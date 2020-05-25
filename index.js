@@ -63,6 +63,7 @@ client.on('message' , msg  => {
 
       m.edit(`*Bot Ping:* **${ping}**\n*API Ping:* **${botPing}**`);
   }
+                                              }
 });
 
 client.on('message', msg => {
