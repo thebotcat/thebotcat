@@ -1,2 +1,2 @@
-web: node aerver.js
+web: node server.js
 service: node index.js
