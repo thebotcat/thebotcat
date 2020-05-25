@@ -62,8 +62,8 @@ client.on('message' , msg  => {
       var botPing = Math.round(ping);
 
       m.edit(`*Bot Ping:* **${ping}**\n*API Ping:* **${botPing}**`);
-  }
-                                              }
+  })
+    }
 });
 
 client.on('message', msg => {
