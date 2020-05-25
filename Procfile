@@ -1,2 +1,2 @@
-web: node server.js
+web: echo: "no."
 service: node index.js
