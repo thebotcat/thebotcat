@@ -57,11 +57,11 @@ client.on('message', message => {
 
 client.on('message' , msg  => {
   if (msg.content === '!ping') {
-   const ping = new Discord.RichEmbed()
-   .setTitle('Here is the connection!')
-   .setDescription(client.ping + 'ms')
-   .setFooter('Thebotcat | INDEV', 'https://ih0.redbubble.net/image.387863594.5073/flat,800x800,075,f.jpg')
- msg.channel.send(ping)
+   message.channel.send('Checking Ping').then(m => {
+      var ping = m.createdTimestamp - message.createdTimestamp;
+      var botPing = Math.round(ping);
+
+      m.edit(`*Bot Ping:* **${ping}**\n*API Ping:* **${botPing}**`);
   }
 });
 
