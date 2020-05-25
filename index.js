@@ -57,7 +57,7 @@ client.on('message', message => {
 
 client.on('message' , msg  => {
   if (msg.content === '!ping') {
-   message.channel.send('Checking Ping').then(m => {
+   messag.channel.send('Checking Ping').then(m => {
       var ping = m.createdTimestamp - message.createdTimestamp;
       var botPing = Math.round(ping);
 
