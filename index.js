@@ -58,7 +58,7 @@ client.on('message', message => {
 client.on('message' , msg  => {
   if (msg.content === '!ping') {
    msg.channel.send('Checking Ping').then(m => {
-      var ping = m.createdTimestamp - message.createdTimestamp;
+      var ping = m.createdTimestamp - msg.createdTimestamp;
       var botPing = Math.round(ping);
 
       m.edit(`*Bot Ping:* **${ping}**\n*API Ping:* **${botPing}**`);
