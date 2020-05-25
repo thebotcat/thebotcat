@@ -1,2 +1,2 @@
-web: echo "I don't want a web process"
+web: echo "I'm qlove but i dont want to start..."
 service: node index.js
