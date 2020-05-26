@@ -7,7 +7,7 @@ client.on('ready', () => {
 });
 
 client.on('ready', () => {
-  client.user.setActivity('! | 7 servers | wash your hands kids')
+  client.user.setActivity(`! | ${client.guilds.size} servers | wash your hands kids`)
 })
 
 client.on('reconnecting', () => {
