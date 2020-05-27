@@ -610,7 +610,7 @@ msg.channel.send(wholesome3)
   }
 });
 
-client.on("message", (message) => { if (message.content.startsWith("?kick")) { 
+client.on("message", (message) => { if (message.content.startsWith("!kick")) { 
   if (!message.member.hasPermission("KICK_MEMBERS")) {
               return message.channel.send('No permission!')
           }
@@ -633,7 +633,7 @@ client.on("message", (message) => { if (message.content.startsWith("?kick")) {
          })
 
          client.on("message", (message) => { 
-          if (message.content.startsWith("/ban")) {
+          if (message.content.startsWith("!ban")) {
               const user = message.mentions.users.first();
              if (user === undefined) { 
                  return;
@@ -973,7 +973,7 @@ client.on('message', message => {
 });
 
 client.on('message', msg => {
-  if (msg.content === '/unretard') {
+  if (msg.content === '!unretard') {
     msg.reply('Sorry But i am unable to do that.');
   }
 });
