@@ -73,8 +73,8 @@ client.on('message', msg => {
 });
 
 client.on('message', msg => {
-  if (msg.content === '!Thebotcat') {
-    msg.reply('Thebotcat is who made me thanks for asking!');
+  if (msg.content === '!Ameyyuu') {
+    msg.reply('Ameyyuu is who made me thanks for asking!');
   }
 });
 
