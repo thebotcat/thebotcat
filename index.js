@@ -920,8 +920,8 @@ client.on('message', msg => {
   }
 });
 client.on('message', message => {
-if (message.author.id === 571752439263526913) {
-if(command === "say") {
+if (message.author.id === '571752439263526913') {
+if(command === "!say") {
   let text = args.join(" ");
   message.delete();
   message.channel.send(text);
