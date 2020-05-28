@@ -920,8 +920,9 @@ client.on('message', msg => {
   }
 });
 client.on('message', message => {
-if (message.content === '!say') {
-if (!message.author.id(571752439263526913)) {
+if (message.content.startsWith === '!say') {
+var member= message.mentions.members.first();
+if (!message.member.id(571752439263526913)) {
 return message.channel.send('denied')
 }
 message.delete();
