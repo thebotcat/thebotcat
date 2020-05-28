@@ -9,7 +9,20 @@ client.on('ready', () => {
 client.on('ready', () => {
   client.user.setActivity(`! | ${client.guilds.size} servers | wash your hands kids`)
 })
+client.on("guildCreate", guild => {
+    console.log("Joined a new guild: " + guild.name);
 
+client.user.setActivity(`! | ${client.guilds.size} servers | wash your hands kids`)
+    //Your other stuff like adding to guildArray
+})
+
+//removed from a server
+client.on("guildDelete", guild => {
+    console.log("Left a guild: " + guild.name);
+
+   client.user.setActivity(`! | ${client.guilds.size} servers | wash your hands kids`)
+ //remove from guildArray
+})
 client.on('reconnecting', () => {
   console.log(`Reconnecting!`);
 });
