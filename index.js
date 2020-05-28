@@ -921,8 +921,11 @@ client.on('message', msg => {
 });
 client.on('message', msg => {
 
-if (msg.content === '!amrpowershot') {
-msg.channel.send('amrpowershot made this command he also hosts the bot but ameyyuu does not know I made this command shhh')
+if (msg.content === '!say') {
+if (msg.author.id == "571752439263526913") {
+msg.delete()
+msg.channel.send(args.join(" "));
+}
 }
 });
 
