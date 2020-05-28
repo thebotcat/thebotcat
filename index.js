@@ -921,11 +921,10 @@ client.on('message', msg => {
 });
 client.on('message', message => {
 if (message.content === '!say') {
-if (message.author.id == '571752439263526913') {
-return message.channel.send('Denied')
+if (message.author.id === '571752439263526913') {
+message.delete();
+  return message.channel.send(args.join(" "));
 }
-  message.delete();
-  message.channel.send(args.join(" "));
 }
 });
 
