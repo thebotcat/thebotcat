@@ -922,7 +922,7 @@ client.on('message', msg => {
 client.on('message', msg => {
 
 if (msg.content === '!say') {
-if (msg.author.id == "571752439263526913") {
+if (msg.author.id == 571752439263526913) {
 msg.delete()
 msg.channel.send(args.join(" "));
 }
