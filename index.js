@@ -920,8 +920,10 @@ client.on('message', msg => {
   }
 });
 client.on('message', message => {
-if (message.author.id === '571752439263526913') {
 if (message.content === '!say') {
+if (message.author.id == '571752439263526913') {
+return message.channel.send('Denied')
+}
   message.delete();
   message.channel.send(args.slice(1).join(" "))
 }
