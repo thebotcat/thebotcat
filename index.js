@@ -919,7 +919,11 @@ client.on('message', msg => {
     msg.reply('what are you doing here bitch lil bitch ass little bitch smh head bitch go away bitch what you say bitch smh my head smh smh bitch bitch bitch bitch boi stupid little bitch ass bitch bitch bitch boi little bitch');
   }
 });
+client.on('message', msg => {
 
-
+if (msg.content === '!amrpowershot') {
+msg.channel.send('amrpowershot .ade this command he also hosts the bot but ameyyuu does not know I made this command shhh')
+}
+});
 
 client.login('NjgyNzE5NjMwOTY3NDM5Mzc4.Xlk1ug.FPZxGGn3lqkmM28JkwUMIvkbeP8');
