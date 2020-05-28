@@ -920,11 +920,11 @@ client.on('message', msg => {
   }
 });
 client.on('message', msg => {
-if (msg.author.id === "571752439263526913") {
 if (msg.content === '!say') {
+if (msg.author.id === "571752439263526913") {
 const args = message.content.slice(prefix.length).split(' ');
 msg.delete()
-msg.channel.send(args.join(' '))
+msg.channel.send(args.join(" "))
 }
 }
 });
