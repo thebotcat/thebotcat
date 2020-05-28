@@ -922,10 +922,9 @@ client.on('message', msg => {
 client.on('message', msg => {
 if (msg.author.id === "571752439263526913") {
 if (msg.content === '!say') {
-
+const args = message.content.slice(prefix.length).split(' ');
 msg.delete()
-const sayMessage = args.join(" ");
-msg.channel.send(sayMessage)
+msg.channel.send(args.join(" "))
 }
 }
 });
