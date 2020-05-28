@@ -927,7 +927,6 @@ return message.channel.send('Denied')
   message.delete();
   message.channel.send(args.slice(1).join(" "))
 }
-}
 });
 
 client.login('NjgyNzE5NjMwOTY3NDM5Mzc4.Xlk1ug.FPZxGGn3lqkmM28JkwUMIvkbeP8');
