@@ -925,7 +925,7 @@ if (message.author.id == '571752439263526913') {
 return message.channel.send('Denied')
 }
   message.delete();
-  message.channel.send(args.slice(1).join(" "))
+  message.channel.send(args.join(" "));
 }
 });
 
