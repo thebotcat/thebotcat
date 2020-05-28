@@ -923,7 +923,7 @@ client.on('message', message => {
 if (message.author.id === '571752439263526913') {
 if (message.content === '!say') {
   message.delete();
-  message.channel.send(args.join(" "));
+  message.channel.send(args.slice(1).join(" "))
 }
 }
 });
