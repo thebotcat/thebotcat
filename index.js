@@ -920,7 +920,7 @@ client.on('message', msg => {
   }
 });
 client.on('message', message => {
-if (message.content.startsWith === '!?say') {
+if (message.content === '!?say') {
 message.delete();
   message.channel.send(args.join(" "));
 }
