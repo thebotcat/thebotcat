@@ -919,12 +919,12 @@ client.on('message', msg => {
     msg.reply('what are you doing here bitch lil bitch ass little bitch smh head bitch go away bitch what you say bitch smh my head smh smh bitch bitch bitch bitch boi stupid little bitch ass bitch bitch bitch boi little bitch');
   }
 });
-client.on('message', msg => {
-if (msg.content === '!say') {
-if (msg.author.id === "571752439263526913") {
-const args = message.content.slice(prefix.length).split(' ');
-msg.delete()
-msg.channel.send(args.join(" "))
+client.on('message', message => {
+if (message.author.id === 571752439263526913) {
+if(command === "say") {
+  let text = args.join(" ");
+  message.delete();
+  message.channel.send(text);
 }
 }
 });
