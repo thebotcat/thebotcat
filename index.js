@@ -884,22 +884,6 @@ client.on('message' , msg => {
   }
 });
 
-client.on('message', msg => {
-
-  if (msg.content === '!help') {
-
-    const embed = new Discord.RichEmbed()
-
-      .setTitle('Here is a list of commands') 
-
-      .setColor(0xff0000)
-
-
-      .setDescription('!ping');
-
-    msg.channel.send(embed);
-  }
-});
        
 client.on('message', msg => {
   if (msg.content === 'heck') {
