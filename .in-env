@@ -5,10 +5,13 @@ THEBOTCAT_CANARY_TOKEN: <insert_token_here>
 DEVELOPERS:             ["405091324572991498","312737536546177025"]
 CONFIRMDEVELOPERS:      []
 ADDLBOTPERMS:           {}
-PERSISTENT_GUILDDATA:   JSON: object {
+PERSISTENT_DATA:   JSON: object {
   special_guilds: array [ <guildids where developer commands are permitted> ],
-  propssaved_alias: {
-    <alias> : <guildid>,
-    ...
+  propssaved_alias: object { <alias>: <guildid>, ... },
+  ids: object {
+    guild: object { <alias>: <id>, ... },
+    channel: object { <alias>: <id>, ... },
+    user: object { <alias>: <id>, ... },
+    misc: object { <alias>: <string>, ... },
   },
 }

@@ -7,7 +7,7 @@ var { recursiveReaddir } = require('./convenience');
 var randomModule = require('./random');
 var { fastIntLog2, randBytes, randFloat, randInt, randInts } = randomModule;
 
-var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString } = require('./time'); 
+var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID } = require('./time'); 
 
 var formatPlaybackBar = (frac, numElems) => {
   if (!Number.isFinite(frac)) frac = 0;
@@ -105,7 +105,7 @@ module.exports = {
   get randomBytes() { return randomModule.randomBytes }, set randomBytes(val) { randomModule.randomBytes = val; },
   get randomOffset() { return randomModule.randomOffset }, set randomOffset(val) { randomModule.randomOffset = val; },
   randBytes, randFloat, randInt, randInts,
-  msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, formatPlaybackBar,
+  msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID, formatPlaybackBar,
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,
   explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, slashCmdResp,
   BotError,

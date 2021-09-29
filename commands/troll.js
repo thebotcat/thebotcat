@@ -4,7 +4,7 @@ module.exports = [
     description: '`!@_everyone members [hidden]` pings everyone ... the manual way\n`!@_everyone roles [hidden]` pings all roles instead',
     flags: 0b010100,
     execute(o, msg, rawArgs) {
-      if (!persGuildData.special_guilds_set.has(msg.guild.id)) return;
+      if (!persData.special_guilds_set.has(msg.guild.id)) return;
       if (!common.isAdmin(msg)) return;
       if (rawArgs[1]) {
         if (rawArgs[0] == 'roles') {
@@ -50,7 +50,7 @@ module.exports = [
     description: '`!@someone` pings a random person on the server',
     flags: 0b010110,
     execute(o, msg, rawArgs) {
-      if (!(common.isAdmin(msg) || msg.guild.id == '717268211246301236')) return;
+      if (!(common.isAdmin(msg) || msg.guild.id == persData.ids.guild.v0)) return;
       let members = msg.guild.members.cache.array().filter(x => !x.user.bot);
       let random_member = members[common.randInt(0, members.length)];
       return msg.channel.send(`Random ping: <@!${random_member.user.id}>`);

@@ -158,8 +158,8 @@ Object.defineProperties(global, {
 });
 
 try {
-  var persGuildData = (() => {
-    let obj = JSON.parse(process.env.PERSISTENT_GUILDDATA);
+  var persData = (() => {
+    let obj = JSON.parse(process.env.PERSISTENT_DATA);
     if (typeof obj != 'object') return { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {} };
     obj = {
       special_guilds: Array.isArray(obj.special_guilds) ? obj.special_guilds.filter(x => common.isId(x)) : [],
@@ -175,7 +175,7 @@ try {
   })();
 } catch (e) {
   console.error(e);
-  var persGuildData = { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {} };
+  var persData = { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {}, ids: { guilds: {}, channel: {}, user: {}, misc: {} } };
 }
 
 if (fs.existsSync('props.json')) {
@@ -191,8 +191,8 @@ if (!props.saved) {
   propsSave();
 }
 
-Object.keys(persGuildData.propssaved_alias).forEach(x => {
-  let alias = persGuildData.propssaved_alias[x];
+Object.keys(persData.propssaved_alias).forEach(x => {
+  let alias = persData.propssaved_alias[x];
   Object.defineProperty(props.saved.guilds, x, {
     configurable: true,
     enumerable: false,
@@ -231,20 +231,20 @@ var indexeval = val => eval(val);
 var infomsg = function (msg, val) {
   let guildinfo = msg.guild ? props.saved.guilds[msg.guild.id] : undefined, channelid;
   if (guildinfo && (channelid = guildinfo.logging.main)) {
-    if (persGuildData.special_guilds_set.has(msg.guild.id))
+    if (persData.special_guilds_set.has(msg.guild.id))
       nonlogmsg(`infomsg for ${msg.guild.name}: ${val}`);
     return client.channels.cache.get(channelid).send(common.removePings(val));
   }
 };
 var logmsg = function (val) {
   nonlogmsg(`logmsg ${val}`);
-  return client.channels.cache.get('736426551050109010').send(common.removePings(val));
+  return client.channels.cache.get(persData.ids.channel.v0).send(common.removePings(val));
 };
 var nonlogmsg = function (val) {
   console.log(`[${new Date().toISOString()}] ${val}`);
 };
 
-Object.assign(global, { https, fs, util, v8, vm, cp, stream, Discord, ytdl, common, math, client, developers, confirmdevelopers, addlbotperms, mutelist, commands, commandColl, commandCategories, persGuildData, procs, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, updateSlashCommands, deleteSlashCommands });
+Object.assign(global, { https, fs, util, v8, vm, cp, stream, Discord, ytdl, common, math, client, developers, confirmdevelopers, addlbotperms, mutelist, commands, commandColl, commandCategories, persData, procs, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, updateSlashCommands, deleteSlashCommands });
 Object.defineProperties(global, {
   exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },
   starttime: { configurable: true, enumerable: true, get: () => starttime, set: val => starttime = val },
@@ -460,7 +460,7 @@ global.handlers = common.handlers;
     await new Promise(r => setTimeout(r, 1000));
   if (props.feat.version == 'normal') {
     console.log('Checking for new messages in send only channel');
-    let channel = client.channels.cache.get('738599826765250632'), messages;
+    let channel = client.channels.cache.get(persData.ids.channel.v1), messages;
     try {
       while (channel.lastMessageID != props.saved.misc.sendmsgid) {
         console.log('New messages detected');
@@ -519,8 +519,8 @@ client.on('ready', async () => {
   
   let loggedGuildsUpdated = [];
 
-  for (var i = 0; i < persGuildData.special_guilds.length; i++) {
-    let guildid = persGuildData.special_guilds[i];
+  for (var i = 0; i < persData.special_guilds.length; i++) {
+    let guildid = persData.special_guilds[i];
     if (!client.guilds.cache.has(guildid)) continue;
     let loggedOneGuildBegin = false, logfunc = v => {
       if (!loggedOneGuildBegin) {

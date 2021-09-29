@@ -482,7 +482,7 @@ module.exports = [
               { name: 'Flags', value: user.flags && user.flags.toArray().length ? user.flags.toArray().join(', ') : 'None', inline: false },
               { name: 'Avatar', value: avatarStr, inline: false },
             ];
-            if (msg.guild && persGuildData.special_guilds_set.has(msg.guild.id) && msg.guild.members.cache.get(user.id)) {
+            if (msg.guild && persData.special_guilds_set.has(msg.guild.id) && msg.guild.members.cache.get(user.id)) {
               let presence = user.presence.clientStatus;
               if (presence) {
                 let presenceKeys = Object.keys(presence);
@@ -535,7 +535,7 @@ module.exports = [
         `Created At: ${createdDate.toISOString()} (${common.msecToHMSs(Date.now() - createdDate.getTime())} ago)\n` +
         `Flags: ${user.flags && user.flags.toArray().length ? user.flags.toArray().join(', ') : 'None'}\n` +
         `Avatar: ${avatarStr}` +
-        (o.guild && persGuildData.special_guilds_set.has(o.guild.id) && o.guild.members.cache.get(user.id) ? (() => {
+        (o.guild && persData.special_guilds_set.has(o.guild.id) && o.guild.members.cache.get(user.id) ? (() => {
           let presence = user.presence.clientStatus;
           if (presence) {
             let presenceKeys = Object.keys(presence);
@@ -755,8 +755,8 @@ module.exports = [
     ],
     execute(o, msg, rawArgs) {
       try {
-        let id = BigInt(rawArgs[0]);
-        return msg.channel.send(`Date: ${new Date(new Date('2015-01-01T00:00:00.000Z').getTime() + Number(id >> 22n)).toISOString()}`);
+        let id = rawArgs[0];
+        return msg.channel.send(`Date: ${common.IDToDate(id).toISOString()}`);
       } catch (e) {
         return msg.channel.send('Invalid ID');
       }
@@ -764,8 +764,8 @@ module.exports = [
     execute_slash(o, interaction, command, args) {
       let emphemeral = args[1] ? (args[1].value ? true : false) : true;
       try {
-        let id = BigInt(args[0].value);
-        return common.slashCmdResp(interaction, emphemeral, `Date: ${new Date(new Date('2015-01-01T00:00:00.000Z').getTime() + Number(id >> 22n)).toISOString()}`);
+        let id = args[0].value;
+        return common.slashCmdResp(interaction, emphemeral, `Date: ${common.IDToDate(id).toISOString()}`);
       } catch (e) {
         return common.slashCmdResp(interaction, emphemeral, 'Invalid ID');
       }

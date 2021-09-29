@@ -6,7 +6,7 @@ module.exports = {
   },
   extra: {
     message: require('./extras/message'),
-    voiceStateUpdate: [],
+    voiceStateUpdate: require('./extras/voiceStateUpdate'),
     INTERACTION_CREATE: require('./extras/INTERACTION_CREATE'),
   },
 };

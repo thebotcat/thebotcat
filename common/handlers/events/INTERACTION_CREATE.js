@@ -49,7 +49,7 @@ module.exports = async interaction => {
         if (!common.hasBotPermissions(o, common.constants.botRolePermBits.NORMAL))
           return common.slashCmdResp(interaction, true, 'You lack permission to use this command.');
         if (o.guild ? o.cmd.flags & 0b000100 : o.cmd.flags & 0b001000) {
-          if (!(o.cmd.flags & 0b000010) && (!o.guild || !persGuildData.special_guilds_set.has(o.guild.id)))
+          if (!(o.cmd.flags & 0b000010) && (!o.guild || !persData.special_guilds_set.has(o.guild.id)))
             return common.slashCmdResp(interaction, true, 'Command invalid.');
           if (o.guild && o.command != 'settings' &&
             props.saved.guilds[o.guild.id] && (

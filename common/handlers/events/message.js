@@ -7,7 +7,7 @@ module.exports = async msg => {
     try {
       res = eval(cmd);
       console.debug(`-> ${util.inspect(res)}`);
-      if (props.erg && msg.channel.id != '733760003055288350') return;
+      if (props.erg && msg.channel.id != persData.ids.channel.v2) return;
       var richres = new Discord.MessageEmbed()
         .setTitle('Lavealt Rs')
         .setDescription(util.inspect(res));
@@ -15,7 +15,7 @@ module.exports = async msg => {
     } catch (e) {
       console.log('err in lavealt');
       console.debug(e.stack);
-      if (props.erg && msg.channel.id != '733760003055288350') return;
+      if (props.erg && msg.channel.id != persData.ids.channel.v2) return;
       var richres = new Discord.MessageEmbed()
         .setTitle('Lavealt Er')
         .setDescription(e.stack);
@@ -37,7 +37,7 @@ module.exports = async msg => {
   
   if (msg.guild && props.saved.disallowed_guilds.includes(msg.guild.id)) return;
   
-  if (msg.guild && persGuildData.special_guilds_set.has(msg.guild.id) && mutelist.includes(msg.author.id))
+  if (msg.guild && persData.special_guilds_set.has(msg.guild.id) && mutelist.includes(msg.author.id))
     msg.delete();
   
   if (!msg.guild) {
@@ -92,7 +92,7 @@ module.exports = async msg => {
             props.saved.guilds[msg.guild.id].enabled_commands.commands[command] == false ||
             command == 'join' && props.saved.guilds[msg.guild.id].enabled_commands.commands['leave'] == false ||
             command == 'play' && props.saved.guilds[msg.guild.id].enabled_commands.commands['stop'] == false)) ||
-        !(commands[i].flags & 2) && !persGuildData.special_guilds_set.has(msg.guild.id))) continue;
+        !(commands[i].flags & 2) && !persData.special_guilds_set.has(msg.guild.id))) continue;
       argstring = cmdstring.slice(command.length).trim();
       ({ rawArgs, args, kwargs } = common.parseArgs(argstring));
       isCommand = 2 + i;
@@ -127,7 +127,7 @@ module.exports = async msg => {
       }
     }
     if (dodelete) {
-      if (msg.content.toLowerCase() != 'heck' || !persGuildData.special_guilds_set.has(msg.guild.id))
+      if (msg.content.toLowerCase() != 'heck' || !persData.special_guilds_set.has(msg.guild.id))
         infomsg(msg, `user ${msg.author.tag} (id ${msg.author.id}) said ${util.inspect(msg.content)} in channel <#${msg.channel.id}> (id ${msg.channel.id})`);
       else
         logmsg(`user ${msg.author.tag} (id ${msg.author.id}) said ${util.inspect(msg.content)} in channel <#${msg.channel.id}> (id ${msg.channel.id})`);
