@@ -160,7 +160,7 @@ Object.defineProperties(global, {
 try {
   var persData = (() => {
     let obj = JSON.parse(process.env.PERSISTENT_DATA);
-    if (typeof obj != 'object') return { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {} };
+    if (typeof obj != 'object') return { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {}, ids: { guilds: {}, channel: {}, user: {}, misc: {} } };
     obj = {
       special_guilds: Array.isArray(obj.special_guilds) ? obj.special_guilds.filter(x => common.isId(x)) : [],
       special_guilds_set: null,
@@ -169,6 +169,28 @@ try {
         Object.keys(obj.propssaved_alias).forEach(x => common.isId(obj.propssaved_alias[x]) ? newObj[x] = obj.propssaved_alias[x] : null);
         return newObj;
       })() : {},
+      ids: typeof obj.ids == 'object' ? {
+        guild: typeof obj.ids.guild == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.guild).forEach(x => common.isId(obj.ids.guild[x]) ? newObj[x] = obj.ids.guild[x] : null);
+          return newObj;
+        })() : {},
+        channel: typeof obj.ids.channel == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.channel).forEach(x => common.isId(obj.ids.channel[x]) ? newObj[x] = obj.ids.channel[x] : null);
+          return newObj;
+        })() : {},
+        user: typeof obj.ids.user == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.user).forEach(x => common.isId(obj.ids.user[x]) ? newObj[x] = obj.ids.user[x] : null);
+          return newObj;
+        })() : {},
+        misc: typeof obj.ids.misc == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.misc).forEach(x => common.isId(obj.ids.misc[x]) ? newObj[x] = obj.ids.misc[x] : null);
+          return newObj;
+        })() : {},
+      } : { guilds: {}, channel: {}, user: {}, misc: {} }
     };
     obj.special_guilds_set = new Set(obj.special_guilds);
     return obj;
