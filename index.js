@@ -2,7 +2,7 @@
 var doWorkers = true;
 
 // for timing data
-var starttime = new Date(), loadtime, readytime;
+var starttime = new Date(), readytime, ready2time, ready3time;
 
 var fs = require('fs');
 
@@ -477,56 +477,8 @@ addCommands(require('./commands/troll.js'), 'Troll');
 // clean propssaved after commands are added
 cleanPropsSaved();
 
-// onready func
-async function onReadyFunc() {
-  if (props.feat.version == 'normal') {
-    console.log('Checking for new messages in send only channel');
-    let channel = client.channels.cache.get(persData.ids.channel.v1), messages;
-    try {
-      while (channel.lastMessageID != props.saved.misc.sendmsgid) {
-        console.log('New messages detected');
-        messages = await channel.messages.fetch({ after: props.saved.misc.sendmsgid });
-        console.log('Loaded up to 50 new messages');
-        messages = Array.from(messages.values()).sort((a, b) => { a = a.createdTimestamp; b = b.createdTimestamp; if (a > b) { return 1; } else if (a < b) { return -1; } else { return 0; } });
-        if (messages.length == 0) {
-          props.saved.misc.sendmsgid = channel.lastMessageID;
-          break;
-        }
-        for (var i = 0; i < messages.length; i++) {
-          console.log(`Message handlering from ${props.saved.misc.sendmsgid}`);
-          handlers.extra.message[0](messages[i]);
-          await new Promise(r => setTimeout(r, 500));
-        }
-      }
-    } catch (e) {
-      console.error(e.toString());
-    }
-    console.log('All caught up');
-    cleanPropsSaved();
-  }
-  loadtime = new Date();
-  if (props.feat.repl) startRepl();
-  try {
-    props.botStatusChannel = await client.channels.fetch('759507043685105757');
-    if (props.feat.version == 'normal') {
-      props.botStatusMsg = await props.botStatusChannel.messages.fetch('762432760680808479');
-    } else if (props.feat.version == 'canary') {
-      props.botStatusMsg = { edit: () => Promise.resolve(null) };
-    }
-  } catch (e) {
-    console.error(`Couldn't fetch bot status message`);
-    console.error(e);
-  }
-}
-
-// client listeners
-client.on('ready', async () => {
-  nonlogmsg(`Logged in as ${client.user.tag}!`);
-  
-  updateStatus();
-  
-  let arr = [];
-  
+// slash commands updater
+async function fullUpdateSlashCommands() {
   let loggedGlobalBegin = 0, logfunc = v => {
     if (!loggedGlobalBegin) {
       nonlogmsg(`Updating global slash commands`);
@@ -578,12 +530,73 @@ client.on('ready', async () => {
       nonlogmsg(`Updated guild slash commands for no guilds`);
     }
   }
+}
+
+// message handlers that should be run when botcat wakes
+async function standardWakeHandlers() {
+  if (props.feat.version == 'normal') {
+    console.log('Checking for new messages in send only channel');
+    let channel = client.channels.cache.get(persData.ids.channel.v1), messages;
+    try {
+      while (channel.lastMessageID != props.saved.misc.sendmsgid) {
+        console.log('New messages detected');
+        messages = await channel.messages.fetch({ after: props.saved.misc.sendmsgid });
+        console.log('Loaded up to 50 new messages');
+        messages = Array.from(messages.values()).sort((a, b) => { a = a.createdTimestamp; b = b.createdTimestamp; if (a > b) { return 1; } else if (a < b) { return -1; } else { return 0; } });
+        if (messages.length == 0) {
+          props.saved.misc.sendmsgid = channel.lastMessageID;
+          break;
+        }
+        for (var i = 0; i < messages.length; i++) {
+          console.log(`Message handlering from ${props.saved.misc.sendmsgid}`);
+          handlers.extra.message[0](messages[i]);
+          await new Promise(r => setTimeout(r, 500));
+        }
+      }
+    } catch (e) {
+      console.error(e.toString());
+    }
+    console.log('All caught up');
+    cleanPropsSaved();
+  }
+}
+
+// populate botStatusMessage
+async function populateBotStatusMessage() {
+  try {
+    props.botStatusChannel = await client.channels.fetch('759507043685105757');
+    if (props.feat.version == 'normal') {
+      props.botStatusMsg = await props.botStatusChannel.messages.fetch('762432760680808479');
+    } else if (props.feat.version == 'canary') {
+      props.botStatusMsg = { edit: () => Promise.resolve(null) };
+    }
+  } catch (e) {
+    console.error(`Couldn't fetch bot status message`);
+    console.error(e);
+  }
+}
+
+// client listeners
+client.on('ready', async () => {
+  nonlogmsg(`Logged in as ${client.user.tag}!`);
+  
+  updateStatus();
+  
+  await fullUpdateSlashCommands();
   
   readytime = new Date();
   
-  onReadyFunc();
+  await standardWakeHandlers();
+
+  ready2time = new Date();
+
+  if (props.feat.repl) startRepl();
+
+  await populateBotStatusMessage();
   
   if (props.feat.loaddms) props.saved.misc.dmchannels.forEach(x => client.channels.fetch(x));
+
+  ready3time = new Date();
 });
 
 client.on('guildCreate', guild => {
@@ -695,8 +708,9 @@ Object.assign(global, { https, fs, util, v8, vm, cp, stream, Discord, ytdl, math
 Object.defineProperties(global, {
   exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },
   starttime: { configurable: true, enumerable: true, get: () => starttime, set: val => starttime = val },
-  loadtime: { configurable: true, enumerable: true, get: () => loadtime, set: val => loadtime = val },
   readytime: { configurable: true, enumerable: true, get: () => readytime, set: val => readytime = val },
+  ready2time: { configurable: true, enumerable: true, get: () => ready2time, set: val => ready2time = val },
+  ready3time: { configurable: true, enumerable: true, get: () => ready3time, set: val => ready3time = val },
   doWorkers: { configurable: true, enumerable: true, get: () => doWorkers, set: val => doWorkers = val },
   version: { configurable: true, enumerable: true, get: () => version, set: val => version = val },
   messageHandler: { configurable: true, enumerable: true, get: () => handlers.event.message, set: val => handlers.event.message = val },

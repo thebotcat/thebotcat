@@ -1,5 +1,3 @@
-consolidate onready and onReadyFunc
-
 finish checking slash commands
 finish checking settings command, kick, ban, unban, emoterole, all voice and music commands
   kick, ban, unban use confirm before ban, but reacting is no longer working
@@ -29,6 +27,7 @@ make bitrate command accept channel ids directly pasted in and search by channel
 make math.js an npm package instead of included in source code
 content commands that send an embed with a gif can just send gif
   content and content2 should be identical for non slash
+use proper discord.js v13 api to create slash commands instead of making a raw api call
 
 make pseudo tagscript implementation in common and use it
   ts('{e}', {e:4})
