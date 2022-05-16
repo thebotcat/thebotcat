@@ -68,3 +68,4 @@ add delete delay to regcmdresp, to emulate ephemeral message
 add logging to log channel on uncaughtexception and unhandledrejection
 change occurrences of 2 spaces after a period to 1 space after a period
 handle values of null in information commands and other commands
+make website control panel
