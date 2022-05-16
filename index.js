@@ -1,7 +1,12 @@
+// true to use workers to evaluate math.js, false to use v8 vm
+var doWorkers = true;
+
+// for timing data
 var starttime = new Date(), loadtime, readytime;
 
 var fs = require('fs');
 
+// load .env file
 try {
   fs.readFileSync('.env').toString().split(/\r?\n/g).forEach(entry => {
     if (entry[0] == '#') return;
@@ -15,23 +20,29 @@ try {
   console.error(e);
 }
 
+// complicated exit handling flag
 var exitHandled = 0;
 
-var doWorkers = true;
-
+// core requires
+var cp = require('child_process');
 var https = require('https');
+var stream = require('stream');
 var util = require('util');
 var v8 = require('v8');
 var vm = require('vm');
-var cp = require('child_process');
-var stream = require('stream');
+
+// 3rd party requires
 var Discord = require('discord.js');
 var ytdl;
 try { ytdl = require('ytdl-core-discord'); } catch (e) { ytdl = null; }
-var common = require('./common/index');
-var client = new Discord.Client();
-
 var math = require('./math.min.js');
+
+// botcat module requires
+var common = require('./common/index');
+
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, ytdl, math, common });
+
+// configure math.js library
 math.config({ number: 'BigNumber' });
 math.oldimport = math.import.bind(math);
 math.oldcreateUnit = math.createUnit.bind(math);
@@ -80,6 +91,7 @@ math.import({
 }, { override: true });
 global.calccontext = null;
 
+// worker importing
 if (doWorkers) {
   try {
     var workerpool = require('workerpool');
@@ -88,6 +100,7 @@ if (doWorkers) {
     doWorkers = false;
   }
 }
+
 if (doWorkers) {
   var worker = require('worker_threads');
   var pool = workerpool.pool(__dirname + '/worker.js', { workerType: 'process', maxWorkers: 3, forkOpts: { execArgv: ['--max_old_space_size=50'] } });
@@ -97,20 +110,40 @@ if (doWorkers) {
   Object.assign(global, { mathVMContext });
 }
 
+// create discord client
+var client = new Discord.Client({
+  allowedMentions: { parse: [] },
+  intents: [
+    Discord.Intents.FLAGS.GUILDS,
+    Discord.Intents.FLAGS.GUILD_MEMBERS,
+    Discord.Intents.FLAGS.GUILD_VOICE_STATES,
+    Discord.Intents.FLAGS.GUILD_PRESENCES,
+    Discord.Intents.FLAGS.GUILD_MESSAGES,
+    Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Discord.Intents.FLAGS.DIRECT_MESSAGES,
+    Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+  ],
+  partials: [
+    Discord.Constants.PartialTypes.CHANNEL,
+  ],
+});
+global.client = client;
+
+// create bot specific config variables
 try { var developers = JSON.parse(process.env.DEVELOPERS); } catch (e) { var developers = ['405091324572991498','312737536546177025']; }
 try { var confirmdevelopers = JSON.parse(process.env.CONFIRMDEVELOPERS); } catch (e) { var confirmdevelopers = []; }
 try { var addlbotperms = JSON.parse(process.env.ADDLBOTPERMS); } catch (e) { var addlbotperms = {}; }
-
 var mutelist = [];
 
-
+// status updating code
 var version = require('./package.json').version;
-global.updateStatus = async () => {
-  let newStatus = props.feat.status ? props.feat.status.replace('{prefix}', defaultprefix).replace('{guilds}', client.guilds.cache.size) : null;
+async function updateStatus() {
+  let newStatus = props.feat.status ?
+    props.feat.status.replace('{prefix}', defaultprefix).replace('{guilds}', client.guilds.cache.size) : null;
+  
   let currentStatus;
-  try {
-    currentStatus = client.user.presence.activities[0].name;
-  } catch (e) {}
+  try { currentStatus = client.user.presence.activities[0].name; } catch (e) {}
+  
   let now = new Date();
   if (currentStatus != newStatus || !props.statusUpdatedAt || now.getTime() > props.statusUpdatedAt.getTime() + 24 * 60 * 60 * 1000) {
     try {
@@ -120,12 +153,15 @@ global.updateStatus = async () => {
       console.error(e);
     }
   }
-};
+}
 
+// command variables
 var commands = [], commandColl = new Discord.Collection(), commandCategories = ['Information', 'Administrative', 'Interactive', 'Voice Channel', 'Music', 'Content', 'Troll'];
 
-var procs = [];
+// command variables to be defined globally now as they are used globally afterward
+Object.assign(global, { commands, commandColl, commandCategories });
 
+// bot config variables
 var props = {
   feat: {
     version: 'canary', // either 'normal' or 'canary'
@@ -147,59 +183,29 @@ var props = {
   botStatusChannel: null,
   botStatusMsg: null,
   botStatusMsgResolve: null,
+  execCmdProcesses: [],
 };
 
+// prefix variable
 var defaultprefix = props.feat.version == 'normal' ? '!' : '?';
 var universalprefix = props.feat.version == 'normal' ? '!(thebotcat)' : '?(thebotcat)';
 
+// prefix has to be defined globally now as it is used globally immediately afterward
 Object.defineProperties(global, {
   defaultprefix: { configurable: true, enumerable: true, get: () => defaultprefix, set: val => defaultprefix = val },
   universalprefix: { configurable: true, enumerable: true, get: () => universalprefix, set: val => universalprefix = val },
 });
 
+// persData loading
 try {
-  var persData = (() => {
-    let obj = JSON.parse(process.env.PERSISTENT_DATA);
-    if (typeof obj != 'object') return { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {}, ids: { guilds: {}, channel: {}, user: {}, misc: {} } };
-    obj = {
-      special_guilds: Array.isArray(obj.special_guilds) ? obj.special_guilds.filter(x => common.isId(x)) : [],
-      special_guilds_set: null,
-      propssaved_alias: typeof obj.propssaved_alias == 'object' ? (() => {
-        let newObj = {};
-        Object.keys(obj.propssaved_alias).forEach(x => common.isId(obj.propssaved_alias[x]) ? newObj[x] = obj.propssaved_alias[x] : null);
-        return newObj;
-      })() : {},
-      ids: typeof obj.ids == 'object' ? {
-        guild: typeof obj.ids.guild == 'object' ? (() => {
-          let newObj = {};
-          Object.keys(obj.ids.guild).forEach(x => common.isId(obj.ids.guild[x]) ? newObj[x] = obj.ids.guild[x] : null);
-          return newObj;
-        })() : {},
-        channel: typeof obj.ids.channel == 'object' ? (() => {
-          let newObj = {};
-          Object.keys(obj.ids.channel).forEach(x => common.isId(obj.ids.channel[x]) ? newObj[x] = obj.ids.channel[x] : null);
-          return newObj;
-        })() : {},
-        user: typeof obj.ids.user == 'object' ? (() => {
-          let newObj = {};
-          Object.keys(obj.ids.user).forEach(x => common.isId(obj.ids.user[x]) ? newObj[x] = obj.ids.user[x] : null);
-          return newObj;
-        })() : {},
-        misc: typeof obj.ids.misc == 'object' ? (() => {
-          let newObj = {};
-          Object.keys(obj.ids.misc).forEach(x => common.isId(obj.ids.misc[x]) ? newObj[x] = obj.ids.misc[x] : null);
-          return newObj;
-        })() : {},
-      } : { guilds: {}, channel: {}, user: {}, misc: {} }
-    };
-    obj.special_guilds_set = new Set(obj.special_guilds);
-    return obj;
-  })();
+  var persData = common.persDataCreateVerifiedCopy(JSON.parse(process.env.PERSISTENT_DATA));
+  console.log('Successfully loaded persData');
 } catch (e) {
-  console.error(e);
+  console.error(`Unable to load persData: ${e.toString()}`);
   var persData = { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {}, ids: { guilds: {}, channel: {}, user: {}, misc: {} } };
 }
 
+// propsSaved loading
 if (fs.existsSync('props.json')) {
   try {
     props.saved = JSON.parse(props.savedstringify = fs.readFileSync('props.json').toString());
@@ -213,6 +219,7 @@ if (!props.saved) {
   propsSave();
 }
 
+// setting propsSaved aliases
 Object.keys(persData.propssaved_alias).forEach(x => {
   let alias = persData.propssaved_alias[x];
   Object.defineProperty(props.saved.guilds, x, {
@@ -226,6 +233,7 @@ Object.defineProperty(props.saved.guilds.default, 'prefix', {
   configurable: true, enumerable: false, get: () => defaultprefix, set: val => defaultprefix = val,
 });
 
+// propsSaved functions
 function cleanPropsSaved() {
   props.saved = common.propsSavedCreateVerifiedCopy(props.saved);
   propsSave();
@@ -248,39 +256,29 @@ function schedulePropsSave() {
   }, 60000);
 }
 
+// index eval
+function indexeval(val) { eval(val); }
 
-var indexeval = val => eval(val);
-var infomsg = function (msg, val) {
+// logging functions
+async function infomsg(msg, val) {
   let guildinfo = msg.guild ? props.saved.guilds[msg.guild.id] : undefined, channelid;
   if (guildinfo && (channelid = guildinfo.logging.main)) {
     if (persData.special_guilds_set.has(msg.guild.id))
       nonlogmsg(`infomsg for ${msg.guild.name}: ${val}`);
-    return client.channels.cache.get(channelid).send(common.removePings(val));
+    return (await client.channels.fetch(channelid)).send(common.removePings(val));
   }
-};
-var logmsg = function (val) {
+}
+
+async function logmsg(val) {
   nonlogmsg(`logmsg ${val}`);
-  return client.channels.cache.get(persData.ids.channel.v0).send(common.removePings(val));
-};
-var nonlogmsg = function (val) {
+  return (await client.channels.fetch(persData.ids.channel.v0)).send(common.removePings(val));
+}
+
+function nonlogmsg(val) {
   console.log(`[${new Date().toISOString()}] ${val}`);
-};
+}
 
-Object.assign(global, { https, fs, util, v8, vm, cp, stream, Discord, ytdl, common, math, client, developers, confirmdevelopers, addlbotperms, mutelist, commands, commandColl, commandCategories, persData, procs, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, updateSlashCommands, deleteSlashCommands });
-Object.defineProperties(global, {
-  exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },
-  starttime: { configurable: true, enumerable: true, get: () => starttime, set: val => starttime = val },
-  loadtime: { configurable: true, enumerable: true, get: () => loadtime, set: val => loadtime = val },
-  readytime: { configurable: true, enumerable: true, get: () => readytime, set: val => readytime = val },
-  doWorkers: { configurable: true, enumerable: true, get: () => doWorkers, set: val => doWorkers = val },
-  version: { configurable: true, enumerable: true, get: () => version, set: val => version = val },
-  messageHandler: { configurable: true, enumerable: true, get: () => handlers.event.message, set: val => handlers.event.message = val },
-  messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => handlers.extra.message = val },
-  voiceStateUpdateHandler: { configurable: true, enumerable: true, get: () => voiceStateUpdateHandler, set: val => voiceStateUpdateHandler = val },
-  exitHandler: { configurable: true, enumerable: true, get: () => exitHandler, set: val => exitHandler = val },
-});
-
-
+// command handling functions
 function addCommand(cmd, category) {
   if (category) {
     cmd = { category, ...cmd };
@@ -291,19 +289,23 @@ function addCommand(cmd, category) {
     commandColl.set(cmd.name, cmd);
   }
 }
+
 function addCommands(cmds, category) {
   cmds.forEach(x => addCommand(x, category));
 }
+
 function removeCommand(cmd) {
   var index;
   while ((index = commands.indexOf(cmd)) != -1)
     commands.splice(index, 1);
   commandColl.delete(cmd.name);
 }
+
 function removeCommands(cmds) {
   var index, cmd;
   cmds.forEach(x => removeCommand(x));
 }
+
 function getCommandsCategorized(guilddata, slashContext) {
   let commandsList;
   if (guilddata == null) {
@@ -340,7 +342,7 @@ function getCommandsCategorized(guilddata, slashContext) {
   return [commandsList, commandsCategorized];
 }
 
-global.slashCommandsInequal = function slashCommandsInequal(cmd1, cmd2) {
+function slashCommandsInequal(cmd1, cmd2) {
   return cmd1.description != cmd2.description ||
     Array.isArray(cmd1.options) - Array.isArray(cmd2.options) ||
     Array.isArray(cmd1.options) && (
@@ -408,6 +410,7 @@ async function updateSlashCommands(endpoint, logfunc) {
     await new Promise(r => setTimeout(r, 1000));
   }
 }
+
 async function deleteSlashCommands(endpoint) {
   nonlogmsg(`Deleting slash commands`);
   
@@ -460,6 +463,7 @@ async function updateNonPubSlashCommands(endpoint, logfunc) {
   }
 }
 
+// adding commmands
 addCommands(require('./commands/information.js'), 'Information');
 addCommands(require('./commands/administrative-other.js'), 'Administrative');
 addCommands(require('./commands/administrative-settings.js'), 'Administrative');
@@ -470,16 +474,11 @@ addCommands(require('./commands/music.js'), 'Music');
 addCommands(require('./commands/content.js'), 'Content');
 addCommands(require('./commands/troll.js'), 'Troll');
 
-
+// clean propssaved after commands are added
 cleanPropsSaved();
 
-
-global.handlers = common.handlers;
-
-
-(async () => {
-  while (!readytime)
-    await new Promise(r => setTimeout(r, 1000));
+// onready func
+async function onReadyFunc() {
   if (props.feat.version == 'normal') {
     console.log('Checking for new messages in send only channel');
     let channel = client.channels.cache.get(persData.ids.channel.v1), messages;
@@ -488,13 +487,13 @@ global.handlers = common.handlers;
         console.log('New messages detected');
         messages = await channel.messages.fetch({ after: props.saved.misc.sendmsgid });
         console.log('Loaded up to 50 new messages');
-        messages = messages.array().sort((a, b) => { a = a.createdTimestamp; b = b.createdTimestamp; if (a > b) { return 1; } else if (a < b) { return -1; } else { return 0; } });
+        messages = Array.from(messages.values()).sort((a, b) => { a = a.createdTimestamp; b = b.createdTimestamp; if (a > b) { return 1; } else if (a < b) { return -1; } else { return 0; } });
         if (messages.length == 0) {
           props.saved.misc.sendmsgid = channel.lastMessageID;
           break;
         }
         for (var i = 0; i < messages.length; i++) {
-          console.log(`message handlering from ${props.saved.misc.sendmsgid}`);
+          console.log(`Message handlering from ${props.saved.misc.sendmsgid}`);
           handlers.extra.message[0](messages[i]);
           await new Promise(r => setTimeout(r, 500));
         }
@@ -506,6 +505,7 @@ global.handlers = common.handlers;
     cleanPropsSaved();
   }
   loadtime = new Date();
+  if (props.feat.repl) startRepl();
   try {
     props.botStatusChannel = await client.channels.fetch('759507043685105757');
     if (props.feat.version == 'normal') {
@@ -514,11 +514,12 @@ global.handlers = common.handlers;
       props.botStatusMsg = { edit: () => Promise.resolve(null) };
     }
   } catch (e) {
-    console.error(`couldn't fetch bot status message`);
+    console.error(`Couldn't fetch bot status message`);
     console.error(e);
   }
-})();
+}
 
+// client listeners
 client.on('ready', async () => {
   nonlogmsg(`Logged in as ${client.user.tag}!`);
   
@@ -533,9 +534,7 @@ client.on('ready', async () => {
       loggedGlobalBegin = 1;
     } else nonlogmsg(v);
   };
-  /*deleteSlashCommands(() => client.api.applications(client.user.id).guilds('688806155530534931').commands)
-    .then(_ => updateSlashCommands(() => client.api.applications(client.user.id).commands);*/
-  //deleteSlashCommands(() => client.api.applications(client.user.id).guilds('688806155530534931').commands);
+  
   await updateSlashCommands(() => client.api.applications(client.user.id).commands, logfunc);
   if (loggedGlobalBegin) nonlogmsg(`Done updating global slash commands`);
   
@@ -565,14 +564,24 @@ client.on('ready', async () => {
   }
   
   if (!loggedGlobalBegin) {
-    nonlogmsg(`Updated global slash commands, updated guild slash commands for:`);
-    nonlogmsg(loggedGuildsUpdated.join(', '));
+    if (loggedGuildsUpdated.length) {
+      nonlogmsg(`Updated global slash commands, updated guild slash commands for:`);
+      nonlogmsg(loggedGuildsUpdated.join(', '));
+    } else {
+      nonlogmsg(`Updated global slash commands, updated guild slash commands for no guilds`);
+    }
   } else if (loggedGlobalBegin == 1) {
-    nonlogmsg(`Updated guild slash commands for:`);
-    nonlogmsg(loggedGuildsUpdated.join(', '));
+    if (loggedGuildsUpdated.length) {
+      nonlogmsg(`Updated guild slash commands for:`);
+      nonlogmsg(loggedGuildsUpdated.join(', '));
+    } else {
+      nonlogmsg(`Updated guild slash commands for no guilds`);
+    }
   }
   
   readytime = new Date();
+  
+  onReadyFunc();
   
   if (props.feat.loaddms) props.saved.misc.dmchannels.forEach(x => client.channels.fetch(x));
 });
@@ -597,7 +606,7 @@ client.on('disconnect', () => {
   nonlogmsg(`Disconnect!`);
 });
 
-['message', 'voiceStateUpdate'].forEach(evtType => {
+['messageCreate', 'voiceStateUpdate', 'interactionCreate'].forEach(evtType => {
   client.on(evtType, async (...args) => {
     try {
       if (handlers.event[evtType]) {
@@ -611,23 +620,10 @@ client.on('disconnect', () => {
   });
 });
 
-client.ws.on('INTERACTION_CREATE', async (...args) => {
-  try {
-    if (handlers.event['INTERACTION_CREATE']) {
-      if (handlers.event['INTERACTION_CREATE'].constructor == Function) handlers.event['INTERACTION_CREATE'](...args);
-      else await handlers.event['INTERACTION_CREATE'](...args);
-    }
-  } catch (e) {
-    console.error('ERROR, something bad happened');
-    console.error(e.stack);
-  }
-});
-
-
-// botcat tick function called every 60 seconds
+// tick function called every 60 seconds
 var ticks = 0, tickStatUpdInt = 30;
 var tickFuncs = [];
-var tickFunc = () => {
+function tickFunc() {
   updateStatus();
   
   props.pCPUUsage = props.cCPUUsage;
@@ -650,20 +646,11 @@ var tickFunc = () => {
   }
   
   ticks++;
-};
+}
 var tickInt = setInterval(() => tickFunc(), 60000);
 var tickTimTemp = setTimeout(() => tickFunc(), 5000);
 
-Object.defineProperties(global, {
-  ticks: { configurable: true, enumerable: true, get: () => ticks, set: val => ticks = val },
-  tickStatUpdInt: { configurable: true, enumerable: true, get: () => tickStatUpdInt, set: val => tickStatUpdInt = val },
-  tickFuncs: { configurable: true, enumerable: true, get: () => tickFuncs, set: val => tickFuncs = val },
-  tickFunc: { configurable: true, enumerable: true, get: () => tickFunc, set: val => tickFunc = val },
-  tickInt: { configurable: true, enumerable: true, get: () => tickInt, set: val => tickInt = val },
-  tickTimTemp: { configurable: true, enumerable: true, get: () => tickTimTemp, set: val => tickTimTemp = val },
-});
-
-
+// uncaught unhandled handlers
 process.on('uncaughtException', function (err) {
   console.error('ERROR: an exception was uncaught by an exception handler.  This is very bad and could leave the bot in an unstable state.  If this is seen contact coolguy284 or another developer immediately.');
   console.error(err);
@@ -674,18 +661,7 @@ process.on('unhandledRejection', function (reason, p) {
   console.error(reason);
 });
 
-global.startRepl = function startRepl() {
-  global.replServer = require('repl').start({
-    prompt: '> ',
-    terminal: true,
-    useColors: true,
-    useGlobal: true,
-    preview: true,
-    breakEvalOnSigint: true,
-  });
-  global.replServer.on('exit', exitHandler);
-};
-
+// exit handlers
 function exitHandler(...args) {
   if (props.feat.version == 'normal') {
     exitHandled++;
@@ -713,21 +689,51 @@ process.on('exit', exitHandler);
 
 process.on('SIGINT', exitHandler);
 
+// defining vars as global
+Object.assign(global, { https, fs, util, v8, vm, cp, stream, Discord, ytdl, math, developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, slashCommandsInequal, updateSlashCommands, deleteSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
 
+Object.defineProperties(global, {
+  exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },
+  starttime: { configurable: true, enumerable: true, get: () => starttime, set: val => starttime = val },
+  loadtime: { configurable: true, enumerable: true, get: () => loadtime, set: val => loadtime = val },
+  readytime: { configurable: true, enumerable: true, get: () => readytime, set: val => readytime = val },
+  doWorkers: { configurable: true, enumerable: true, get: () => doWorkers, set: val => doWorkers = val },
+  version: { configurable: true, enumerable: true, get: () => version, set: val => version = val },
+  messageHandler: { configurable: true, enumerable: true, get: () => handlers.event.message, set: val => handlers.event.message = val },
+  messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => handlers.extra.message = val },
+  voiceStateUpdateHandler: { configurable: true, enumerable: true, get: () => voiceStateUpdateHandler, set: val => voiceStateUpdateHandler = val },
+  exitHandler: { configurable: true, enumerable: true, get: () => exitHandler, set: val => exitHandler = val },
+  ticks: { configurable: true, enumerable: true, get: () => ticks, set: val => ticks = val },
+  tickStatUpdInt: { configurable: true, enumerable: true, get: () => tickStatUpdInt, set: val => tickStatUpdInt = val },
+  tickFuncs: { configurable: true, enumerable: true, get: () => tickFuncs, set: val => tickFuncs = val },
+  tickFunc: { configurable: true, enumerable: true, get: () => tickFunc, set: val => tickFunc = val },
+  tickInt: { configurable: true, enumerable: true, get: () => tickInt, set: val => tickInt = val },
+  tickTimTemp: { configurable: true, enumerable: true, get: () => tickTimTemp, set: val => tickTimTemp = val },
+});
+
+// repl start function
+function startRepl() {
+  global.replServer = require('repl').start({
+    prompt: '> ',
+    terminal: true,
+    useColors: true,
+    useGlobal: true,
+    preview: true,
+    breakEvalOnSigint: true,
+  });
+  global.replServer.on('exit', exitHandler);
+};
+
+// login to discord
 if (props.feat.version == 'normal') {
   client.login(process.env.THEBOTCAT_TOKEN);
 } else if (props.feat.version == 'canary') {
   client.login(process.env.THEBOTCAT_CANARY_TOKEN);
 }
 
-
+// print info about repl
 if (props.feat.repl) {
   console.log('To shut down thebotcat press Ctrl+C twice or Ctrl+D to exit the repl, after which a shutdown is performed that cleans up variables.  Just pressing X could lead to data loss if props.saved was modified.');
-  (async () => {
-    while ((!loadtime || !readytime) && Date.now() < starttime.getTime() + 10000)
-      await new Promise(r => setTimeout(r, 5));
-    startRepl();
-  })();
 } else {
   console.log('To shut down thebotcat press Ctrl+C, which performs a shutdown that cleans up variables.  Just pressing X could lead to data loss if props.saved was modified.');
 }

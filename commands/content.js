@@ -78,11 +78,11 @@ function contentCommand(o, msg, rawArgs) {
         return msg.reply(obj.contents[num - 1]);
       }
     case 'image':
-      return msg.channel.send({ embed: { title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } } });
+      return msg.channel.send({ embeds: [{ title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } }] });
     case 'image_multi':
       if (rawArgs.length == 0) {
         let embed = obj.embeds[common.randInt(0, obj.embeds.length)];
-        return msg.channel.send({ embed: { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } } });
+        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       } else if (rawArgs[0] == 'count') {
         return msg.channel.send(`The command has ${obj.embeds.length} entries.`);
       } else {
@@ -91,7 +91,7 @@ function contentCommand(o, msg, rawArgs) {
         if (num < 1) return msg.channel.send('Entry number must be greater than or equal to 1.');
         if (num > obj.embeds.length) return msg.channel.send(`Entry number greater than number of items. (${obj.embeds.length})`);
         let embed = obj.embeds[num - 1];
-        return msg.channel.send({ embed: { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } } });
+        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       }
   }
 }
@@ -115,11 +115,11 @@ function contentCommandNonSlash(o, msg, rawArgs) {
         return msg.reply(obj.contents[num - 1]);
       }
     case 'image':
-      return msg.channel.send({ embed: { title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } } });
+      return msg.channel.send({ embeds: [{ title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } }] });
     case 'image_multi':
       if (!rawArgs[1]) {
         let embed = obj.embeds[common.randInt(0, obj.embeds.length)];
-        return msg.channel.send({ embed: { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } } });
+        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       } else if (rawArgs[1] == 'count') {
         return msg.channel.send(`The command has ${obj.embeds.length} entries.`);
       } else {
@@ -128,7 +128,7 @@ function contentCommandNonSlash(o, msg, rawArgs) {
         if (num < 1) return msg.channel.send('Entry number must be greater than or equal to 1.');
         if (num > obj.embeds.length) return msg.channel.send(`Entry number greater than number of items. (${obj.embeds.length})`);
         let embed = obj.embeds[num - 1];
-        return msg.channel.send({ embed: { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } } });
+        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       }
   }
 }
@@ -136,35 +136,35 @@ function contentCommandNonSlash(o, msg, rawArgs) {
 function contentCommandSlash(o, interaction, command, args) {
   let obj = commands[args[0].name.replaceAll('_', ' ')];
   switch (obj.type) {
-    case 'text': return common.slashCmdResp(interaction, false, obj.content);
-    case 'text_reply': return common.slashCmdResp(interaction, false, `<@${o.author.id}>, ` + obj.content);
+    case 'text': return common.slashCmdResp(o, false, obj.content);
+    case 'text_reply': return common.slashCmdResp(o, false, `<@${o.author.id}>, ` + obj.content);
     case 'text_multi_reply':
       if (!args[0].options) {
-        return common.slashCmdResp(interaction, false, `<@${o.author.id}>, ` + obj.contents[common.randInt(0, obj.contents.length)]);
+        return common.slashCmdResp(o, false, `<@${o.author.id}>, ` + obj.contents[common.randInt(0, obj.contents.length)]);
       } else if (args[0].options[0].value == 'count') {
-        return common.slashCmdResp(interaction, true, `The command has ${obj.contents.length} entries.`);
+        return common.slashCmdResp(o, true, `The command has ${obj.contents.length} entries.`);
       } else {
         let num = Number(args[0].options[0].value);
-        if (!Number.isSafeInteger(num)) return common.slashCmdResp(interaction, true, 'Invalid command entry number.');
-        if (num < 1) return common.slashCmdResp(interaction, true, 'Entry number must be greater than or equal to 1.');
-        if (num > obj.contents.length) return common.slashCmdResp(interaction, true, `Entry number greater than number of items. (${obj.contents.length})`);
-        return common.slashCmdResp(interaction, false, `<@${o.author.id}>, ` + obj.contents[num - 1]);
+        if (!Number.isSafeInteger(num)) return common.slashCmdResp(o, true, 'Invalid command entry number.');
+        if (num < 1) return common.slashCmdResp(o, true, 'Entry number must be greater than or equal to 1.');
+        if (num > obj.contents.length) return common.slashCmdResp(o, true, `Entry number greater than number of items. (${obj.contents.length})`);
+        return common.slashCmdResp(o, false, `<@${o.author.id}>, ` + obj.contents[num - 1]);
       }
     case 'image':
-      return common.slashCmdResp(interaction, false, { title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } });
+      return common.slashCmdResp(o, false, { title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } });
     case 'image_multi':
       if (!args[0].options) {
         let embed = obj.embeds[common.randInt(0, obj.embeds.length)];
-        return common.slashCmdResp(interaction, false, { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } });
+        return common.slashCmdResp(o, false, { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } });
       } else if (args[0].options[0].value == 'count') {
-        return common.slashCmdResp(interaction, true, `The command has ${obj.embeds.length} entries.`);
+        return common.slashCmdResp(o, true, `The command has ${obj.embeds.length} entries.`);
       } else {
         let num = Number(args[0].options[0].value);
-        if (!Number.isSafeInteger(num)) return common.slashCmdResp(interaction, true, 'Invalid command entry number.');
-        if (num < 1) return common.slashCmdResp(interaction, true, 'Entry number must be greater than or equal to 1.');
-        if (num > obj.embeds.length) return common.slashCmdResp(interaction, true, `Entry number greater than number of items. (${obj.embeds.length})`);
+        if (!Number.isSafeInteger(num)) return common.slashCmdResp(o, true, 'Invalid command entry number.');
+        if (num < 1) return common.slashCmdResp(o, true, 'Entry number must be greater than or equal to 1.');
+        if (num > obj.embeds.length) return common.slashCmdResp(o, true, `Entry number greater than number of items. (${obj.embeds.length})`);
         let embed = obj.embeds[num - 1];
-        return common.slashCmdResp(interaction, false, { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } });
+        return common.slashCmdResp(o, false, { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } });
       }
   }
 }
@@ -219,7 +219,7 @@ exports.push(
     execute_slash(o, interaction, command, args) {
       let len = Math.min(Math.max(args[0].value, 3), 100);
       if (len != len || len < 4) {
-        return common.slashCmdResp(interaction, false, 'lamomamoemao');
+        return common.slashCmdResp(o, false, 'lamomamoemao');
       } else {
         len -= 4;
         let text = '', lastchar = 'o';
@@ -228,7 +228,7 @@ exports.push(
         for (; len >= 0; len--)
           text += lastchar = options.filter(x => x != lastchar)[randints[len]];
         if (text[text.length - 1] != 'o') text += 'o';
-        return common.slashCmdResp(interaction, false, `lamo${text}`);
+        return common.slashCmdResp(o, false, `lamo${text}`);
       }
     },
   },

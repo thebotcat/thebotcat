@@ -99,7 +99,7 @@ var clientVCManager = {
     var voiceIndex = voice.voteskip.indexOf(userid);
     if (voiceIndex > -1) voice.voteskip.splice(voiceIndex, 1);
     else voice.voteskip.push(userid);
-    if (voice.mainloop && voice.voteskip.length / voice.channel.members.array().filter(x => !x.user.bot).length >= 0.5) {
+    if (voice.mainloop && voice.voteskip.length / Array.from(voice.channel.members.values()).filter(x => !x.user.bot).length >= 0.5) {
       voice.mainloop = 2;
       return 1;
     } else return voiceIndex > -1 ? 3 : 2;

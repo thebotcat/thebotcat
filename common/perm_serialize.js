@@ -1,6 +1,6 @@
 // converts a channel's permission overwrites into an easy to parse and store array
 function serializePermissionOverwrites(channel) {
-  return channel.permissionOverwrites.array()
+  return Array.from(channel.permissionOverwrites.cache.values())
     .map(x =>
       ({
         id: x.id,
@@ -13,7 +13,7 @@ function serializePermissionOverwrites(channel) {
 
 // takes the array returned by the above function, and applies the permission overwrites it represents
 function partialDeserializePermissionOverwrites(channel, perms, reason) {
-  return channel.overwritePermissions(perms, reason);
+  return channel.permissionOverwrites.set(perms, reason);
 }
 
 // like the above function except that channel overwrites are wiped first so the channel ONLY has the permissions that were in the array

@@ -1,7 +1,7 @@
 module.exports = [
   {
     name: 'suppressembeds',
-    description: '`!suppressembeds <messageid> <\'suppress\'/\'unsuppress\'> [#channel]` suppresses or unsuppresses embeds on a message',
+    description: '`!suppressembeds <\'suppress\'/\'unsuppress\'> <messageid> [#channel]` suppresses or unsuppresses embeds on a message',
     description_slash: 'suppresses or unsuppresses embeds on a message',
     flags: 0b110110,
     options: [
@@ -64,20 +64,20 @@ module.exports = [
       
       channel = channel ? o.guild.channels.cache.get(channel) : o.channel;
       if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
-        return common.slashCmdResp(interaction, true, 'Cannot suppress embeds on message in channel outside of this guild.');
+        return common.slashCmdResp(o, true, 'Cannot suppress embeds on message in channel outside of this guild.');
       
       try {
         targetMsg = await channel.messages.fetch(targetMsg);
       } catch (e) {
-        return common.slashCmdResp(interaction, true, 'Error in fetching message');
+        return common.slashCmdResp(o, true, 'Error in fetching message');
       }
       
       if (o.author.id == targetMsg.author.id || common.hasBotPermissions(o, common.constants.botRolePermBits.DELETE_MESSAGES, channel))
         targetMsg.suppressEmbeds(suppress);
       else
-        return common.slashCmdResp(interaction, true, 'You do not have permission to suppress other member\'s embeds.');
+        return common.slashCmdResp(o, true, 'You do not have permission to suppress other member\'s embeds.');
       
-      return common.slashCmdResp(interaction, false, `Embeds in message https://discord.com/channels/${o.guild.id}/${channel.id}/${targetMsg.id} in ${suppress ? 'suppressed' : 'unsuppressed'}.`);
+      return common.slashCmdResp(o, false, `Embeds in message https://discord.com/channels/${o.guild.id}/${channel.id}/${targetMsg.id} in ${suppress ? 'suppressed' : 'unsuppressed'}.`);
     },
   },
   {
@@ -105,7 +105,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.SLOWMODE, channel))
         return msg.channel.send('You do not have permission to run this command.');
       
-      if (channel.type == 'text' || channel.type == 'news') {
+      if (channel.isText()) {
         try {
           await channel.setRateLimitPerUser(seconds);
           return msg.channel.send(`Slowmode in channel <#${channel.id}> set to ${seconds} seconds.`);
@@ -126,33 +126,33 @@ module.exports = [
       let seconds, channel;
       
       seconds = Math.floor(args[0].value);
-      if (!Number.isSafeInteger(seconds) || seconds < 0) return common.slashCmdResp(interaction, true, 'Invalid seconds for slowmode.');
+      if (!Number.isSafeInteger(seconds) || seconds < 0) return common.slashCmdResp(o, true, 'Invalid seconds for slowmode.');
       
       if (args[1]) {
         channel = o.guild.channels.cache.get(args[1].value);
         if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
-          return common.slashCmdResp(interaction, true, 'Cannot set slowmode in channel outside of this guild.');
+          return common.slashCmdResp(o, true, 'Cannot set slowmode in channel outside of this guild.');
       }
       if (!channel) channel = o.channel;
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.SLOWMODE, channel))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (channel.type == 'text' || channel.type == 'news') {
+      if (channel.isText()) {
         try {
           await channel.setRateLimitPerUser(seconds);
-          return common.slashCmdResp(interaction, false, `Slowmode in channel <#${channel.id}> set to ${seconds} seconds.`);
+          return common.slashCmdResp(o, false, `Slowmode in channel <#${channel.id}> set to ${seconds} seconds.`);
         } catch (e) {
           let estring = e.toString();
           if (estring.startsWith('DiscordAPIError: Invalid Form Body\nrate_limit_per_user: int value should be less than or equal to ')) {
-            return common.slashCmdResp(interaction, true, `Slowmode must be less than or equal to ${estring.slice(98).replace(/[^0-9]+/g, '')}.`);
+            return common.slashCmdResp(o, true, `Slowmode must be less than or equal to ${estring.slice(98).replace(/[^0-9]+/g, '')}.`);
           } else {
             console.error(e);
-            return common.slashCmdResp(interaction, true, `Error for setting slowmode in channel <#${channel.id}>.`);
+            return common.slashCmdResp(o, true, `Error for setting slowmode in channel <#${channel.id}>.`);
           }
         }
       } else {
-        return common.slashCmdResp(interaction, true, `Channel <#${channel.id}> not a text channel.`);
+        return common.slashCmdResp(o, true, `Channel <#${channel.id}> not a text channel.`);
       }
     },
   },
@@ -174,12 +174,14 @@ module.exports = [
       if (/<#[0-9]+>/.test(rawArgs[1])) {
         channel = msg.guild.channels.cache.get(rawArgs[1].slice(2, -1));
         if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('Cannot set bitrate of channel outside of this guild.');
+      } else {
+        return msg.channel.send('Invalid channel mention.');
       }
       
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.SLOWMODE, channel))
         return msg.channel.send('You do not have permission to run this command.');
       
-      if (channel.type == 'voice') {
+      if (channel.isVoice()) {
         try {
           await channel.setBitrate(bitrate);
           return msg.channel.send(`Channel <#${channel.id}> bitrate set to ${bitrate}`);
@@ -202,33 +204,33 @@ module.exports = [
       let bitrate, channel;
       
       bitrate = Math.floor(args[0].value);
-      if (!Number.isSafeInteger(bitrate) || bitrate < 0) return common.slashCmdResp(interaction, true, 'Invalid bitrate');
+      if (!Number.isSafeInteger(bitrate) || bitrate < 0) return common.slashCmdResp(o, true, 'Invalid bitrate');
       
       if (args[1]) {
         channel = o.guild.channels.cache.get(args[1].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(interaction, true, 'Cannot set bitrate of channel outside of this guild.');
+        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, true, 'Cannot set bitrate of channel outside of this guild.');
       }
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.SLOWMODE, channel))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (channel.type == 'voice') {
+      if (channel.isVoice()) {
         try {
           await channel.setBitrate(bitrate);
-          return common.slashCmdResp(interaction, false, `Channel <#${channel.id}> bitrate set to ${bitrate}`);
+          return common.slashCmdResp(o, false, `Channel <#${channel.id}> bitrate set to ${bitrate}`);
         } catch (e) {
           let estring = e.toString();
           if (estring.startsWith('DiscordAPIError: Invalid Form Body\nbitrate: int value should be greater than or equal to ')) {
-            return common.slashCmdResp(interaction, true, `Bitrate must be greater than or equal to ${estring.slice(89).replace(/[^0-9]+/g, '')}.`);
+            return common.slashCmdResp(o, true, `Bitrate must be greater than or equal to ${estring.slice(89).replace(/[^0-9]+/g, '')}.`);
           } else if (estring.startsWith('DiscordAPIError: Invalid Form Body\nbitrate: int value should be less than or equal to ')) {
-            return common.slashCmdResp(interaction, true, `Bitrate must be less than or equal to ${estring.slice(86).replace(/[^0-9]+/g, '')}.`);
+            return common.slashCmdResp(o, true, `Bitrate must be less than or equal to ${estring.slice(86).replace(/[^0-9]+/g, '')}.`);
           } else {
             console.error(e);
-            return common.slashCmdResp(interaction, true, `Error in setting bitrate of channel <#${channel.id}>.`);
+            return common.slashCmdResp(o, true, `Error in setting bitrate of channel <#${channel.id}>.`);
           }
         }
       } else {
-        return common.slashCmdResp(interaction, true, `Channel <#${channel.id}> not a voice channel`);
+        return common.slashCmdResp(o, true, `Channel <#${channel.id}> not a voice channel`);
       }
     },
   },
@@ -268,18 +270,18 @@ module.exports = [
       
       if (args[1]) {
         channel = o.guild.channels.cache.get(args[1].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(interaction, true, 'Cannot purge messages in channel outside of this guild.');
+        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, true, 'Cannot purge messages in channel outside of this guild.');
       }
       if (!channel) channel = o.channel;
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.DELETE_MESSAGES, channel))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       try {
         await channel.bulkDelete(msgs);
-        return common.slashCmdResp(interaction, false, `${msgs} messages purged successfully.`);
+        return common.slashCmdResp(o, false, `${msgs} messages purged successfully.`);
       } catch (e) {
-        return common.slashCmdResp(interaction, true, 'Error in purging messages');
+        return common.slashCmdResp(o, true, 'Error in purging messages');
       }
     },
   },
@@ -322,16 +324,16 @@ module.exports = [
         newperms.push({
           id: msg.guild.id,
           type: 'role',
-          allow: 0,
-          deny: 0,
+          allow: '0',
+          deny: '0',
         });
       }
-      let type = { dm: 0, text: 1, voice: 2, category: 3, news: 1, store: 1, unknown: 0 }[channel.type];
-      let bits = Discord.Permissions.FLAGS['SEND_MESSAGES'] * !!(type & 1) | Discord.Permissions.FLAGS['CONNECT'] * !!(type & 2);
+      let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
+      let bits = Discord.Permissions.FLAGS['SEND_MESSAGES'] * BigInt(type & 1n) | Discord.Permissions.FLAGS['CONNECT'] * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[msg.guild.id].perms).filter(y => y == x.id && props.saved.guilds[msg.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
-          x.allow &= ~bits;
-          x.deny |= bits;
+          x.allow = String(BigInt(x.allow) & ~bits);
+          x.deny = String(BigInt(x.deny) | bits);
         }
       });
       let newpermids = newperms.map(x => x.id);
@@ -341,7 +343,7 @@ module.exports = [
             id: x,
             type: 'role',
             allow: bits,
-            deny: 0,
+            deny: 0n,
           });
       });
       
@@ -368,14 +370,14 @@ module.exports = [
       }
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.LOCK_CHANNEL))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       let channel, reason = args[1] && args[1].value;
       
       if (args[0]) {
         channel = o.guild.channels.cache.get(args[0].value);
         if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
-          return common.slashCmdResp(interaction, true, 'Cannot lock channel outside of this guild.');
+          return common.slashCmdResp(o, true, 'Cannot lock channel outside of this guild.');
       }
       if (!channel) channel = o.channel;
       
@@ -385,12 +387,12 @@ module.exports = [
         newperms.push({
           id: o.guild.id,
           type: 'role',
-          allow: 0,
-          deny: 0,
+          allow: 0n,
+          deny: 0n,
         });
       }
-      let type = { dm: 0, text: 1, voice: 2, category: 3, news: 1, store: 1, unknown: 0 }[channel.type];
-      let bits = Discord.Permissions.FLAGS['SEND_MESSAGES'] * !!(type & 1) | Discord.Permissions.FLAGS['CONNECT'] * !!(type & 2);
+      let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
+      let bits = Discord.Permissions.FLAGS['SEND_MESSAGES'] * BigInt(type & 1n) | Discord.Permissions.FLAGS['CONNECT'] * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[o.guild.id].perms).filter(y => y == x.id && props.saved.guilds[o.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
           x.allow &= ~bits;
@@ -404,7 +406,7 @@ module.exports = [
             id: x,
             type: 'role',
             allow: bits,
-            deny: 0,
+            deny: 0n,
           });
       });
       
@@ -413,15 +415,15 @@ module.exports = [
           await common.partialDeserializePermissionOverwrites(channel, newperms);
           props.saved.guilds[o.guild.id].temp.stashed.channeloverrides[channel.id] = perms;
           schedulePropsSave();
-          return common.slashCmdResp(interaction, false, `Locked channel <#${channel.id}> (id ${channel.id}).`);
+          return common.slashCmdResp(o, false, `Locked channel <#${channel.id}> (id ${channel.id}).`);
         } catch (e) {
           console.error(e);
           let estring = e.toString();
           if (estring.startsWith('DiscordAPIError'))
-            return common.slashCmdResp(interaction, true, estring);
+            return common.slashCmdResp(o, true, estring);
         }
       } else {
-        return common.slashCmdResp(interaction, false, `Channel <#${channel.id}> (id ${channel.id}) already locked or no permissions to change.`);
+        return common.slashCmdResp(o, false, `Channel <#${channel.id}> (id ${channel.id}) already locked or no permissions to change.`);
       }
     },
   },
@@ -482,14 +484,14 @@ module.exports = [
       }
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.LOCK_CHANNEL))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       let channel, reason = args[1] && args[1].value;
       
       if (args[0]) {
         channel = o.guild.channels.cache.get(args[0].value);
         if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
-          return common.slashCmdResp(interaction, true, 'Cannot unlock channel outside of this guild.');
+          return common.slashCmdResp(o, true, 'Cannot unlock channel outside of this guild.');
       }
       if (!channel) channel = o.channel;
       
@@ -499,15 +501,15 @@ module.exports = [
           await common.partialDeserializePermissionOverwrites(channel, perms);
           delete props.saved.guilds[o.guild.id].temp.stashed.channeloverrides[channel.id];
           schedulePropsSave();
-          return common.slashCmdResp(interaction, false, `Unlocked channel <#${channel.id}> (id ${channel.id}).`);
+          return common.slashCmdResp(o, false, `Unlocked channel <#${channel.id}> (id ${channel.id}).`);
         } catch (e) {
           console.error(e);
           let estring = e.toString();
           if (estring.startsWith('DiscordAPIError'))
-            return common.slashCmdResp(interaction, true, estring);
+            return common.slashCmdResp(o, true, estring);
         }
       } else {
-        return common.slashCmdResp(interaction, false, `Channel <#${channel.id}> (id ${channel.id}) not locked.`);
+        return common.slashCmdResp(o, false, `Channel <#${channel.id}> (id ${channel.id}) not locked.`);
       }
     },
   },
@@ -557,26 +559,26 @@ module.exports = [
       }
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.MUTE))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       if (!props.saved.guilds[o.guild.id].mutedrole)
-        return common.slashCmdResp(interaction, true, 'Error: no guild muted role specified, set one with `!settings mutedrole set <@role|id|name|query>`');
+        return common.slashCmdResp(o, true, 'Error: no guild muted role specified, set one with `!settings mutedrole set <@role|id|name|query>`');
       
       let member;
       try {
         member = await o.guild.members.fetch(args[0].value);
-        if (!member) return common.slashCmdResp(interaction, true, 'Could not find member.');
+        if (!member) return common.slashCmdResp(o, true, 'Could not find member.');
       } catch (e) {
-        return common.slashCmdResp(interaction, true, 'Could not find member.');
+        return common.slashCmdResp(o, true, 'Could not find member.');
       }
       
       let mutereason = args[1] && args[1].value;
       
       if (!member.roles.cache.get(props.saved.guilds[o.guild.id].mutedrole)) {
         await member.roles.add(props.saved.guilds[o.guild.id].mutedrole, `[By ${o.author.tag} (id ${o.author.id})]${mutereason ? ' ' + mutereason : ''}`);
-        return common.slashCmdResp(interaction, false, `Muted ${member.user.tag}.`);
+        return common.slashCmdResp(o, false, `Muted ${member.user.tag}.`);
       } else {
-        return common.slashCmdResp(interaction, false, `${member.user.tag} already muted.`);
+        return common.slashCmdResp(o, false, `${member.user.tag} already muted.`);
       }
       return promise;
     },
@@ -626,26 +628,26 @@ module.exports = [
       }
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.MUTE))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       if (!props.saved.guilds[o.guild.id].mutedrole)
-        return common.slashCmdResp(interaction, true, 'Error: no guild muted role specified, set one with `!settings mutedrole <@role|id|name|query>`');
+        return common.slashCmdResp(o, true, 'Error: no guild muted role specified, set one with `!settings mutedrole <@role|id|name|query>`');
       
       let member;
       try {
         member = await o.guild.members.fetch(args[0].value);
-        if (!member) return common.slashCmdResp(interaction, true, 'Could not find member.');
+        if (!member) return common.slashCmdResp(o, true, 'Could not find member.');
       } catch (e) {
-        return common.slashCmdResp(interaction, true, 'Could not find member.');
+        return common.slashCmdResp(o, true, 'Could not find member.');
       }
       
       let unmutereason = args[1] && args[1].value;
       
       if (member.roles.cache.get(props.saved.guilds[o.guild.id].mutedrole)) {
         await member.roles.remove(props.saved.guilds[o.guild.id].mutedrole, `[By ${o.author.tag} (id ${o.author.id})]${unmutereason ? ' ' + unmutereason : ''}`);
-        return common.slashCmdResp(interaction, false, `Unmuted ${member.user.tag}.`);
+        return common.slashCmdResp(o, false, `Unmuted ${member.user.tag}.`);
       } else {
-        return common.slashCmdResp(interaction, false, `${member.user.tag} not muted.`);
+        return common.slashCmdResp(o, false, `${member.user.tag} not muted.`);
       }
     },
   },
@@ -662,7 +664,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.KICK))
         return msg.channel.send('You do not have permission to run this command.');
       
-      if (!msg.guild.me.hasPermission('KICK_MEMBERS'))
+      if (!msg.guild.me.permissions.has(Discord.Permissions.FLAGS.KICK_MEMBERS))
         return msg.channel.send('Error: I do not have permission to kick members.');
       
       let member;
@@ -691,7 +693,7 @@ module.exports = [
           let kickreacts = kickconfirm.awaitReactions((react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id, { time: 60000, max: 1 });
           await kickconfirm.react('✅'); await kickconfirm.react('❌');
           kickreacts = await kickreacts;
-          if (kickreacts.keyArray().length == 0 || kickreacts.keyArray()[0] == '❌')
+          if (kickreacts.size == 0 || kickreacts.firstKey() == '❌')
             return kickconfirm.edit(kickconfirm.content + '\nKick cancelled.');
           
           await member.kick(`[By ${msg.author.tag} (id ${msg.author.id})]${kickreason ? ' ' + kickreason : ''}`);
@@ -707,36 +709,36 @@ module.exports = [
     },
     async execute_slash(o, interaction, command, args) {
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.KICK))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.hasPermission('KICK_MEMBERS'))
-        return common.slashCmdResp(interaction, true, 'Error: I do not have permission to kick members.');
+      if (!o.guild.me.permissions.has(Discord.Permissions.FLAGS.KICK_MEMBERS))
+        return common.slashCmdResp(o, true, 'Error: I do not have permission to kick members.');
       
       let member;
       try {
         member = await o.guild.members.fetch(args[0].value);
-        if (!member) return common.slashCmdResp(interaction, true, 'Could not find member.');
+        if (!member) return common.slashCmdResp(o, true, 'Could not find member.');
       } catch (e) {
         console.error(e);
-        return common.slashCmdResp(interaction, true, 'Could not find member.');
+        return common.slashCmdResp(o, true, 'Could not find member.');
       }
       
       if (o.member.id != o.guild.ownerID &&
         (member.id == o.guild.ownerID || o.member.roles.highest.position <= member.roles.highest.position))
-        return common.slashCmdResp(interaction, true, 'You cannot kick someone equal or higher than you in the role hierarchy.');
+        return common.slashCmdResp(o, true, 'You cannot kick someone equal or higher than you in the role hierarchy.');
       
       if (o.guild.me.id != o.guild.ownerID &&
         (member.id == o.guild.ownerID || o.guild.me.roles.highest.position <= member.roles.highest.position))
-        return common.slashCmdResp(interaction, true, 'Error: I cannot kick someone equal or higher than me in the role hierarchy.');
+        return common.slashCmdResp(o, true, 'Error: I cannot kick someone equal or higher than me in the role hierarchy.');
       
       let kickreason = args[1] && args[1].value;
       
       try {
         await member.kick(`[By ${o.author.tag} (id ${o.author.id})]${kickreason ? ' ' + kickreason : ''}`);
-        return common.slashCmdResp(interaction, false, `${member.user.tag} (id ${member.id}) has been successfully kicked`);
+        return common.slashCmdResp(o, false, `${member.user.tag} (id ${member.id}) has been successfully kicked`);
       } catch (e) {
         console.error(e);
-        return common.slashCmdResp(interaction, true, 'Error: something went wrong.');
+        return common.slashCmdResp(o, true, 'Error: something went wrong.');
       }
     },
   },
@@ -753,7 +755,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
         return msg.channel.send('You do not have permission to run this command.');
       
-      if (!msg.guild.me.hasPermission('BAN_MEMBERS'))
+      if (!msg.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
         return msg.channel.send('Error: I do not have permission to ban members.');
       
       let user = await common.searchMember(msg.guild.members, rawArgs[0]);
@@ -783,7 +785,7 @@ module.exports = [
           let banreacts = banconfirm.awaitReactions((react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id, { time: 60000, max: 1 });
           await banconfirm.react('✅'); await banconfirm.react('❌');
           banreacts = await banreacts;
-          if (banreacts.keyArray().length == 0 || banreacts.keyArray()[0] == '❌')
+          if (banreacts.size == 0 || banreacts.firstKey() == '❌')
             return banconfirm.edit(banconfirm.content + '\nBan cancelled.');
           
           await msg.guild.members.ban(user, { reason: `[By ${msg.author.tag} (id ${msg.author.id})]${banreason ? ' ' + banreason : ''}` });
@@ -799,15 +801,15 @@ module.exports = [
     },
     async execute_slash(o, interaction, command, args) {
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.BAN))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.hasPermission('BAN_MEMBERS'))
-        return common.slashCmdResp(interaction, true, 'Error: I do not have permission to ban members.');
+      if (!o.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
+        return common.slashCmdResp(o, true, 'Error: I do not have permission to ban members.');
       
       let user = await o.guild.members.fetch(args[0].value);
       if (!user) {
         user = await client.users.fetch(args[0].value);
-        if (!user) return common.slashCmdResp(interaction, true, 'Could not find member.');
+        if (!user) return common.slashCmdResp(o, true, 'Could not find member.');
       }
       
       let banreason = args[1] && args[1].value;
@@ -815,21 +817,21 @@ module.exports = [
       if (user instanceof Discord.GuildMember) {
         if (o.member.id != o.guild.ownerID &&
           (user.id == o.guild.ownerID || o.member.roles.highest.position <= user.roles.highest.position))
-          return common.slashCmdResp(interaction, true, 'You cannot ban someone equal or higher than you in the role hierarchy.');
+          return common.slashCmdResp(o, true, 'You cannot ban someone equal or higher than you in the role hierarchy.');
         
         if (o.guild.me.id != o.guild.ownerID &&
           (user.id == o.guild.ownerID || o.guild.me.roles.highest.position <= user.roles.highest.position))
-          return common.slashCmdResp(interaction, true, 'Error: I cannot ban someone equal or higher than me in the role hierarchy.');
+          return common.slashCmdResp(o, true, 'Error: I cannot ban someone equal or higher than me in the role hierarchy.');
         
         user = user.user;
       }
       
       try {
         await o.guild.members.ban(user, { reason: `[By ${o.author.tag} (id ${o.author.id})]${banreason ? ' ' + banreason : ''}` });
-        return common.slashCmdResp(interaction, false, `${user.tag} (id ${user.id}) has been successfully banned`);
+        return common.slashCmdResp(o, false, `${user.tag} (id ${user.id}) has been successfully banned`);
       } catch (e) {
         console.error(e);
-        return common.slashCmdResp(interaction, true, 'Error: something went wrong.');
+        return common.slashCmdResp(o, true, 'Error: something went wrong.');
       }
     },
   },
@@ -846,7 +848,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
         return msg.channel.send('You do not have permission to run this command.');
       
-      if (!msg.guild.me.hasPermission('BAN_MEMBERS'))
+      if (!msg.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
         return msg.channel.send('Error: I do not have permission to unban members.');
       
       let userid;
@@ -874,7 +876,7 @@ module.exports = [
           await unbanconfirm.react('✅');
           await unbanconfirm.react('❌');
           unbanreacts = await unbanreacts;
-          if (unbanreacts.keyArray().length == 0 || unbanreacts.keyArray()[0] == '❌')
+          if (unbanreacts.size == 0 || unbanreacts.firstKey() == '❌')
             return unbanconfirm.edit(unbanconfirm.content + '\nUnban cancelled.');
           
           await msg.guild.members.unban(userid, `[By ${msg.author.tag} (id ${msg.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
@@ -889,28 +891,28 @@ module.exports = [
     },
     async execute_slash(o, interaction, command, args) {
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.BAN))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.hasPermission('BAN_MEMBERS'))
-        return common.slashCmdResp(interaction, true, 'Error: I do not have permission to unban members.');
+      if (!o.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
+        return common.slashCmdResp(o, true, 'Error: I do not have permission to unban members.');
       
       let userid = args[0] && args[0].value;
       
       let baninfo;
       try {
         baninfo = await o.guild.fetchBan(userid);
-        if (!baninfo) return common.slashCmdResp(interaction, true, 'User not banned or nonexistent.');
+        if (!baninfo) return common.slashCmdResp(o, true, 'User not banned or nonexistent.');
       } catch (e) {
-        return common.slashCmdResp(interaction, true, 'User not banned or nonexistent.');
+        return common.slashCmdResp(o, true, 'User not banned or nonexistent.');
       }
       
       let unbanreason = args[1] && args[1].value;
       
       try {
         await o.guild.members.unban(userid, `[By ${o.author.tag} (id ${o.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
-        return common.slashCmdResp(interaction, false, `${baninfo.user.tag} (id ${baninfo.user.id}) has been successfully unbanned`);
+        return common.slashCmdResp(o, false, `${baninfo.user.tag} (id ${baninfo.user.id}) has been successfully unbanned`);
       } catch (e) {
-        return common.slashCmdResp(interaction, true, 'Error: something went wrong.');
+        return common.slashCmdResp(o, true, 'Error: something went wrong.');
       }
     },
   },
@@ -946,7 +948,7 @@ module.exports = [
       },
     ],
     execute(o, msg, rawArgs) {
-      if (!msg.member.hasPermission('MANAGE_EMOJIS'))
+      if (!msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS))
         return msg.channel.send('You do not have permission to run this command.');
       
       let emote;
@@ -965,21 +967,21 @@ module.exports = [
       switch (rawArgs[0]) {
         case 'add':
           emote.roles.add(roles);
-          return msg.channel.send({ embed: { title: 'Roles Added', description: `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} added to <:${emote.name}:${emote.id}> emote` } });
+          return msg.channel.send({ embeds: [{ title: 'Roles Added', description: `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} added to <:${emote.name}:${emote.id}> emote` }] });
           break;
         case 'remove':
           emote.roles.remove(roles);
-          return msg.channel.send({ embed: { title: 'Roles Removed', description: `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} removed from <:${emote.name}:${emote.id}> emote` } });
+          return msg.channel.send({ embeds: [{ title: 'Roles Removed', description: `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} removed from <:${emote.name}:${emote.id}> emote` }] });
           break;
         case 'set':
           emote.roles.set(roles);
-          return msg.channel.send({ embed: { title: 'Roles Set', description: `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'}` } });
+          return msg.channel.send({ embeds: [{ title: 'Roles Set', description: `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'}` }] });
           break;
       }
     },
     execute_slash(o, interaction, command, args) {
-      if (!o.member.hasPermission('MANAGE_EMOJIS'))
-        return common.slashCmdResp(interaction, true, 'You do not have permission to run this command.');
+      if (!o.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS))
+        return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       let emote;
       if (/^<a?:[A-Za-z]+:[0-9]+$>/.test(args[0].options[0].value)) {
@@ -990,22 +992,22 @@ module.exports = [
       } else {
         emote = o.guild.emojis.cache.find(x => x.name == args[0].options[0].value);
       }
-      if (emote == null) return common.slashCmdResp(interaction, true, 'Error: couldn\'t fetch emote.');
+      if (emote == null) return common.slashCmdResp(o, true, 'Error: couldn\'t fetch emote.');
       
       let roles = args[0].options[1] ? args[0].options[1].value.split(' ').map(x => common.searchRole(o.guild.roles, x)).filter(x => x) : [];
       
       switch (args[0].name) {
         case 'add':
           emote.roles.add(roles);
-          return common.slashCmdResp(interaction, false, `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} added to <:${emote.name}:${emote.id}> emote`);
+          return common.slashCmdResp(o, false, `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} added to <:${emote.name}:${emote.id}> emote`);
           break;
         case 'remove':
           emote.roles.remove(roles);
-          return common.slashCmdResp(interaction, false, `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} removed from <:${emote.name}:${emote.id}> emote`);
+          return common.slashCmdResp(o, false, `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} removed from <:${emote.name}:${emote.id}> emote`);
           break;
         case 'set':
           emote.roles.set(roles);
-          return common.slashCmdResp(interaction, false, `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'}`);
+          return common.slashCmdResp(o, false, `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'}`);
           break;
       }
     },

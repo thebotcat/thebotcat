@@ -11,7 +11,7 @@ module.exports = async msg => {
       var richres = new Discord.MessageEmbed()
         .setTitle('Lavealt Rs')
         .setDescription(util.inspect(res));
-      msg.channel.send(richres);
+      msg.channel.send({ embeds: [richres] });
     } catch (e) {
       console.log('err in lavealt');
       console.debug(e.stack);
@@ -19,7 +19,7 @@ module.exports = async msg => {
       var richres = new Discord.MessageEmbed()
         .setTitle('Lavealt Er')
         .setDescription(e.stack);
-      msg.channel.send(richres);
+      msg.channel.send({ embeds: [richres] });
     }
     return;
   }
@@ -147,7 +147,7 @@ module.exports = async msg => {
       
       let o = { msg, cmdstring, command, argstring, rawArgs, args, kwargs, commandObject };
       
-      Object.defineProperty(o, 'asOneArg', { configurable: true, enumerable: true, get: common.onMsgOneArgHelper.bind(null, o) });
+      Object.defineProperty(o, 'asOneArg', { configurable: true, enumerable: true, get: common.onMsgOneArgHelper.bind(null, o), set: common.onMsgOneArgSetHelper.bind(null, o) });
       
       if (commandObject.execute.constructor == Function)
         return commandObject.execute(o, msg, rawArgs);

@@ -11,7 +11,7 @@ function searchRoles(roles, query) {
   if (mentionRole) return mentionRole;
   
   var queryLower = query.toLowerCase(), queryNumbers = query.replace(/[^0-9]+/g, '');
-  var roleArr = roles.cache.array();
+  var roleArr = Array.from(roles.cache.values());
   
   // step 1: check if there is only one possibility anyway
   if (roleArr.length == 1) return roleArr[0];
@@ -58,7 +58,7 @@ async function searchMembers(members, query) {
   if (mentionMember) return mentionMember;
   
   var queryLower = query.toLowerCase(), queryNumbers = query.replace(/[^0-9]+/g, '');
-  var memArr = members.cache.array();
+  var memArr = Array.from(members.cache.values());
   
   // step 1: check if there is only one possibility anyway
   if (memArr.length == 1) return memArr[0];
@@ -123,7 +123,7 @@ async function searchUsers(users, query, options) {
   if (mentionUser) return mentionUser;
   
   var queryLower = query.toLowerCase(), queryNumbers = query.replace(/[^0-9]+/g, '');
-  var userArr = users.cache.array(), minArr = null;
+  var userArr = Array.from(users.cache.values()), minArr = null;
   
   // all these will not be run for non debug circumstances
   if (typeof options == 'object' && options.safeMode != null && !options.safeMode) {

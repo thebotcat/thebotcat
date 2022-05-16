@@ -13,6 +13,43 @@ function isObject(val) {
 module.exports = {
   isId, isObject,
   
+  persDataCreateVerifiedCopy: function persDataCreateVerifiedCopy(obj) {
+    if (typeof obj != 'object') return { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {}, ids: { guilds: {}, channel: {}, user: {}, misc: {} } };
+    obj = {
+      special_guilds: Array.isArray(obj.special_guilds) ? obj.special_guilds.filter(x => common.isId(x)) : [],
+      special_guilds_set: null,
+      propssaved_alias: typeof obj.propssaved_alias == 'object' ? (() => {
+        let newObj = {};
+        Object.keys(obj.propssaved_alias).forEach(x => common.isId(obj.propssaved_alias[x]) ? newObj[x] = obj.propssaved_alias[x] : null);
+        return newObj;
+      })() : {},
+      ids: typeof obj.ids == 'object' ? {
+        guild: typeof obj.ids.guild == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.guild).forEach(x => common.isId(obj.ids.guild[x]) ? newObj[x] = obj.ids.guild[x] : null);
+          return newObj;
+        })() : {},
+        channel: typeof obj.ids.channel == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.channel).forEach(x => common.isId(obj.ids.channel[x]) ? newObj[x] = obj.ids.channel[x] : null);
+          return newObj;
+        })() : {},
+        user: typeof obj.ids.user == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.user).forEach(x => common.isId(obj.ids.user[x]) ? newObj[x] = obj.ids.user[x] : null);
+          return newObj;
+        })() : {},
+        misc: typeof obj.ids.misc == 'object' ? (() => {
+          let newObj = {};
+          Object.keys(obj.ids.misc).forEach(x => common.isId(obj.ids.misc[x]) ? newObj[x] = obj.ids.misc[x] : null);
+          return newObj;
+        })() : {},
+      } : { guilds: {}, channel: {}, user: {}, misc: {} }
+    };
+    obj.special_guilds_set = new Set(obj.special_guilds);
+    return obj;
+  },
+  
   propsSavedCreateVerifiedCopy: function propsSavedCreateVerifiedCopy(obj) {
     if (!isObject(obj)) obj = {};
     if (!Number.isSafeInteger(obj.version) || obj.version == 1) {
@@ -157,9 +194,9 @@ module.exports = {
             }
             newObj.feat._audio = newVal;
           },
-        }
+        },
       });
-      client.guilds.cache.keyArray().forEach(x => newObj.guilds[x] = perGuildFunc(guildsIsObj ? obj.guilds[x] : null, x));
+      Array.from(client.guilds.cache.keys()).forEach(x => newObj.guilds[x] = perGuildFunc(guildsIsObj ? obj.guilds[x] : null, x));
       if (guildsIsObj) {
         let props = Object.getOwnPropertyDescriptors(obj.guilds);
         let keys = Object.keys(props);
@@ -478,7 +515,7 @@ module.exports = {
           },
         },
       });
-      client.guilds.cache.keyArray().forEach(x => newObj.guilds[x] = perGuildFunc(guildsIsObj ? obj.guilds[x] : null, x));
+      Array.from(client.guilds.cache.keys()).forEach(x => newObj.guilds[x] = perGuildFunc(guildsIsObj ? obj.guilds[x] : null, x));
       if (guildsIsObj) {
         let props = Object.getOwnPropertyDescriptors(obj.guilds);
         let keys = Object.keys(props);

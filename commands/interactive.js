@@ -4,13 +4,13 @@ module.exports = [
     description: '`!coinflip` returns heads or tails with 50% probability each',
     description_slash: 'returns heads or tails with 50% probability each',
     flags: 0b111110,
-    options: [ { type: 5, name: 'emphemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       return msg.channel.send(`I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
     execute_slash(o, interaction, command, args) {
-      let emphemeral = args[0] ? (args[0].value ? true : false) : true;
-      return common.slashCmdResp(interaction, emphemeral, `I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
+      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      return common.slashCmdResp(o, ephemeral, `I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
   },
   {
@@ -22,7 +22,7 @@ module.exports = [
       { type: 3, name: 'sides', description: 'the number of sides of the die, or dnd notation' },
       { type: 4, name: 'times', description: 'the number of times to roll' },
       { type: 4, name: 'modifier', description: 'the modifier to add at the end' },
-      { type: 5, name: 'emphemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let match, sides, times, modifier;
@@ -88,7 +88,7 @@ module.exports = [
       if (modifier != null) try { modifier = BigInt(modifier); } catch (e) { try { modifier = BigInt(Math.floor(Number(modifier))); } catch (e) { modifier = null; } }
       
       let size = (sides.toString().length + 2) * (times + 1);
-      if (size > 1960) return common.slashCmdResp(interaction, true, `Limit on times for the given sides value is ${Math.floor(1960 / (sides.toString().length + 2) - 1)}`);
+      if (size > 1960) return common.slashCmdResp(o, true, `Limit on times for the given sides value is ${Math.floor(1960 / (sides.toString().length + 2) - 1)}`);
       
       let result = [];
       if (Number.isFinite(times) && times <= 10000) {
@@ -96,8 +96,8 @@ module.exports = [
           result.push(common.randInt(1n, sides + 1n));
       }
       
-      let emphemeral = args[3] ? (args[3].value ? true : false) : true;
-      return common.slashCmdResp(interaction, emphemeral, `Result of rolling a ${times}d${sides}${modifier != null ? (modifier < 0 ? modifier : '+' + modifier) : ''}: ${result.join(', ')}${result.length > 1 || modifier != null && result.length == 1 ? '; ' : ''}${result.length > 1 || result.length == 0 || modifier != null ? 'total ' + (result.reduce((a, c) => a + c, 0n) + (modifier != null ? modifier : 0n)) : ''}`);
+      let ephemeral = args[3] ? (args[3].value ? true : false) : true;
+      return common.slashCmdResp(o, ephemeral, `Result of rolling a ${times}d${sides}${modifier != null ? (modifier < 0 ? modifier : '+' + modifier) : ''}: ${result.join(', ')}${result.length > 1 || modifier != null && result.length == 1 ? '; ' : ''}${result.length > 1 || result.length == 0 || modifier != null ? 'total ' + (result.reduce((a, c) => a + c, 0n) + (modifier != null ? modifier : 0n)) : ''}`);
     },
   },
   {
@@ -108,7 +108,7 @@ module.exports = [
     options: [
       { type: 4, name: 'min', description: 'the minimum number that can be returned' },
       { type: 4, name: 'max', description: 'the maximum number that can be returned' },
-      { type: 5, name: 'emphemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let min = 0n, max = 1n;
@@ -129,8 +129,8 @@ module.exports = [
       let minStrLen = min.toString().length, maxStrLen = max.toString().length;
       if (minStrLen + maxStrLen + Math.max(minStrLen, maxStrLen) > 1960) return msg.channel.send('Integers too large.');
       
-      let emphemeral = args[2] ? (args[2].value ? true : false) : true;
-      return common.slashCmdResp(interaction, emphemeral, `Random integer between ${min} and ${max}: ${common.randInt(min, max + 1)}`);
+      let ephemeral = args[2] ? (args[2].value ? true : false) : true;
+      return common.slashCmdResp(o, ephemeral, `Random integer between ${min} and ${max}: ${common.randInt(min, max + 1)}`);
     },
   },
   {
@@ -141,7 +141,7 @@ module.exports = [
     options: [
       { type: 3, name: 'min', description: 'the minimum number that can be returned' },
       { type: 3, name: 'max', description: 'the maximum number that can be returned' },
-      { type: 5, name: 'emphemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let min, max;
@@ -158,8 +158,8 @@ module.exports = [
     execute_slash(o, interaction, command, args) {
       let min = args[0] == null ? 0 : Number(args[0].value), max = args[1] == null ? 1 : Number(args[1].value);
       min = Number.isNaN(min) ? 0 : min; max = Number.isNaN(max) ? 1 : max;
-      let emphemeral = args[2] ? (args[2].value ? true : false) : true;
-      return common.slashCmdResp(interaction, emphemeral, `Random real number between ${min} and ${max}: ${min + common.randFloat() * (max - min)}`);
+      let ephemeral = args[2] ? (args[2].value ? true : false) : true;
+      return common.slashCmdResp(o, ephemeral, `Random real number between ${min} and ${max}: ${min + common.randFloat() * (max - min)}`);
     },
   },
   {
@@ -177,7 +177,7 @@ module.exports = [
       { type: 3, name: '7', description: 'the seventh choice' },
       { type: 3, name: '8', description: 'the eigth choice' },
       { type: 3, name: '9', description: 'the ninth choice' },
-      { type: 5, name: 'emphemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let choice = common.randInt(0, rawArgs.length);
@@ -185,11 +185,11 @@ module.exports = [
       return msg.channel.send(`Random choice: ${choice}`, { allowedMentions: { parse: [] } });
     },
     execute_slash(o, interaction, command, args) {
-      let choices = (interaction.data.options || []).filter(x => x.name != 'emphemeral');
+      let choices = (interaction.data.options || []).filter(x => x.name != 'ephemeral');
       let choice = common.randInt(0, choices.length);
       choice = choices[choice] && choices[choice].value;
-      let emphemeral = args[9] ? (args[9].value ? true : false) : true;
-      return common.slashCmdResp(interaction, emphemeral, `Random choice: ${choice}`);
+      let ephemeral = args[9] ? (args[9].value ? true : false) : true;
+      return common.slashCmdResp(o, ephemeral, `Random choice: ${choice}`);
     },
   },
   {
@@ -202,7 +202,7 @@ module.exports = [
         type: 3, name: 'choice', description: 'your choice', required: true,
         choices: [ { name: 'rock', value: 'rock' }, { name: 'paper', value: 'paper' }, { name: 'scissors', value: 'scissors' } ],
       },
-      { type: 5, name: 'emphemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let replies = ['rock', 'paper', 'scissors'];
@@ -232,13 +232,13 @@ module.exports = [
       
       let status = common.rps(uReply, result);
       
-      let emphemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
       if (status == 0) {
-        return common.slashCmdResp(interaction, emphemeral, `It's a tie! We had the same choice. (${result})`);
+        return common.slashCmdResp(o, ephemeral, `It's a tie! We had the same choice. (${result})`);
       } else if (status == 1) {
-        return common.slashCmdResp(interaction, emphemeral, `I chose ${result}, I won!`);
+        return common.slashCmdResp(o, ephemeral, `I chose ${result}, I won!`);
       } else if (status == -1) {
-        return common.slashCmdResp(interaction, emphemeral, `I chose ${result}, you won!`);
+        return common.slashCmdResp(o, ephemeral, `I chose ${result}, you won!`);
       }
     },
   },
@@ -252,7 +252,7 @@ module.exports = [
       return msg.channel.send('wrapped: ' + o.asOneArg.split('').map(x => `\\||${x}\\||`).join(''));
     },
     execute_slash(o, interaction, command, args) {
-      return common.slashCmdResp(interaction, true, 'wrapped: ' + args[0].value.split('').map(x => `\\||${x}\\||`).join(''));
+      return common.slashCmdResp(o, true, 'wrapped: ' + args[0].value.split('').map(x => `\\||${x}\\||`).join(''));
     },
   },
   {
@@ -274,7 +274,7 @@ module.exports = [
     flags: 0b111110,
     options: [
       { type: 3, name: 'expression', description: 'the expression to evaluate' },
-      { type: 5, name: 'emphemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.feat.calc) return msg.channel.send('Calculation features are disabled');
@@ -405,13 +405,13 @@ module.exports = [
       }
     },
     async execute_slash(o, interaction, command, args) {
-      let emphemeral = args[1] ? (args[1].value ? true : false) : true;
-      if (!props.saved.feat.calc) return common.slashCmdResp(interaction, emphemeral, 'Calculation features are disabled');
+      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      if (!props.saved.feat.calc) return common.slashCmdResp(o, ephemeral, 'Calculation features are disabled');
       let expr = args[0] ? args[0].value : '', res;
       nonlogmsg(`calculating from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${util.inspect(expr)}`);
       let user = props.saved.users[o.author.id];
       if (!user) {
-        if (expr == ':view' || expr == ':clear') return common.slashCmdResp(interaction, emphemeral, 'User object not created yet');
+        if (expr == ':view' || expr == ':clear') return common.slashCmdResp(o, ephemeral, 'User object not created yet');
         else {
           user = props.saved.users[o.author.id] = common.getEmptyUserObject();
           schedulePropsSave();
@@ -422,15 +422,15 @@ module.exports = [
         let text;
         if (user.calc_scope.length <= 2000) {
           console.log(text = user.calc_scope);
-          return common.slashCmdResp(interaction, emphemeral, text);
+          return common.slashCmdResp(o, ephemeral, text);
         } else {
           let scopeVars = Reflect.ownKeys(JSON.parse(user.calc_scope)).join(', ');
           if (scopeVars.length <= 1950) {
             console.log(text = `Scope too big to fit in a discord message, variables:\n${scopeVars}`);
-            return common.slashCmdResp(interaction, emphemeral, text);
+            return common.slashCmdResp(o, ephemeral, text);
           } else {
             console.log(text = `Scope variables too big to fit in a discord message, use \`!calc :clear\` to wipe`);
-            return common.slashCmdResp(interaction, emphemeral, text);
+            return common.slashCmdResp(o, ephemeral, text);
           }
         }
       } else if (expr == ':clear') {
@@ -439,10 +439,10 @@ module.exports = [
           user.calc_scope = '{}';
           schedulePropsSave();
           console.log(text = `Cleared scope successfully`);
-          return common.slashCmdResp(interaction, emphemeral, text);
+          return common.slashCmdResp(o, ephemeral, text);
         } else {
           console.log(text = `You do not have a scope created yet`);
-          return common.slashCmdResp(interaction, emphemeral, text);
+          return common.slashCmdResp(o, ephemeral, text);
         }
       } else {
         let promise, res, calc_scope_new, shared_calc_scope_new;
@@ -467,7 +467,7 @@ module.exports = [
               if (shared_calc_scope_new && shared_calc_scope_new.length > 2 ** 20) throw new Error('Shared calc scope size too large');
               res = `Result: ${res}`;
             }
-            promise = common.slashCmdResp(interaction, emphemeral, res);
+            promise = common.slashCmdResp(o, ephemeral, res);
             if (calc_scope_new) user.calc_scope = calc_scope_new;
             if (shared_calc_scope_new && props.saved.users.default) props.saved.users.default.calc_scope = shared_calc_scope_new;
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
@@ -475,11 +475,11 @@ module.exports = [
             res = e.toString();
             console.error(res);
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
-              promise = common.slashCmdResp(interaction, emphemeral, `Error: expression timeout after ${res.slice(40, Infinity)}`);
+              promise = common.slashCmdResp(o, ephemeral, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else if (/^Error: Workerpool Worker terminated Unexpectedly/.test(res)) {
-              promise = common.slashCmdResp(interaction, emphemeral, `Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)`);
+              promise = common.slashCmdResp(o, ephemeral, `Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)`);
             } else {
-              promise = common.slashCmdResp(interaction, emphemeral, res);
+              promise = common.slashCmdResp(o, ephemeral, res);
             }
           } finally {
             calccontext--;
@@ -514,7 +514,7 @@ module.exports = [
             shared_calc_scope_new = (props.saved.users.default ? props.saved.users.default.calc_scope : '{}') != shared_calc_scope_new ? shared_calc_scope_new : null;
             if (calc_scope_new && calc_scope_new.length > 2 ** 20) throw new Error('Calc scope size too large');
             if (shared_calc_scope_new && shared_calc_scope_new.length > 2 ** 20) throw new Error('Shared calc scope size too large');
-            promise = common.slashCmdResp(interaction, emphemeral, res);
+            promise = common.slashCmdResp(o, ephemeral, res);
             if (calc_scope_new) user.calc_scope = calc_scope_new;
             if (shared_calc_scope_new && props.saved.users.default) props.saved.users.default.calc_scope = shared_calc_scope_new;
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
@@ -522,9 +522,9 @@ module.exports = [
             res = e.toString();
             console.error(res);
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
-              promise = common.slashCmdResp(interaction, emphemeral, `Error: expression timeout after ${res.slice(40, Infinity)}`);
+              promise = common.slashCmdResp(o, ephemeral, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else {
-              promise = common.slashCmdResp(interaction, emphemeral, res);
+              promise = common.slashCmdResp(o, ephemeral, res);
             }
           } finally {
             global.calccontext = null;
@@ -544,7 +544,7 @@ module.exports = [
       return msg.channel.send(JSON.stringify({ rawArgs, args: o.args, kwargs: o.kwargs }).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'), { allowedMentions: { parse: [] } });
     },
     execute_slash(o, interaction, command, args) {
-      return common.slashCmdResp(interaction, true, JSON.stringify(common.parseArgs(args[0] && args[0].value || '')).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'), { allowedMentions: { parse: [] } });
+      return common.slashCmdResp(o, true, JSON.stringify(common.parseArgs(args[0] && args[0].value || '')).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'), { allowedMentions: { parse: [] } });
     },
   },
   {
@@ -556,7 +556,7 @@ module.exports = [
       return msg.channel.send(rawArgs[0] ? 'val: ' + rawArgs[0] : 'no val', { allowedMentions: { parse: [] } });
     },
     execute_slash(o, interaction, command, args) {
-      return common.slashCmdResp(interaction, false, args[0] ? 'val: ' + args[0].value : 'no val');
+      return common.slashCmdResp(o, false, args[0] ? 'val: ' + args[0].value : 'no val');
     },
   },
   {
@@ -565,7 +565,7 @@ module.exports = [
     flags: 0b101110,
     options: [ { type: 3, name: 'goe', description: 'mama' } ],
     execute_slash(o, interaction, command, args) {
-      return common.slashCmdResp(interaction, true, args[0] ? 'val: ' + args[0].value : 'no val');
+      return common.slashCmdResp(o, true, args[0] ? 'val: ' + args[0].value : 'no val');
     },
   },
   {
@@ -573,7 +573,7 @@ module.exports = [
     description: 'lathe but no arguments',
     flags: 0b101110,
     execute_slash(o, interaction, command, args) {
-      return common.slashCmdResp(interaction, true, 'no val');
+      return common.slashCmdResp(o, true, 'no val');
     },
   },
   {

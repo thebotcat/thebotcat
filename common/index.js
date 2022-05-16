@@ -7,26 +7,26 @@ var { recursiveReaddir } = require('./convenience');
 var randomModule = require('./random');
 var { fastIntLog2, randBytes, randFloat, randInt, randInts } = randomModule;
 
-var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID } = require('./time'); 
+var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID } = require('./time_format'); 
 
-var formatPlaybackBar = (frac, numElems) => {
+function formatPlaybackBar(frac, numElems) {
   if (!Number.isFinite(frac)) frac = 0;
   if (frac < 0 || frac > 1) frac = Math.min(Math.max(frac, 0), 1);
   if (!Number.isSafeInteger(numElems) || numElems < 0) numElems = 30;
   var dotElem = Math.floor(frac * numElems);
   return '-'.repeat(Math.max(dotElem, 0)) + '•' + '-'.repeat(Math.max(numElems - dotElem - 1, 0));
-};
+}
 
-var { getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage } = require('./status');
+var { getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage } = require('./status_gen');
 
-var explainChannel = (channel, full) => {
+function explainChannel(channel, full) {
   if (full)
     return channel.guild ? `${channel.guild.name}:${channel.name}` : `dms with ${channel.recipient.tag} (id ${channel.recipient.id})`;
   else
     return channel.guild ? `${channel.guild.name}:${channel.name}` : `dms`;
-};
+}
 
-var stringToBoolean = str => {
+function stringToBoolean(str) {
   switch (str) {
     case 'true':
     case 'yes':
@@ -39,13 +39,13 @@ var stringToBoolean = str => {
     default:
       return null;
   }
-};
+}
 
-var removePings = str => {
+function removePings(str) {
   return str.replace(/@/g, '@\u200b');
-};
+}
 
-var onMsgOneArgHelper = function onMsgOneArgHelper(o) {
+function onMsgOneArgHelper(o) {
   let oneArg = o.argstring[0] == '"' || o.argstring[0] == '\'' ? o.rawArgs[0] : o.argstring;
   
   Object.defineProperty(o, 'asOneArg', {
@@ -56,47 +56,60 @@ var onMsgOneArgHelper = function onMsgOneArgHelper(o) {
   });
   
   return oneArg;
-};
+}
 
-var slashCmdResp = function slashCmdResp(interaction, emphemeral, content) {
-  if (typeof content == 'object') {
-    return client.api.interactions(interaction.id, interaction.token).callback.post({ data: {
-      type: 4,
-      data: { embeds: [content], flags: emphemeral ? 64 : 0 },
-    } });
+function onMsgOneArgSetHelper(o, val) {
+  Object.defineProperty(o, 'asOneArg', {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    value: val,
+  });
+}
+
+function regCmdResp(o, message) {
+  return o.msg.channel.send(message);
+}
+
+function slashCmdResp(o, ephemeral, message) {
+  if (typeof message == 'object') {
+    return o.interaction.reply({
+      ...message,
+      ephemeral,
+    });
   } else {
-    return client.api.interactions(interaction.id, interaction.token).callback.post({ data: {
-      type: 4,
-      data: { content, flags: emphemeral ? 64 : 0, allowed_mentions: { parse: [] } },
-    } });
+    return o.interaction.reply({
+      content: message,
+      ephemeral,
+    });
   }
-};
+}
 
 class BotError extends Error {}
 
-var { BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer } = require('./workerbuffer');
+var { BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer } = require('./worker_buf');
 
-var { isDeveloper, isConfirmDeveloper, isOwner, isAdmin, hasBotPermissions, getBotPermissions, getBotPermissionsArray, getPermissions } = require('./isposition');
+var { isDeveloper, isConfirmDeveloper, isOwner, isAdmin, hasBotPermissions, getBotPermissions, getBotPermissionsArray, getPermissions } = require('./perm_check');
 
-var { serializePermissionOverwrites, partialDeserializePermissionOverwrites, completeDeserializePermissionOverwrites, serializedPermissionsEqual } = require('./permserialize');
+var { serializePermissionOverwrites, partialDeserializePermissionOverwrites, completeDeserializePermissionOverwrites, serializedPermissionsEqual } = require('./perm_serialize');
 
-var { parseArgs } = require('./parsecommand');
+var { parseArgs } = require('./parse_cmd_args');
 
-var { searchRoles, searchMembers, searchUsers, searchRole, searchMember, searchUser } = require('./searchcollection');
+var { searchRoles, searchMembers, searchUsers, searchRole, searchMember, searchUser } = require('./coll_search');
 
-var { leftPadID, getFancyGuilds, getSortedChannels, getFancyChannels } = require('./generalserialize');
+var { leftPadID, getFancyGuilds, getSortedChannels, getFancyChannels } = require('./general_serialize');
 
-var invokeMessageHandler = require('./invokemsg');
+var invokeMessageHandler = require('./msg_invoke');
 
 var { rps } = require('./misc');
 
-var BufferStream = require('./bufferstream');
+var BufferStream = require('./buffer_stream');
 
-var clientVCManager = require('./clientvcmanager');
+var clientVCManager = require('./client_vc_manager');
 
 var handlers = require('./handlers/index');
 
-var { isId, isObject, propsSavedCreateVerifiedCopy, getEmptyGuildObject, getEmptyUserObject } = require('./propssavedverif');
+var { isId, isObject, persDataCreateVerifiedCopy, propsSavedCreateVerifiedCopy, getEmptyGuildObject, getEmptyUserObject } = require('./pers_data_verif');
 
 // module.exports is the default object that a node.js module uses to export functions and such, when you do require(), you get this object
 // also an interesting way to make js cleaner is by shortening { e: e } to { e }, and the compiler still understands
@@ -107,7 +120,7 @@ module.exports = {
   randBytes, randFloat, randInt, randInts,
   msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID, formatPlaybackBar,
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,
-  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, slashCmdResp,
+  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp,
   BotError,
   BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer,
   isDeveloper, isConfirmDeveloper, isOwner, isAdmin, hasBotPermissions, getBotPermissions, getBotPermissionsArray, getPermissions,
@@ -122,5 +135,5 @@ module.exports = {
   BufferStream,
   clientVCManager,
   handlers,
-  isId, isObject, propsSavedCreateVerifiedCopy, getEmptyGuildObject, getEmptyUserObject,
+  isId, isObject, persDataCreateVerifiedCopy, propsSavedCreateVerifiedCopy, getEmptyGuildObject, getEmptyUserObject,
 };

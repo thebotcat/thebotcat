@@ -1,10 +1,10 @@
 function getBotcatUptimeMessage(embeds) {
   if (embeds != false)
     return {
-      embed: {
+      embeds: [{
         title: 'Thebotcat Uptime',
         description: `${common.msecToHMSs(client.uptime)} (${ticks} ticks)`,
-      }
+      }],
     };
   else
     return `Uptime: ${common.msecToHMSs(client.uptime)} (${ticks} ticks)`
@@ -13,7 +13,7 @@ function getBotcatUptimeMessage(embeds) {
 function getBotcatStatusMessage(embeds) {
   if (embeds != false)
     return {
-      embed: {
+      embeds: [{
         title: 'Thebotcat Status',
         fields: [
           { name: 'Uptime', value: `${common.msecToHMSs(client.uptime)} (${ticks} ticks)`, inline: false },
@@ -23,7 +23,7 @@ function getBotcatStatusMessage(embeds) {
           { name: 'Memory', value: props.memoryUsage ? (props.memoryUsage.rss / 2 ** 20).toFixed(3) + 'M' : 'N/A', inline: false },
           { name: 'Last Tick', value: props.cCPUUsageDate ? common.fancyDateString(props.cCPUUsageDate) : 'N/A', inline: false },
         ],
-      }
+      }],
     };
   else
     return '**Thebotcat Status:**\n\n' +
@@ -39,7 +39,7 @@ function getBotcatFullStatusMessage(embeds, statusMsg) {
   if (embeds != false) {
     if (statusMsg)
       return {
-        embed: {
+        embeds: [{
           title: 'Thebotcat Status',
           fields: [
             { name: 'Node Version', value: process.version, inline: true },
@@ -51,11 +51,11 @@ function getBotcatFullStatusMessage(embeds, statusMsg) {
             { name: 'Memory', value: props.memoryUsage ? (props.memoryUsage.rss / 2 ** 20).toFixed(3) + 'M' : 'N/A', inline: false },
             { name: 'Last Tick', value: props.cCPUUsageDate ? common.fancyDateString(props.cCPUUsageDate) : 'N/A', inline: false },
           ],
-        }
+        }],
       };
     else
       return {
-        embed: {
+        embeds: [{
           title: 'Thebotcat Status',
           fields: [
             { name: 'Node Version', value: process.version, inline: true },
@@ -68,7 +68,7 @@ function getBotcatFullStatusMessage(embeds, statusMsg) {
             { name: 'Last Tick', value: props.cCPUUsageDate ? common.fancyDateString(props.cCPUUsageDate) : 'N/A', inline: false },
             { name: 'Current Time', value: common.fancyDateString(new Date()), inline: false },
           ],
-        }
+        }],
       };
   } else {
     return '**Thebotcat Status:**\n\n' +

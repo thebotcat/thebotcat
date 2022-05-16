@@ -57,6 +57,13 @@ format for props.saved:
         prefix : string (default <defaultprefix>),
         confirm_kb : bool (default true),
         vc_disconnect_timeout : int (default -1, range x >= -1),
+        [FUTURE_IMPLEMENTATION] force_simple_render : object {
+          global : bool (default false),
+          channels : array [
+            <channelid>,
+            ...
+          ],
+        },
         enabled_commands : object {
           global : bool (default true),
           categories : object {
@@ -181,7 +188,7 @@ format for props.saved:
             },
           },
         },
-        [EMPHEMERAL] voice : object {
+        [EPHEMERAL] voice : object {
           channel : null / VoiceChannel,
           connection : null / VoiceConnection,
           dispatcher : null / StreamDispatcher,
@@ -199,6 +206,7 @@ format for props.saved:
           loop : null / boolean,
           queueloop : null / boolean,
           voteskip : array [ string (userid), ... ],
+          [FUTURE_IMPLEMENTATION] disconnect_timestamp : int,
         },
       },
       ...
@@ -206,7 +214,7 @@ format for props.saved:
     users : object {
       'default' / <userid> : object {
         calc_scope : string (math.js calc scope, serialized, 'shared' property added at runtime for a shared calc scope),
-        [EMPHEMERAL] calc_scope_running : boolean,
+        [EPHEMERAL] calc_scope_running : boolean,
       },
       ...
     },

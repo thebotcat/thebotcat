@@ -8,7 +8,7 @@ function leftPadID(id) {
 ...
 */
 function getFancyGuilds() {
-  var guilds = client.guilds.cache.array();
+  var guilds = Array.from(client.guilds.cache.values());
   var maxGuildNameLen = guilds.reduce((a, c) => Math.max(a, c.name.length), 0);
   return guilds.map(x => x.id + ' ' + x.name.padEnd(maxGuildNameLen, ' ') + ' ' + x.memberCount).join('\n');
 }
@@ -26,14 +26,14 @@ function getFancyGuilds() {
   (everything is sorted in the order that a discord client would show them)
 */
 function getSortedChannels(guild) {
-  var channels = guild.channels.cache.array();
+  var channels = Array.from(guild.channels.cache.values());
   var categoryChannels = [];
   var unCategorizedChannels = [];
   var nonCategoryChannels = {};
   var channel, id;
   for (var i = 0; i < channels.length; i++) {
     channel = channels[i];
-    if (channel.type == 'category') categoryChannels.push(channel);
+    if (channel.type == 'GUILD_CATEGORY') categoryChannels.push(channel);
     else {
       id = channel.parent != null ? channel.parent.id : 'uncategorized';
       if (id == 'uncategorized') {

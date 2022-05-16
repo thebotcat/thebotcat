@@ -1,12 +1,12 @@
 module.exports = {
   event: {
-    message: require('./events/message'),
+    messageCreate: require('./events/messageCreate'),
     voiceStateUpdate: require('./events/voiceStateUpdate'),
-    INTERACTION_CREATE: require('./events/INTERACTION_CREATE'),
+    interactionCreate: require('./events/interactionCreate'),
   },
   extra: {
-    message: require('./extras/message'),
+    messageCreate: require('./extras/messageCreate'),
     voiceStateUpdate: require('./extras/voiceStateUpdate'),
-    INTERACTION_CREATE: require('./extras/INTERACTION_CREATE'),
+    interactionCreate: require('./extras/interactionCreate'),
   },
 };

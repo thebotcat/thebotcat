@@ -1,13 +1,12 @@
 module.exports = async interaction => {
-  let type = interaction.type;
-  switch (type) {
-    case 2:
+  switch (interaction.type) {
+    case 'APPLICATION_COMMAND':
       let o = {
         interaction,
-        cmd: commandColl.get(interaction.data.name),
-        command: interaction.data.name,
+        cmd: commandColl.get(interaction.commandName),
+        command: interaction.commandName,
         args: null,
-        channel: await client.channels.fetch(interaction.channel_id),
+        channel: interaction.channel,
         guild: null,
         author: null,
         member: null,
@@ -15,30 +14,30 @@ module.exports = async interaction => {
       
       if (o.cmd) {
         if (Array.isArray(o.cmd.options) && o.cmd.options.length) {
-          if (o.cmd.options[0].type > 2) 
-            o.args = o.cmd.options.map(x => interaction.data.options ? interaction.data.options.filter(y => y.name == x.name)[0] : null);
-          else
-            o.args = interaction.data.options;
+          o.args = o.cmd.options.map(x => {
+            var interactionValue = interaction.options.get(x.name)?.value;
+            return interactionValue != null ? { value: interactionValue } : null;
+          });
         } else {
           o.args = [];
         }
       } else {
-        o.args = interaction.data.options;
+        o.args = interaction.options;
       }
       
       if (interaction.member) {
-        o.author = await client.users.fetch(interaction.member.user.id);
-        o.member = await (await client.guilds.fetch(interaction.guild_id)).members.fetch(interaction.member.user.id);
-        o.guild = await client.guilds.fetch(interaction.guild_id);
+        o.author = interaction.user;
+        o.member = interaction.member;
+        o.guild = interaction.guild;
       } else {
-        o.author = await client.users.fetch(interaction.user.id);
+        o.author = interaction.user;
       }
       
-      if (handlers.extra.INTERACTION_CREATE) {
+      if (handlers.extra.interactionCreate) {
         let res;
-        for (var i = 0; i < handlers.extra.INTERACTION_CREATE.length; i++) {
-          if (handlers.extra.INTERACTION_CREATE[i].constructor == Function) res = handlers.extra.INTERACTION_CREATE[i](o, i);
-          else res = await handlers.extra.INTERACTION_CREATE[i](o, i);
+        for (var i = 0; i < handlers.extra.interactionCreate.length; i++) {
+          if (handlers.extra.interactionCreate[i].constructor == Function) res = handlers.extra.interactionCreate[i](o, i);
+          else res = await handlers.extra.interactionCreate[i](o, i);
           if (res === 0) return;
         }
       }
@@ -47,10 +46,10 @@ module.exports = async interaction => {
       
       if (o.cmd.execute_slash) {
         if (!common.hasBotPermissions(o, common.constants.botRolePermBits.NORMAL))
-          return common.slashCmdResp(interaction, true, 'You lack permission to use this command.');
+          return common.slashCmdResp(o, true, 'You lack permission to use this command.');
         if (o.guild ? o.cmd.flags & 0b000100 : o.cmd.flags & 0b001000) {
           if (!(o.cmd.flags & 0b000010) && (!o.guild || !persData.special_guilds_set.has(o.guild.id)))
-            return common.slashCmdResp(interaction, true, 'Command invalid.');
+            return common.slashCmdResp(o, true, 'Command invalid.');
           if (o.guild && o.command != 'settings' &&
             props.saved.guilds[o.guild.id] && (
               !props.saved.guilds[o.guild.id].enabled_commands.global ||
@@ -58,7 +57,7 @@ module.exports = async interaction => {
               props.saved.guilds[o.guild.id].enabled_commands.commands[o.command] == false ||
               o.command == 'join' && props.saved.guilds[o.guild.id].enabled_commands.commands['leave'] == false ||
               o.command == 'play' && props.saved.guilds[o.guild.id].enabled_commands.commands['stop'] == false))
-            return common.slashCmdResp(interaction, true, 'Command is disabled in this server.');
+            return common.slashCmdResp(o, true, 'Command is disabled in this server.');
           
           try {
             if (o.cmd.execute_slash.constructor == Function)
@@ -67,11 +66,11 @@ module.exports = async interaction => {
               return await o.cmd.execute_slash(o, interaction, o.command, o.args);
           } catch (e) {
             if (e instanceof common.BotError) {
-              return common.slashCmdResp(interaction, true, `Error: ${e.message}`);
+              return common.slashCmdResp(o, true, `Error: ${e.message}`);
             } else throw e;
           }
         } else {
-          return common.slashCmdResp(interaction, true, o.guild ? 'Command not for guilds.' : 'Command not for dms.');
+          return common.slashCmdResp(o, true, o.guild ? 'Command not for guilds.' : 'Command not for dms.');
         }
       }
       break;

@@ -1,6 +1,5 @@
 #!/bin/bash
-cd "$(dirname "${BASH_SOURCE[0]}")"
-sudo docker run -it --name thebotcat \
-  --mount type=bind,source=../props.json,target=/home/thebotcat/props.json \
+sudo docker run --rm -it --name thebotcat \
+  --mount type=bind,source="$(realpath "$(dirname "${BASH_SOURCE[0]}")/../.env")",target=/home/thebotcat/.env,readonly \
+  --mount type=bind,source="$(realpath "$(dirname "${BASH_SOURCE[0]}")/../props.json")",target=/home/thebotcat/props.json \
   thebotcat/thebotcat
-./stop.sh
