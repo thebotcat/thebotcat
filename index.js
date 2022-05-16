@@ -139,7 +139,7 @@ var mutelist = [];
 var version = require('./package.json').version;
 async function updateStatus() {
   let newStatus = props.feat.status ?
-    props.feat.status.replace('{prefix}', defaultprefix).replace('{guilds}', client.guilds.cache.size) : null;
+    props.feat.status.replaceAll('{prefix}', defaultprefix).replaceAll('{guilds}', client.guilds.cache.size) : null;
   
   let currentStatus;
   try { currentStatus = client.user.presence.activities[0].name; } catch (e) {}
@@ -168,7 +168,7 @@ var props = {
     repl: true,
     savedms: true,
     loaddms: false,
-    status: '{prefix} | {guilds} servers | !discord for support server',
+    status: '{prefix} | {guilds} servers | {prefix}discord for support server',
   },
   saved: null,
   savedstringify: null,
