@@ -16,7 +16,7 @@ module.exports = async interaction => {
         if (Array.isArray(o.cmd.options) && o.cmd.options.length) {
           o.args = o.cmd.options.map(x => {
             var interactionValue = interaction.options.get(x.name)?.value;
-            return interactionValue != null ? { value: interactionValue } : null;
+            return interactionValue != null ? { name: x.name, value: interactionValue } : null;
           });
         } else {
           o.args = [];

@@ -1,4 +1,4 @@
-finish checking slash commands
+fix content commands slash and regular
 finish checking settings command, kick, ban, unban, emoterole, all voice and music commands
   kick, ban, unban use confirm before ban, but reacting is no longer working
 fix mentions especially on troll commands

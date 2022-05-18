@@ -185,7 +185,7 @@ module.exports = [
       return msg.channel.send(`Random choice: ${choice}`, { allowedMentions: { parse: [] } });
     },
     execute_slash(o, interaction, command, args) {
-      let choices = (interaction.data.options || []).filter(x => x.name != 'ephemeral');
+      let choices = args.filter(x => x != null && x.name != 'ephemeral');
       let choice = common.randInt(0, choices.length);
       choice = choices[choice] && choices[choice].value;
       let ephemeral = args[9] ? (args[9].value ? true : false) : true;

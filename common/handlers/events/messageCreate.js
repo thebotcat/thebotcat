@@ -145,7 +145,7 @@ module.exports = async msg => {
       
       if (!commandObject.execute) return;
       
-      let o = { msg, cmdstring, command, argstring, rawArgs, args, kwargs, commandObject };
+      let o = { msg, cmdstring, command, argstring, rawArgs, args, kwargs, commandObject, channel: msg.channel, guild: msg.guild, author: msg.author, member: msg.guild ? msg.member : null };
       
       Object.defineProperty(o, 'asOneArg', { configurable: true, enumerable: true, get: common.onMsgOneArgHelper.bind(null, o), set: common.onMsgOneArgSetHelper.bind(null, o) });
       

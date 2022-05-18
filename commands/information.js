@@ -495,7 +495,7 @@ module.exports = [
               { name: 'Avatar', value: avatarStr, inline: false },
             ];
             if (msg.guild && persData.special_guilds_set.has(msg.guild.id) && msg.guild.members.cache.get(user.id)) {
-              let presence = user.presence.clientStatus;
+              let presence = o.guild.members.cache.get(user.id).presence.clientStatus;
               if (presence) {
                 let presenceKeys = Object.keys(presence);
                 arr.push({ name: 'Presence', value: presenceKeys.length ? presenceKeys.map(x => `${x}: ${presence[x]}`).join(', ') : 'None', inline: false });
@@ -548,7 +548,7 @@ module.exports = [
         `Flags: ${user.flags && user.flags.toArray().length ? user.flags.toArray().join(', ') : 'None'}\n` +
         `Avatar: ${avatarStr}` +
         (o.guild && persData.special_guilds_set.has(o.guild.id) && o.guild.members.cache.get(user.id) ? (() => {
-          let presence = user.presence.clientStatus;
+          let presence = o.guild.members.cache.get(user.id).presence.clientStatus;
           if (presence) {
             let presenceKeys = Object.keys(presence);
             return '\nPresence: ' + (presenceKeys.length ? presenceKeys.map(x => `${x}: ${presence[x]}`).join(', ') : 'None');
