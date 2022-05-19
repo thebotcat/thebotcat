@@ -9,11 +9,8 @@ finish migrating to o.regCmdResp
 fix anything that uses o.guild, o.channel, o.author, o.member in regular commands not working, basically look closely at differences between o in messageCreate and interactionCreate
   specifically, bug with settings badwords modify
 
-finish fixing slash command support
-
 botcat confirmkb doesnt work on slash commands
 command that sends a message and suppresses embed on it
-change github command reponse to say "i'm completely open source" instead of "its"
 add explainer for each permission and its use
 make purge command work in dms
 make all commands reply not just content (?)

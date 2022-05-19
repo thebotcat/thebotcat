@@ -181,7 +181,7 @@ module.exports = [
     options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       var github = new Discord.MessageEmbed()
-        .setTitle('This is my github repository (its completely open source)!\nhttps://github.com/thebotcat/thebotcat')
+        .setTitle('This is my github repository (I\'m completely open source)!\nhttps://github.com/thebotcat/thebotcat')
         .setFooter({ text: 'Star our GitHub repo! (If you like the code of course)\n\nAnd when they clicked "make public" they felt an evil leave their presence.' });
       return common.regCmdResp(o, { embeds: [github] });
     },
