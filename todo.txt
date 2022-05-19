@@ -1,4 +1,3 @@
-fix content commands slash and regular
 finish checking settings command, kick, ban, unban, emoterole, all voice and music commands
   kick, ban, unban use confirm before ban, but reacting is no longer working
 fix mentions especially on troll commands
@@ -28,6 +27,7 @@ make math.js an npm package instead of included in source code
 content commands that send an embed with a gif can just send gif
   content and content2 should be identical for non slash
 use proper discord.js v13 api to create slash commands instead of making a raw api call
+use discordjs types and slash command options framework instead of using integers for type
 
 make pseudo tagscript implementation in common and use it
   ts('{e}', {e:4})
@@ -63,7 +63,7 @@ fix grammar in content commands and make consistent
 validator for invalid gifs in content commands
 add comments to code
 find out some use for elements in message like buttons and select elements, also some use for message and user right click interactions
-add delete delay to regcmdresp, to emulate ephemeral message
+add delete delay to regcmdresp, to emulate ephemeral message, also add reply true/false to it
 add logging to log channel on uncaughtexception and unhandledrejection
 change occurrences of 2 spaces after a period to 1 space after a period
 handle values of null in information commands and other commands

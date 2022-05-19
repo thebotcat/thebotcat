@@ -14,10 +14,42 @@ module.exports = async interaction => {
       
       if (o.cmd) {
         if (Array.isArray(o.cmd.options) && o.cmd.options.length) {
-          o.args = o.cmd.options.map(x => {
-            var interactionValue = interaction.options.get(x.name)?.value;
-            return interactionValue != null ? { name: x.name, value: interactionValue } : null;
-          });
+          let subCommandGroup = interaction.options.getSubcommandGroup(false);
+          let subCommand = interaction.options.getSubcommand(false);
+          if (subCommandGroup) {
+            let subOptionsGroup = o.cmd.options.filter(x => x.name == subCommandGroup)[0].options;
+            let subOptions = subOptionsGroup.filter(x => x.name == subCommand)[0].options;
+            o.args = [
+              {
+                name: subCommandGroup,
+                options: [
+                  {
+                    name: subCommand,
+                    options: Array.isArray(subOptions) ? subOptions.map(x => {
+                      var interactionValue = interaction.options.get(x.name)?.value;
+                      return interactionValue != null ? { name: x.name, value: interactionValue } : null;
+                    }) : [],
+                  },
+                ],
+              },
+            ];
+          } else if (subCommand) {
+            let subOptions = o.cmd.options.filter(x => x.name == subCommand)[0].options;
+            o.args = [
+              {
+                name: subCommand,
+                options: Array.isArray(subOptions) ? subOptions.map(x => {
+                  var interactionValue = interaction.options.get(x.name)?.value;
+                  return interactionValue != null ? { name: x.name, value: interactionValue } : null;
+                }) : [],
+              },
+            ];
+          } else {
+            o.args = Array.isArray(o.cmd.options) ? o.cmd.options.map(x => {
+              var interactionValue = interaction.options.get(x.name)?.value;
+              return interactionValue != null ? { name: x.name, value: interactionValue } : null;
+            }) : [];
+          }
         } else {
           o.args = [];
         }

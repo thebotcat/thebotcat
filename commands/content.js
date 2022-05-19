@@ -139,7 +139,7 @@ function contentCommandSlash(o, interaction, command, args) {
     case 'text': return common.slashCmdResp(o, false, obj.content);
     case 'text_reply': return common.slashCmdResp(o, false, `<@${o.author.id}>, ` + obj.content);
     case 'text_multi_reply':
-      if (!args[0].options) {
+      if (!args[0].options[0]) {
         return common.slashCmdResp(o, false, `<@${o.author.id}>, ` + obj.contents[common.randInt(0, obj.contents.length)]);
       } else if (args[0].options[0].value == 'count') {
         return common.slashCmdResp(o, true, `The command has ${obj.contents.length} entries.`);
@@ -153,7 +153,7 @@ function contentCommandSlash(o, interaction, command, args) {
     case 'image':
       return common.slashCmdResp(o, false, { title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } });
     case 'image_multi':
-      if (!args[0].options) {
+      if (!args[0].options[0]) {
         let embed = obj.embeds[common.randInt(0, obj.embeds.length)];
         return common.slashCmdResp(o, false, { title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } });
       } else if (args[0].options[0].value == 'count') {

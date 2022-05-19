@@ -74,7 +74,7 @@ function regCmdResp(o, message) {
 function slashCmdResp(o, ephemeral, message) {
   if (typeof message == 'object') {
     return o.interaction.reply({
-      ...message,
+      embeds: [message],
       ephemeral,
     });
   } else {
