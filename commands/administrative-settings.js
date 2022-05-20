@@ -1165,7 +1165,7 @@ module.exports = [
                 }
                 let roleid = args[0].options[0].options[1].value;
                 if (!guilddata.overrides[channelid][roleid])
-                  return common.slashCmdResp(o, true,  `No bot-level overrides in channel <#${channelid}> for role <@&${roleid}>.`);
+                  return common.slashCmdResp(o, true, `No bot-level overrides in channel <#${channelid}> for role <@&${roleid}>.`);
                 return common.slashCmdResp(o, true, `Permissions for <@&${roleid}>:\n` + 
                   common.getBotPermissionsArray(guilddata.overrides[channelid][roleid], true).map(x => `${x[1] > 0 ? '🟩' : x[1] < 0 ? '🟥' : '⬛'} ${x[0]}`).join('\n'));
               }
@@ -1244,7 +1244,7 @@ module.exports = [
                   break;
               }
               schedulePropsSave();
-              return common.slashCmdResp(o, false,  `Overrides ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[2].value == 'enable' ? 'enabled' : args[0].options[0].options[2].value == 'disable' ? 'disabled' : 'reset'} in channel <#${channelid}> for role <@&${roleid}>.`);
+              return common.slashCmdResp(o, false, `Overrides ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[2].value == 'enable' ? 'enabled' : args[0].options[0].options[2].value == 'disable' ? 'disabled' : 'reset'} in channel <#${channelid}> for role <@&${roleid}>.`);
               break;
           }
           break;

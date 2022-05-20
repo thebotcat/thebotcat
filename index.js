@@ -665,7 +665,7 @@ var tickTimTemp = setTimeout(() => tickFunc(), 5000);
 
 // uncaught unhandled handlers
 process.on('uncaughtException', function (err) {
-  console.error('ERROR: an exception was uncaught by an exception handler.  This is very bad and could leave the bot in an unstable state.  If this is seen contact coolguy284 or another developer immediately.');
+  console.error('ERROR: an exception was uncaught by an exception handler. This is very bad and could leave the bot in an unstable state. If this is seen contact coolguy284 or another developer immediately.');
   console.error(err);
 });
 
@@ -747,7 +747,7 @@ if (props.feat.version == 'normal') {
 
 // print info about repl
 if (props.feat.repl) {
-  console.log('To shut down thebotcat press Ctrl+C twice or Ctrl+D to exit the repl, after which a shutdown is performed that cleans up variables.  Just pressing X could lead to data loss if props.saved was modified.');
+  console.log('To shut down thebotcat press Ctrl+C twice or Ctrl+D to exit the repl, after which a shutdown is performed that cleans up variables. Just pressing X could lead to data loss if props.saved was modified.');
 } else {
-  console.log('To shut down thebotcat press Ctrl+C, which performs a shutdown that cleans up variables.  Just pressing X could lead to data loss if props.saved was modified.');
+  console.log('To shut down thebotcat press Ctrl+C, which performs a shutdown that cleans up variables. Just pressing X could lead to data loss if props.saved was modified.');
 }

@@ -16,7 +16,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && playperms))
-        return msg.channel.send('You must be in the same voice channel as I\'m in to play a song.  Admins and mods can bypass this though.');
+        return msg.channel.send('You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
       let latestObj = await common.clientVCManager.addSong(guilddata.voice, rawArgs[0], msg.author.id);
       let text = `[${latestObj.desc}](<${latestObj.url}>) (${common.msecToHMS(Number(latestObj.expectedLength))}) added to queue`;
       await msg.channel.send(text, { allowedMentions: { parse: [] } });
@@ -33,7 +33,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && playperms))
-        return common.slashCmdResp(o, false, 'You must be in the same voice channel as I\'m in to play a song.  Admins and mods can bypass this though.');
+        return common.slashCmdResp(o, false, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
       let latestObj = await common.clientVCManager.addSong(guilddata.voice, args[0].value, o.author.id);
       let text = `[${latestObj.desc}](<${latestObj.url}>) (${common.msecToHMS(Number(latestObj.expectedLength))}) added to queue`;
       common.slashCmdResp(o, false, text);
