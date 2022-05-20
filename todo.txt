@@ -9,59 +9,65 @@ finish migrating to o.regCmdResp
 fix anything that uses o.guild, o.channel, o.author, o.member in regular commands not working, basically look closely at differences between o in messageCreate and interactionCreate
   specifically, bug with settings badwords modify
 
+use proper discord.js v13 api to create slash commands instead of making a raw api call
+use discordjs types and slash command options framework instead of using integers for type
+
+-- Release --
+
 botcat confirmkb doesnt work on slash commands
-command that sends a message and suppresses embed on it
+
+move all miscellaneous common functions into misc.js
+reorder arguments in settings badwords
+command that sends a message and suppresses embed on it to make "invisible" message
 add explainer for each permission and its use
+rename hack command to hack-old and make hack command more dynamic
 make purge command work in dms
 make all commands reply not just content (?)
-rename hack command to hack-old and make hack command more dynamic
-reorder arguments in settings badwords
-move all miscellaneous common functions into misc.js
 parse_cmd_args "-a" with no argument after should add null to kwargs
 make bitrate command accept channel ids directly pasted in and search by channel name as text
   also join command
 make math.js an npm package instead of included in source code
 content commands that send an embed with a gif can just send gif
-  content and content2 should be identical for non slash
-use proper discord.js v13 api to create slash commands instead of making a raw api call
-use discordjs types and slash command options framework instead of using integers for type
+remindme command (takes a message and a certain time, or can be configured to repeat every certain time)
+command to print the bans and who banned them, using audit log
+timezone command (says the time in a certain timezone)
+clearduplicatemsgs command taking the number of past messages to scan through as argument, option to stop duplicate streak after another person's message or to continue (also add same option to purge command's remove duplicate mode)
+add logging to log channel on uncaughtexception and unhandledrejection
+change occurrences of 2 spaces after a period to 1 space after a period
+find out some use for elements in message like buttons and select elements, also some use for message and user right click interactions
+  right click on a message to calculate its contents, if someone says "it needs 2*2 oranges and 7+8 apples" then print the results of each seperate expression
 
 make pseudo tagscript implementation in common and use it
   ts('{e}', {e:4})
   idea: double up braces {{e}} to escape them
-remindme command (takes a message and a certain time, or can be configured to repeat every certain time)
-command to print the bans and who banned them, using audit log
-timezone command (says the time in a certain timezone)
 handle the bot getting disconnected or kicked without causing errors
-tempmute and templock and tempban commands
+some task scheduling system
+  tempmute and templock and tempban commands
 log memory and cpu every tick to 4th stdio
 more generalserialize stuff
-some task scheduling system
 check for embed perms and display fancy msgs if so
-  support no react perms
-  support no embed perms
+  support no react perms and setting to disable reacts (also channel overrides)
+  support no embed perms and setting to disable embeds (also channel overrides)
   make slash commands use embeds
-make purge command have --before and --after params and --beforeeq and --aftereq params (taking message ids), and make all the other commands also use intelligent arguments
+make all the commands also use intelligent arguments, kwargs so the order of arguments doesnt have to be memorized
+  make purge command have --before and --after params and --beforeeq and --aftereq params (taking message ids)
   purge --remove-duplicates-only
-  support for over 100 messages, done in parts and with a confirm before doing so
-clearduplicatemsgs command taking the number of past messages to scan through as argument
-confirmkb does work for non ephemeral msgs cause they support reacts
-add a configurable option for auto disconnecting from vc
-aliases for commands
+purge command support for over 100 messages, done in parts and with a confirm before doing so
+add to guild settings
+  auto disconnect from vc timeout
+  move deafened ppl to a vc
+  reply to non slash commands, default, yes, or no
+make user specific settings
+  forcing no embeds or reacts in message reponses
+  prefix in dm channels
+  reply to non slash commands, default, yes, or no
+aliases for commands and rename base music commands to something more obvious
 reaction roles
-add a configurable option for vc for deafened ppl
-add configurable settings only the user, such as forcing no embeds or reacts in message reponses
-  another specific example is prefix in dm channels
-add configurable option for forcing no embeds or reacts server wide, with channel overrides
-configurable option server and user for preferred reply to commands, either default, yes, or no
 try to merge regular and slash commands, maybe rename execute to execute_message and then add execute for a merged version of the executes
 try to merge embed and non embed commands with some unified framework that does a fallback
 fix grammar in content commands and make consistent
 validator for invalid gifs in content commands
 add comments to code
-find out some use for elements in message like buttons and select elements, also some use for message and user right click interactions
 add delete delay to regcmdresp, to emulate ephemeral message, also add reply true/false to it
-add logging to log channel on uncaughtexception and unhandledrejection
-change occurrences of 2 spaces after a period to 1 space after a period
 handle values of null in information commands and other commands
 make website control panel
