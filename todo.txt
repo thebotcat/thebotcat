@@ -1,8 +1,8 @@
-finish checking settings command, kick, ban, unban, emoterole, all voice and music commands
-  kick, ban, unban use confirm before ban, but reacting is no longer working
+finish checking kick, ban, unban, emoterole commands
+kick, ban, unban use confirm before ban, but reacting is no longer working
 fix mentions especially on troll commands
 
-voice commands need fixing
+voice and music commands need fixing
 
 finish migrating to o.regCmdResp
 
@@ -12,9 +12,14 @@ fix anything that uses o.guild, o.channel, o.author, o.member in regular command
 use proper discord.js v13 api to create slash commands instead of making a raw api call
 use discordjs types and slash command options framework instead of using integers for type
 
+get rid of unnecessary use of word successfully
+
 -- Release --
 
 botcat confirmkb doesnt work on slash commands
+
+when collection searching functions are given a string that is too specific they return all items in the collection instead of null
+settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well
 
 move all miscellaneous common functions into misc.js
 reorder arguments in settings badwords
@@ -36,6 +41,7 @@ add logging to log channel on uncaughtexception and unhandledrejection
 find out some use for elements in message like buttons and select elements, also some use for message and user right click interactions
   right click on a message to calculate its contents, if someone says "it needs 2*2 oranges and 7+8 apples" then print the results of each seperate expression
 
+emphemeral message chat feature
 make pseudo tagscript implementation in common and use it
   ts('{e}', {e:4})
   idea: double up braces {{e}} to escape them

@@ -272,7 +272,7 @@ module.exports = [
                         { name: 'Enabled', value: `${word.enabled}`, inline: true },
                         { name: 'Type', value: `${word.type}`, inline: true },
                         { name: 'Ignore Admin', value: `${word.ignore_admin}`, inline: true },
-                        { name: 'Ignored Roles', value: `${word.ignored_roles.length ? word.ignored_roles.map(x => `<@&#{x}>`).join(' ') : 'None'}`, inline: false },
+                        { name: 'Ignored Roles', value: `${word.ignored_roles.length ? word.ignored_roles.map(x => `<@&${x}>`).join(' ') : 'None'}`, inline: false },
                       ],
                     }]
                   });
@@ -290,7 +290,7 @@ module.exports = [
                   enabled: common.stringToBoolean(rawArgs[4]),
                   type,
                   ignore_admin: common.stringToBoolean(rawArgs[6]),
-                  ignored_roles: rawArgs[7].split(' ').map(x => common.searchRole(o.guild.roles, x)).filter(x => x),
+                  ignored_roles: rawArgs[7].split(' ').map(x => common.searchRole(o.guild.roles, x)?.id).filter(x => x),
                   word: rawArgs[2],
                   retaliation: rawArgs[3],
                 });
@@ -330,7 +330,7 @@ module.exports = [
                   enabled: common.stringToBoolean(rawArgs[4]),
                   type: type2,
                   ignore_admin: common.stringToBoolean(rawArgs[6]),
-                  ignored_roles: rawArgs[7].split(' ').map(x => common.searchRole(o.guild.roles, x)).filter(x => x),
+                  ignored_roles: rawArgs[7].split(' ').map(x => common.searchRole(o.guild.roles, x)?.id).filter(x => x),
                   word: rawArgs[2],
                   retaliation: rawArgs[3],
                 };
@@ -371,7 +371,6 @@ module.exports = [
               }
             } else {
               return msg.channel.send(
-                'Argument not a valid channel.\n' +
                 'To set logging channel to this channel run `settings logchannel set`.\n' +
                 'To set logging channel to a channel run `settings logchannel set <#channel>`.\n' +
                 'To turn off logging run `settings logchannel clear`.'
@@ -404,7 +403,7 @@ module.exports = [
                 let role = common.searchRoles(msg.guild.roles, rawArgs.slice(2).join(' '));
                 if (Array.isArray(role)) {
                   return msg.channel.send({
-                    embeds: [{ title: 'Not Specific Enough', description: `Your query narrows it down to these roles:\n${roles.map(x => '<@&' + x.id + '>').join(' ')}` }]
+                    embeds: [{ title: 'Not Specific Enough', description: `Your query narrows it down to these roles:\n${msg.guild.roles.cache.map(x => '<@&' + x.id + '>').join(' ')}` }]
                   });
                 } else {
                   guilddata.mutedrole = role.id;
@@ -548,7 +547,7 @@ module.exports = [
                   return msg.channel.send({
                     embeds: [{
                       title: 'Permissions Updated',
-                      description: `Permissions ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${rawArgs[2] == 'enable' ? 'enabled' : 'disabled'} for role <@&${role3.id}>.`
+                      description: `Permissions ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${rawArgs[3] == 'enable' ? 'enabled' : 'disabled'} for role <@&${role3.id}>.`
                     }]
                   });
                 }
@@ -939,7 +938,7 @@ module.exports = [
       
       switch (args[0].name) {
         case 'prefix':
-          if (!args[0].options) {
+          if (!args[0].options[0]) {
             return common.slashCmdResp(o, true, `The current server prefix is: \`${guilddata.prefix}\``);
           } else {
             guilddata.prefix = args[0].options[0].value;
@@ -950,7 +949,7 @@ module.exports = [
         
         case 'confirmkb':
           if (!fullperms) return silenced ? null : common.slashCmdResp(o, true, 'You do not have permission to run this command.');
-          if (!args[0].options) {
+          if (!args[0].options[0]) {
             return common.slashCmdResp(o, true, `Confirmation on the kick, ban, and unban commands: ${guilddata.confirm_kb ? '✅' : '❌'}.`);
           } else {
             guilddata.confirm_kb = args[0].options[0].value;
@@ -962,7 +961,7 @@ module.exports = [
         case 'badwords':
           switch (args[0].options[0].name) {
             case 'list':
-              if (!args[0].options[0].options) {
+              if (!args[0].options[0].options[0]) {
                 return common.slashCmdResp(o, true, 'Badwords: ' + guilddata.basic_automod.bad_words.map(x => x.word).join(', '));
               } else {
                 let word = guilddata.basic_automod.bad_words.filter(x => x.word == args[0].options[0].options[0].value)[0];
@@ -973,7 +972,7 @@ module.exports = [
                   `Enabled: ${word.enabled}\n` +
                   `Type: ${word.type}\n` +
                   `Ignore Admin: ${word.ignore_admin}\n` +
-                  `Ignored Roles: ${word.ignored_roles.length ? word.ignored_roles.map(x => `<@&#{x}>`).join(' ') : 'None'}`);
+                  `Ignored Roles: ${word.ignored_roles.length ? word.ignored_roles.map(x => `<@&${x}>`).join(' ') : 'None'}`);
               }
               break;
             
@@ -981,10 +980,13 @@ module.exports = [
               if (guilddata.basic_automod.bad_words.filter(x => x.word == args[0].options[0].options[0].value).length)
                 return common.slashCmdResp(o, true, `Word ${util.inspect(args[0].options[0].options[0].value)} already exists`);
               guilddata.basic_automod.bad_words.push({
-                enabled: args[0].options[0].options.filter(x => x.name == 'enabled')[0]?.value ?? true,
+                enabled: args[0].options[0].options.filter(x => x != null && x.name == 'enabled')[0]?.value ?? true,
                 type: Number(args[0].options[0].options[2].value),
-                ignore_admin: args[0].options[0].options.filter(x => x.name == 'ignore_admin')[0]?.value ?? false,
-                ignored_roles: (args[0].options[0].options.filter(x => x.name == 'ignore_admin')[0]?.value || '').split(' ').map(x => common.searchRole(o.guild.roles, x)).filter(x => x),
+                ignore_admin: args[0].options[0].options.filter(x => x != null && x.name == 'ignore_admin')[0]?.value ?? false,
+                ignored_roles: (() => {
+                  let val = args[0].options[0].options.filter(x => x != null && x.name == 'ignored_roles')[0]?.value;
+                  return val ? val.split(' ').map(x => common.searchRole(o.guild.roles, x)?.id).filter(x => x) : guilddata.basic_automod.bad_words[index2].ignored_roles;
+                })(),
                 word: args[0].options[0].options[0].value,
                 retaliation: args[0].options[0].options[1].value,
               });
@@ -1016,15 +1018,15 @@ module.exports = [
               }
               if (index2 == null) return common.slashCmdResp(o, true, `Word ${util.inspect(args[0].options[0].options[0].value)} not found`);
               guilddata.basic_automod.bad_words[index2] = {
-                enabled: args[0].options[0].options.filter(x => x.name == 'enabled')[0]?.value ?? guilddata.basic_automod.bad_words[index2].enabled,
-                type: Number(args[0].options[0].options.filter(x => x.name == 'type')[0]?.value ?? guilddata.basic_automod.bad_words[index2].type),
-                ignore_admin: args[0].options[0].options.filter(x => x.name == 'ignore_admin')[0]?.value ?? guilddata.basic_automod.bad_words[index2].ignore_admin,
+                enabled: args[0].options[0].options.filter(x => x != null && x.name == 'enabled')[0]?.value ?? guilddata.basic_automod.bad_words[index2].enabled,
+                type: Number(args[0].options[0].options.filter(x => x != null && x.name == 'type')[0]?.value ?? guilddata.basic_automod.bad_words[index2].type),
+                ignore_admin: args[0].options[0].options.filter(x => x != null && x.name == 'ignore_admin')[0]?.value ?? guilddata.basic_automod.bad_words[index2].ignore_admin,
                 ignored_roles: (() => {
-                  let val = args[0].options[0].options.filter(x => x.name == 'ignored_roles')[0]?.value;
-                  return val ? val.split(' ').map(x => common.searchRole(o.guild.roles, x)).filter(x => x) : guilddata.basic_automod.bad_words[index2].ignored_roles;
+                  let val = args[0].options[0].options.filter(x => x != null && x.name == 'ignored_roles')[0]?.value;
+                  return val ? val.split(' ').map(x => common.searchRole(o.guild.roles, x)?.id).filter(x => x) : guilddata.basic_automod.bad_words[index2].ignored_roles;
                 })(),
                 word: args[0].options[0].options[0].value,
-                retaliation: args[0].options[0].options.filter(x => x.name == 'retaliation')[0]?.value ?? guilddata.basic_automod.bad_words[index2].retaliation,
+                retaliation: args[0].options[0].options.filter(x => x != null && x.name == 'retaliation')[0]?.value ?? guilddata.basic_automod.bad_words[index2].retaliation,
               };
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Word ${util.inspect(args[0].options[0].options[0].value)} successfully modified`);
@@ -1040,7 +1042,7 @@ module.exports = [
               break;
             
             case 'set':
-              if (!args[0].options[0].options) {
+              if (!args[0].options[0].options[0]) {
                 guilddata.logging.main = o.channel.id;
                 schedulePropsSave();
                 return common.slashCmdResp(o, false, `Logging channel set to <#${o.channel.id}> (id ${o.channel.id}).`);
@@ -1071,7 +1073,7 @@ module.exports = [
               break;
             
             case 'set':
-              if (!args[0].options[0].options) {
+              if (!args[0].options[0].options[0]) {
                 if (guilddata.mutedrole) {
                   guilddata.mutedrole = null;
                   schedulePropsSave();
@@ -1092,7 +1094,7 @@ module.exports = [
           if (!fullperms) return silenced ? null : common.slashCmdResp(o, true, 'You do not have permission to run this command.');
           switch (args[0].options[0].name) {
             case 'view':
-              if (!args[0].options[0].options) {
+              if (!args[0].options[0].options[0]) {
                 return common.slashCmdResp(o, true, 'Roles with bot-level permissions:\n' + Object.keys(guilddata.perms).map(x => `<@&${x}>`));
               } else {
                 let roleid = args[0].options[0].options[0].value;
@@ -1148,78 +1150,73 @@ module.exports = [
           if (!fullperms) return silenced ? null : common.slashCmdResp(o, true, 'You do not have permission to run this command.');
           switch (args[0].options[0].name) {
             case 'view':
-              if (!args[0].options[0].options) {
-                return common.slashCmdResp(o, true, 'Channels with bot-level permission overrides:\n' + Object.keys(guilddata.overrides).map(x => `<#${x}>`));
-              } else if (args[0].options[0].options.length == 1) {
-                if (args[0].options[0].options[0].name != 'channel')
+              if (args[0].options[0].options[1]) {
+                if (!args[0].options[0].options[0])
                   return common.slashCmdResp(o, true, `Role parameter by itself cannot be specified`);
                 let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid]) {
+                if (!guilddata.overrides[channelid])
                   return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelid}>.`);
-                }
-                return common.slashCmdResp(o, true, `Roles with bot-level permission overrides for <#${channelid}>:\n` + Object.keys(guilddata.overrides[channelid]).map(x => `<@&${x}>`));
-              } else {
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid]) {
-                  return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelid}>.`);
-                }
                 let roleid = args[0].options[0].options[1].value;
                 if (!guilddata.overrides[channelid][roleid])
                   return common.slashCmdResp(o, true, `No bot-level overrides in channel <#${channelid}> for role <@&${roleid}>.`);
                 return common.slashCmdResp(o, true, `Permissions for <@&${roleid}>:\n` + 
                   common.getBotPermissionsArray(guilddata.overrides[channelid][roleid], true).map(x => `${x[1] > 0 ? '🟩' : x[1] < 0 ? '🟥' : '⬛'} ${x[0]}`).join('\n'));
+              } else if (args[0].options[0].options[0]) {
+                let channelid = args[0].options[0].options[0].value;
+                if (!guilddata.overrides[channelid])
+                  return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelid}>.`);
+                return common.slashCmdResp(o, true, `Roles with bot-level permission overrides for <#${channelid}>:\n` + Object.keys(guilddata.overrides[channelid]).map(x => `<@&${x}>`));
+              } else {
+                return common.slashCmdResp(o, true, 'Channels with bot-level permission overrides:\n' + Object.keys(guilddata.overrides).map(x => `<#${x}>`));
               }
               break;
             
             case 'init':
-              if (args[0].options[0].options.length == 1) {
+              if (args[0].options[0].options[1]) {
                 let channelid = args[0].options[0].options[0].value;
-                if (guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, false, `Bot-level overrides already exist for channel <#${channelid}>.`);
-                guilddata.overrides[channelid] = {};
-                schedulePropsSave();
-                return common.slashCmdResp(o, false, `Overrides created for channel <#${channelid}>.`);
-              } else {
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid]) {
+                if (!guilddata.overrides[channelid])
                   return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelid}>.`);
-                }
                 let roleid = args[0].options[0].options[1].value;
                 if (guilddata.overrides[channelid][roleid])
                   return common.slashCmdResp(o, false, `Bot-level overrides already exist in channel <#${channelid}> for role <@&${roleid}>.`);
                 guilddata.overrides[channelid][roleid] = { allows: 0, denys: 0 };
                 schedulePropsSave();
                 return common.slashCmdResp(o, false, `Overrides created in channel <#${channelid}> for role <@&${roleid}>.`);
+              } else {
+                let channelid = args[0].options[0].options[0].value;
+                if (guilddata.overrides[channelid])
+                  return common.slashCmdResp(o, false, `Bot-level overrides already exist for channel <#${channelid}>.`);
+                guilddata.overrides[channelid] = {};
+                schedulePropsSave();
+                return common.slashCmdResp(o, false, `Overrides created for channel <#${channelid}>.`);
               }
               break;
             
             case 'clear':
-              if (args[0].options[0].options.length == 1) {
+              if (args[0].options[0].options[1]) {
                 let channelid = args[0].options[0].options[0].value;
                 if (!guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, false, `Bot-level overrides do not exist for channel <#${channelid}>.`);
-                delete guilddata.overrides[channelid];
-                schedulePropsSave();
-                return common.slashCmdResp(o, false, `Overrides cleared for channel <#${channelid}>.`);
-              } else {
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid]) {
                   return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelid}>.`);
-                }
                 let roleid = args[0].options[0].options[1].value;
                 if (!guilddata.overrides[channelid][roleid])
                   return common.slashCmdResp(o, false, `Bot-level overrides do not exist in channel <#${channelid}> for role <@&${roleid}>.`);
                 delete guilddata.overrides[channelid][roleid];
                 schedulePropsSave();
                 return common.slashCmdResp(o, false, `Overrides cleared in channel <#${channelid}> for role <@&${roleid}>.`);
+              } else {
+                let channelid = args[0].options[0].options[0].value;
+                if (!guilddata.overrides[channelid])
+                  return common.slashCmdResp(o, false, `Bot-level overrides do not exist for channel <#${channelid}>.`);
+                delete guilddata.overrides[channelid];
+                schedulePropsSave();
+                return common.slashCmdResp(o, false, `Overrides cleared for channel <#${channelid}>.`);
               }
               break;
             
             case 'setperms':
               let channelid = args[0].options[0].options[0].value;
-              if (!guilddata.overrides[channelid]) {
+              if (!guilddata.overrides[channelid])
                 return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelid}>.`);
-              }
               let roleid = args[0].options[0].options[1].value;
               if (!guilddata.overrides[channelid][roleid])
                 return common.slashCmdResp(o, false, `Bot-level overrides do not exist in channel <#${channelid}> for role <@&${roleid}>.`);

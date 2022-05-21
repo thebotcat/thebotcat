@@ -119,8 +119,14 @@ module.exports = async msg => {
             case 2: if (!content.includes(word.word)) break; badwordTriggered = true; break;
           }
           if (badwordTriggered) {
-            if (!dodelete) dodelete = true;
-            if (!isCommand || isCommand && command != 'settings') msg.reply(word.retaliation.replace(/\$\(rcontent\)/g, msg.content.length < 1800 ? common.removePings(util.inspect(msg.content)) : `Error: message length over 1800 characters`));
+            dodelete = true;
+            let content = word.retaliation.replace(/\$\(rcontent\)/g, msg.content.length < 1800 ? common.removePings(util.inspect(msg.content)) : `Error: message length over 1800 characters`);
+            if (!isCommand || isCommand && command != 'settings') {
+              if (isCommand < 2)
+                msg.channel.send(content)
+              else
+                msg.reply(content);
+            }
             badwordTriggered = false;
           }
         }
@@ -128,7 +134,7 @@ module.exports = async msg => {
     }
     if (dodelete) {
       if (msg.content.toLowerCase() != 'heck' || !persData.special_guilds_set.has(msg.guild.id))
-        infomsg(msg, `user ${msg.author.tag} (id ${msg.author.id}) said ${util.inspect(msg.content)} in channel <#${msg.channel.id}> (id ${msg.channel.id})`);
+        infomsg(msg.guild, `user ${msg.author.tag} (id ${msg.author.id}) said ${util.inspect(msg.content)} in channel <#${msg.channel.id}> (id ${msg.channel.id})`);
       else
         logmsg(`user ${msg.author.tag} (id ${msg.author.id}) said ${util.inspect(msg.content)} in channel <#${msg.channel.id}> (id ${msg.channel.id})`);
       if (isCommand < 2) {

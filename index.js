@@ -260,11 +260,11 @@ function schedulePropsSave() {
 function indexeval(val) { eval(val); }
 
 // logging functions
-async function infomsg(msg, val) {
-  let guildinfo = msg.guild ? props.saved.guilds[msg.guild.id] : undefined, channelid;
+async function infomsg(guild, val) {
+  let guildinfo = guild ? props.saved.guilds[guild.id] : undefined, channelid;
   if (guildinfo && (channelid = guildinfo.logging.main)) {
-    if (persData.special_guilds_set.has(msg.guild.id))
-      nonlogmsg(`infomsg for ${msg.guild.name}: ${val}`);
+    if (persData.special_guilds_set.has(guild.id))
+      nonlogmsg(`infomsg for ${guild.name}: ${val}`);
     return (await client.channels.fetch(channelid)).send(common.removePings(val));
   }
 }
