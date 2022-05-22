@@ -918,12 +918,12 @@ module.exports = [
   },
   {
     name: 'emoterole',
-    description: 'configures which roles can use which emoji (API is broken: view always says no roles, add is set, and remove is reset)\n' +
+    description: 'configures which roles can use which emoji (API broken: view says none, add is set, remove is reset)\n' +
       '`!emoterole view <emote|id|name>` views roles which can use an emoji\n' +
       '`!emoterole add <emote|id|name> [<@role|id|name>] ...` adds roles which can use an emoji\n' +
       '`!emoterole remove <emote|id|name> [<@role|id|name>] ...` removes roles which can use an emoji\n' +
       '`!emoterole set <emote|id|name> [<@role|id|name>] ...` sets roles which can use an emoji',
-    description_slash: 'configures which roles can use which emoji (API is broken: view always says no roles, add is set, and remove is reset)',
+    description_slash: 'configures which roles can use which emoji (API broken: view says none, add is set, remove is reset)',
     flags: 0b110110,
     options: [
       {
