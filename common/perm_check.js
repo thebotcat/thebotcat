@@ -12,7 +12,7 @@ function isConfirmDeveloper(msg) {
 
 function isOwner(msg) {
   if (!msg.guild) return false;
-  return msg.guild.ownerID == msg.author.id;
+  return msg.guild.ownerId == msg.author.id;
 }
 
 function isAdmin(msg) {

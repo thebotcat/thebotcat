@@ -1,4 +1,3 @@
-update guild.ownerID to guild.ownerId
 finish checking kick, ban, unban commands
 kick, ban, unban use confirm before ban, but reacting is no longer working
 fix mentions especially on troll commands

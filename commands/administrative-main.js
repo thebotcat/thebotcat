@@ -676,12 +676,12 @@ module.exports = [
         return msg.channel.send('Could not find member.');
       }
       
-      if (msg.member.id != msg.guild.ownerID &&
-        (member.id == msg.guild.ownerID || msg.member.roles.highest.position <= member.roles.highest.position))
+      if (msg.member.id != msg.guild.ownerId &&
+        (member.id == msg.guild.ownerId || msg.member.roles.highest.position <= member.roles.highest.position))
         return msg.channel.send('You cannot kick someone equal or higher than you in the role hierarchy.');
       
-      if (msg.guild.me.id != msg.guild.ownerID &&
-        (member.id == msg.guild.ownerID || msg.guild.me.roles.highest.position <= member.roles.highest.position))
+      if (msg.guild.me.id != msg.guild.ownerId &&
+        (member.id == msg.guild.ownerId || msg.guild.me.roles.highest.position <= member.roles.highest.position))
         return msg.channel.send('Error: I cannot kick someone equal or higher than me in the role hierarchy.');
       
       let kickreason = rawArgs.slice(1).join(' ');
@@ -723,12 +723,12 @@ module.exports = [
         return common.slashCmdResp(o, true, 'Could not find member.');
       }
       
-      if (o.member.id != o.guild.ownerID &&
-        (member.id == o.guild.ownerID || o.member.roles.highest.position <= member.roles.highest.position))
+      if (o.member.id != o.guild.ownerId &&
+        (member.id == o.guild.ownerId || o.member.roles.highest.position <= member.roles.highest.position))
         return common.slashCmdResp(o, true, 'You cannot kick someone equal or higher than you in the role hierarchy.');
       
-      if (o.guild.me.id != o.guild.ownerID &&
-        (member.id == o.guild.ownerID || o.guild.me.roles.highest.position <= member.roles.highest.position))
+      if (o.guild.me.id != o.guild.ownerId &&
+        (member.id == o.guild.ownerId || o.guild.me.roles.highest.position <= member.roles.highest.position))
         return common.slashCmdResp(o, true, 'Error: I cannot kick someone equal or higher than me in the role hierarchy.');
       
       let kickreason = args[1] && args[1].value;
@@ -767,12 +767,12 @@ module.exports = [
       let banreason = rawArgs.slice(1).join(' ');
       
       if (user instanceof Discord.GuildMember) {
-        if (msg.member.id != msg.guild.ownerID &&
-          (user.id == msg.guild.ownerID || msg.member.roles.highest.position <= user.roles.highest.position))
+        if (msg.member.id != msg.guild.ownerId &&
+          (user.id == msg.guild.ownerId || msg.member.roles.highest.position <= user.roles.highest.position))
           return msg.channel.send('You cannot ban someone equal or higher than you in the role hierarchy.');
         
-        if (msg.guild.me.id != msg.guild.ownerID &&
-          (user.id == msg.guild.ownerID || msg.guild.me.roles.highest.position <= user.roles.highest.position))
+        if (msg.guild.me.id != msg.guild.ownerId &&
+          (user.id == msg.guild.ownerId || msg.guild.me.roles.highest.position <= user.roles.highest.position))
           return msg.channel.send('Error: I cannot ban someone equal or higher than me in the role hierarchy.');
         
         user = user.user;
@@ -815,12 +815,12 @@ module.exports = [
       let banreason = args[1] && args[1].value;
       
       if (user instanceof Discord.GuildMember) {
-        if (o.member.id != o.guild.ownerID &&
-          (user.id == o.guild.ownerID || o.member.roles.highest.position <= user.roles.highest.position))
+        if (o.member.id != o.guild.ownerId &&
+          (user.id == o.guild.ownerId || o.member.roles.highest.position <= user.roles.highest.position))
           return common.slashCmdResp(o, true, 'You cannot ban someone equal or higher than you in the role hierarchy.');
         
-        if (o.guild.me.id != o.guild.ownerID &&
-          (user.id == o.guild.ownerID || o.guild.me.roles.highest.position <= user.roles.highest.position))
+        if (o.guild.me.id != o.guild.ownerId &&
+          (user.id == o.guild.ownerId || o.guild.me.roles.highest.position <= user.roles.highest.position))
           return common.slashCmdResp(o, true, 'Error: I cannot ban someone equal or higher than me in the role hierarchy.');
         
         user = user.user;
