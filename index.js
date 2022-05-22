@@ -1,5 +1,11 @@
+// log errors
+var logErrors = true;
+
 // true to use workers to evaluate math.js, false to use v8 vm
 var doWorkers = true;
+
+// limit is 1 error logged every 24 hours
+var errorCounter = 0;
 
 // for timing data
 var starttime = new Date(), readytime, ready2time, ready3time;
@@ -627,8 +633,17 @@ client.on('disconnect', () => {
         else await handlers.event[evtType](...args);
       }
     } catch (e) {
-      console.error('ERROR, something bad happened');
+      console.error('ERROR in the handler function');
       console.error(e.stack);
+      try {
+        if (logErrors && errorCounter < 1) {
+          errorCounter++;
+          let oldLogErrors = logErrors;
+          logErrors = false;
+          client.channels.fetch(persData.ids.channel.v0).then(x => x.send('An error in the handler function has occurred.')).catch(e => {});
+          logErrors = oldLogErrors;
+        }
+      } catch (e) {}
     }
   });
 });
@@ -653,6 +668,8 @@ function tickFunc() {
       .then(x => props.botStatusMsgResolve = null)
       .catch(e => { console.error(e); props.botStatusMsgResolve = null; });
   }
+
+  if (ticks % 1400 == 0 && errorCounter > 0) errorCounter = 0;
   
   for (var i = 0; i < tickFuncs.length; i++) {
     tickFuncs[i]();
@@ -665,13 +682,31 @@ var tickTimTemp = setTimeout(() => tickFunc(), 5000);
 
 // uncaught unhandled handlers
 process.on('uncaughtException', function (err) {
-  console.error('ERROR: an exception was uncaught by an exception handler. This is very bad and could leave the bot in an unstable state. If this is seen contact coolguy284 or another developer immediately.');
+  console.error('ERROR uncaught exception. Bot state could be corrupted, contact coolguy284 or another developer.');
   console.error(err);
+  try {
+    if (logErrors && errorCounter < 1) {
+      errorCounter++;
+      let oldLogErrors = logErrors;
+      logErrors = false;
+      client.channels.fetch(persData.ids.channel.v0).then(x => x.send('An uncaught exception has occurred.')).catch(e => {});
+      logErrors = oldLogErrors;
+    }
+  } catch (e) {}
 });
 
 process.on('unhandledRejection', function (reason, p) {
-  console.error('Unhandled promise rejection from ' + p + ':');
+  console.error('ERROR unhandled promise rejection from ' + p + ':');
   console.error(reason);
+  try {
+    if (logErrors && errorCounter < 1) {
+      errorCounter++;
+      let oldLogErrors = logErrors;
+      logErrors = false;
+      client.channels.fetch(persData.ids.channel.v0).then(x => x.send('An unhandled rejection has occurred.')).catch(e => {});
+      logErrors = oldLogErrors;
+    }
+  } catch (e) {}
 });
 
 // exit handlers

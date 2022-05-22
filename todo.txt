@@ -38,7 +38,6 @@ remindme command (takes a message and a certain time, or can be configured to re
 command to print the bans and who banned them, using audit log
 timezone command (says the time in a certain timezone)
 clearduplicatemsgs command taking the number of past messages to scan through as argument, option to stop duplicate streak after another person's message or to continue (also add same option to purge command's remove duplicate mode)
-add logging to log channel on uncaughtexception and unhandledrejection
 find out some use for elements in message like buttons and select elements, also some use for message and user right click interactions
   right click on a message to calculate its contents, if someone says "it needs 2*2 oranges and 7+8 apples" then print the results of each seperate expression
 
