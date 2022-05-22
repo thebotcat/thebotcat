@@ -1,4 +1,5 @@
-finish checking kick, ban, unban, emoterole commands
+update guild.ownerID to guild.ownerId
+finish checking kick, ban, unban commands
 kick, ban, unban use confirm before ban, but reacting is no longer working
 fix mentions especially on troll commands
 
@@ -31,6 +32,7 @@ make all commands reply not just content (?)
 parse_cmd_args "-a" with no argument after should add null to kwargs
 make bitrate command accept channel ids directly pasted in and search by channel name as text
   also join command
+collection searching function for searching for emote for emoterole command
 make math.js an npm package instead of included in source code
 content commands that send an embed with a gif can just send gif
 remindme command (takes a message and a certain time, or can be configured to repeat every certain time)

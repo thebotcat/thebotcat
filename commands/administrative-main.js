@@ -918,13 +918,20 @@ module.exports = [
   },
   {
     name: 'emoterole',
-    description: 'configures which roles can use which emoji\n' +
-      '`!emoterole add <emote|id|name> [<@role|id|name>] ...` adds roles that can use an emoji\n' +
-      '`!emoterole remove <emote|id|name> [<@role|id|name>] ...` removes roles that can use an emoji\n' +
-      '`!emoterole set <emote|id|name> [<@role|id|name>] ...` sets roles that can use an emoji',
-    description_slash: 'configures which roles can use which emoji',
+    description: 'configures which roles can use which emoji (API is broken: view always says no roles, add is set, and remove is reset)\n' +
+      '`!emoterole view <emote|id|name>` views roles which can use an emoji\n' +
+      '`!emoterole add <emote|id|name> [<@role|id|name>] ...` adds roles which can use an emoji\n' +
+      '`!emoterole remove <emote|id|name> [<@role|id|name>] ...` removes roles which can use an emoji\n' +
+      '`!emoterole set <emote|id|name> [<@role|id|name>] ...` sets roles which can use an emoji',
+    description_slash: 'configures which roles can use which emoji (API is broken: view always says no roles, add is set, and remove is reset)',
     flags: 0b110110,
     options: [
+      {
+        type: 1, name: 'view', description: 'views roles which can use the emoji',
+        options: [
+          { type: 3, name: 'emote', description: 'emote, id, or search query', required: true },
+        ],
+      },
       {
         type: 1, name: 'add', description: 'adds roles which can use the emoji',
         options: [
@@ -951,6 +958,15 @@ module.exports = [
       if (!msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS))
         return msg.channel.send('You do not have permission to run this command.');
       
+      if (!rawArgs.length)
+        return msg.channel.send('No parameters, run `?help emoterole` for parameters');
+      
+      if (!['view', 'add', 'remove', 'set'].includes(rawArgs[0]))
+        return msg.channel.send('Invalid option, run `?help emoterole` for parameters');
+
+      if (rawArgs.length < 2)
+        return msg.channel.send('Emoji not specified, run `?help emoterole` for parameters');
+      
       let emote;
       if (/^<a?:[A-Za-z]+:[0-9]+>$/.test(rawArgs[1])) {
         let end = rawArgs[1].split(':')[2];
@@ -965,18 +981,18 @@ module.exports = [
       let roles = rawArgs.slice(2).map(x => common.searchRole(msg.guild.roles, x)).filter(x => x);
       
       switch (rawArgs[0]) {
+        case 'view':
+          let origRoles = emote.roles.cache.map(x => `<@&${x.id}>`);
+          return msg.channel.send({ embeds: [{ title: 'Emote Roles', description: `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? 'Roles: ' + origRoles.join(' ') : 'No Roles'}` }] });
         case 'add':
           emote.roles.add(roles);
-          return msg.channel.send({ embeds: [{ title: 'Roles Added', description: `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} added to <:${emote.name}:${emote.id}> emote` }] });
-          break;
+          return msg.channel.send({ embeds: [{ title: 'Roles Added', description: `${roles.length ? 'Roles: ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} added to <:${emote.name}:${emote.id}> emote` }] });
         case 'remove':
           emote.roles.remove(roles);
-          return msg.channel.send({ embeds: [{ title: 'Roles Removed', description: `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} removed from <:${emote.name}:${emote.id}> emote` }] });
-          break;
+          return msg.channel.send({ embeds: [{ title: 'Roles Removed', description: `${roles.length ? 'Roles: ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} removed from <:${emote.name}:${emote.id}> emote` }] });
         case 'set':
           emote.roles.set(roles);
-          return msg.channel.send({ embeds: [{ title: 'Roles Set', description: `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'}` }] });
-          break;
+          return msg.channel.send({ embeds: [{ title: 'Roles Set', description: `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'}` }] });
       }
     },
     execute_slash(o, interaction, command, args) {
@@ -984,7 +1000,7 @@ module.exports = [
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       let emote;
-      if (/^<a?:[A-Za-z]+:[0-9]+$>/.test(args[0].options[0].value)) {
+      if (/^<a?:[A-Za-z]+:[0-9]+>$/.test(args[0].options[0].value)) {
         let end = args[0].options[0].value.split(':')[2];
         emote = o.guild.emojis.resolve(end.slice(0, -1));
       } else if (/^[0-9]+$/.test(args[0].options[0].value)) {
@@ -997,18 +1013,18 @@ module.exports = [
       let roles = args[0].options[1] ? args[0].options[1].value.split(' ').map(x => common.searchRole(o.guild.roles, x)).filter(x => x) : [];
       
       switch (args[0].name) {
+        case 'view':
+          let origRoles = emote.roles.cache.map(x => `<@&${x.id}>`);
+          return common.slashCmdResp(o, true, `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? origRoles.join(' ') : 'No Roles'}`);
         case 'add':
           emote.roles.add(roles);
-          return common.slashCmdResp(o, false, `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} added to <:${emote.name}:${emote.id}> emote`);
-          break;
+          return common.slashCmdResp(o, false, `${roles.length ? 'Roles ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} added to <:${emote.name}:${emote.id}> emote`);
         case 'remove':
           emote.roles.remove(roles);
-          return common.slashCmdResp(o, false, `Roles ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'} removed from <:${emote.name}:${emote.id}> emote`);
-          break;
+          return common.slashCmdResp(o, false, `${roles.length ? 'Roles ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} removed from <:${emote.name}:${emote.id}> emote`);
         case 'set':
           emote.roles.set(roles);
-          return common.slashCmdResp(o, false, `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'nothing'}`);
-          break;
+          return common.slashCmdResp(o, false, `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'}`);
       }
     },
   },
