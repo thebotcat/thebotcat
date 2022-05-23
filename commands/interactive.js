@@ -9,7 +9,7 @@ module.exports = [
       return msg.channel.send(`I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       return common.slashCmdResp(o, ephemeral, `I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
   },
@@ -96,7 +96,7 @@ module.exports = [
           result.push(common.randInt(1n, sides + 1n));
       }
       
-      let ephemeral = args[3] ? (args[3].value ? true : false) : true;
+      let ephemeral = args[3] ? args[3].value : true;
       return common.slashCmdResp(o, ephemeral, `Result of rolling a ${times}d${sides}${modifier != null ? (modifier < 0 ? modifier : '+' + modifier) : ''}: ${result.join(', ')}${result.length > 1 || modifier != null && result.length == 1 ? '; ' : ''}${result.length > 1 || result.length == 0 || modifier != null ? 'total ' + (result.reduce((a, c) => a + c, 0n) + (modifier != null ? modifier : 0n)) : ''}`);
     },
   },
@@ -129,7 +129,7 @@ module.exports = [
       let minStrLen = min.toString().length, maxStrLen = max.toString().length;
       if (minStrLen + maxStrLen + Math.max(minStrLen, maxStrLen) > 1960) return msg.channel.send('Integers too large.');
       
-      let ephemeral = args[2] ? (args[2].value ? true : false) : true;
+      let ephemeral = args[2] ? args[2].value : true;
       return common.slashCmdResp(o, ephemeral, `Random integer between ${min} and ${max}: ${common.randInt(min, max + 1)}`);
     },
   },
@@ -158,7 +158,7 @@ module.exports = [
     execute_slash(o, interaction, command, args) {
       let min = args[0] == null ? 0 : Number(args[0].value), max = args[1] == null ? 1 : Number(args[1].value);
       min = Number.isNaN(min) ? 0 : min; max = Number.isNaN(max) ? 1 : max;
-      let ephemeral = args[2] ? (args[2].value ? true : false) : true;
+      let ephemeral = args[2] ? args[2].value : true;
       return common.slashCmdResp(o, ephemeral, `Random real number between ${min} and ${max}: ${min + common.randFloat() * (max - min)}`);
     },
   },
@@ -188,7 +188,7 @@ module.exports = [
       let choices = args.filter(x => x != null && x.name != 'ephemeral');
       let choice = common.randInt(0, choices.length);
       choice = choices[choice] && choices[choice].value;
-      let ephemeral = args[9] ? (args[9].value ? true : false) : true;
+      let ephemeral = args[9] ? args[9].value : true;
       return common.slashCmdResp(o, ephemeral, `Random choice: ${choice}`);
     },
   },
@@ -232,7 +232,7 @@ module.exports = [
       
       let status = common.rps(uReply, result);
       
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       if (status == 0) {
         return common.slashCmdResp(o, ephemeral, `It's a tie! We had the same choice. (${result})`);
       } else if (status == 1) {
@@ -405,7 +405,7 @@ module.exports = [
       }
     },
     async execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       if (!props.saved.feat.calc) return common.slashCmdResp(o, ephemeral, 'Calculation features are disabled');
       let expr = args[0] ? args[0].value : '', res;
       nonlogmsg(`calculating from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${util.inspect(expr)}`);

@@ -34,7 +34,7 @@ module.exports = [
       }
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       if (!args[0] || args[0].value == 'all') {
         let [commandsList, commandsCategorized] = getCommandsCategorized(args[0] && args[0].value == 'all' ? null : o.guild ? props.saved.guilds[o.guild.id] : false, true);
         return common.slashCmdResp(o, ephemeral,
@@ -68,7 +68,7 @@ module.exports = [
       return common.regCmdResp(o, `Thebotcat is version ${version}`);
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       return common.slashCmdResp(o, ephemeral, `Thebotcat is version ${version}`);
     },
   },
@@ -82,7 +82,7 @@ module.exports = [
       common.regCmdResp(o, common.getBotcatUptimeMessage());
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       common.slashCmdResp(o, ephemeral, common.getBotcatUptimeMessage(false));
     },
   },
@@ -96,7 +96,7 @@ module.exports = [
       common.regCmdResp(o, common.getBotcatStatusMessage());
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       common.slashCmdResp(o, ephemeral, common.getBotcatStatusMessage(false));
     },
   },
@@ -110,7 +110,7 @@ module.exports = [
       common.regCmdResp(o, common.getBotcatFullStatusMessage());
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       common.slashCmdResp(o, ephemeral, common.getBotcatFullStatusMessage(false));
     },
   },
@@ -138,7 +138,7 @@ module.exports = [
       });
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       return new Promise((resolve, reject) => {
         common.slashCmdResp(o, ephemeral, 'Checking Ping').then(v => {
           let beforerequest = Date.now(), afterrequest;
@@ -169,7 +169,7 @@ module.exports = [
       return common.regCmdResp(o, { embeds: [discord] });
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       common.slashCmdResp(o, ephemeral, 'Support server: https://discord.gg/NamrBZc');
     },
   },
@@ -186,7 +186,7 @@ module.exports = [
       return common.regCmdResp(o, { embeds: [github] });
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       common.slashCmdResp(o, ephemeral, 'Github Repository: https://github.com/thebotcat/thebotcat');
     },
   },
@@ -202,7 +202,7 @@ module.exports = [
       return common.regCmdResp(o, { embeds: [invite] });
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       common.slashCmdResp(o, ephemeral, 'Bot Invite Link: <https://discord.com/api/oauth2/authorize?client_id=682719630967439378&permissions=1379265775&scope=bot+applications.commands>');
     },
   },
@@ -286,7 +286,7 @@ module.exports = [
       }
     },
     async execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       
       let member;
       if (args[0]) {
@@ -399,7 +399,7 @@ module.exports = [
       }
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[0] ? (args[0].value ? true : false) : true;
+      let ephemeral = args[0] ? args[0].value : true;
       
       let guild = o.guild;
       
@@ -509,7 +509,7 @@ module.exports = [
       });
     },
     async execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       
       let user;
       if (args[0]) {
@@ -592,7 +592,7 @@ module.exports = [
       });
     },
     async execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       
       let member;
       if (args[0]) {
@@ -675,7 +675,7 @@ module.exports = [
         });
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       
       let guild = o.guild;
       
@@ -749,7 +749,7 @@ module.exports = [
         if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) channel = o.channel;
       }
       let msgs = Array.from((await channel.messages.fetch({ after: 0, limit: 1 })).values());
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       if (msgs.length == 1)
         return common.slashCmdResp(o, ephemeral, `First message in <#${channel.id}>: https://discord.com/channels/${o.guild ? o.guild.id : '@me'}/${channel.id}/${msgs[0].id}`);
       else
@@ -774,7 +774,7 @@ module.exports = [
       }
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       try {
         let id = args[0].value;
         return common.slashCmdResp(o, ephemeral, `Date: ${common.IDToDate(id).toISOString()}`);
@@ -812,7 +812,7 @@ module.exports = [
       }
     },
     execute_slash(o, interaction, command, args) {
-      let ephemeral = args[1] ? (args[1].value ? true : false) : true;
+      let ephemeral = args[1] ? args[1].value : true;
       try {
         let id = BigInt(args[0].value);
         return common.slashCmdResp(o, ephemeral,
