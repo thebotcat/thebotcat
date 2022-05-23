@@ -690,7 +690,11 @@ module.exports = [
         let guilddata = props.saved.guilds[msg.guild.id];
         if (guilddata && (guilddata.confirm_kb || guilddata.confirm_kb == null) || !guilddata) {
           let kickconfirm = await msg.channel.send(`Are you sure you want to kick user ${member.user.tag} (id ${member.id})${kickreason ? ' with reason ' + util.inspect(kickreason) : ''}?`, { allowedMentions: { parse: [] } });
-          let kickreacts = kickconfirm.awaitReactions((react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id, { time: 60000, max: 1 });
+          let kickreacts = kickconfirm.awaitReactions({
+            filter: (react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id,
+            time: 60000,
+            max: 1,
+          });
           await kickconfirm.react('✅'); await kickconfirm.react('❌');
           kickreacts = await kickreacts;
           if (kickreacts.size == 0 || kickreacts.firstKey() == '❌')
@@ -782,7 +786,11 @@ module.exports = [
         let guilddata = props.saved.guilds[msg.guild.id];
         if (guilddata && (guilddata.confirm_kb || guilddata.confirm_kb == null) || !guilddata) {
           let banconfirm = await msg.channel.send(`Are you sure you want to ban user ${user.tag} (id ${user.id})${banreason ? ' with reason ' + util.inspect(banreason) : ''}?`, { allowedMentions: { parse: [] } });
-          let banreacts = banconfirm.awaitReactions((react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id, { time: 60000, max: 1 });
+          let banreacts = banconfirm.awaitReactions({
+            filter: (react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id,
+            time: 60000,
+            max: 1,
+          });
           await banconfirm.react('✅'); await banconfirm.react('❌');
           banreacts = await banreacts;
           if (banreacts.size == 0 || banreacts.firstKey() == '❌')
@@ -860,7 +868,7 @@ module.exports = [
       
       let baninfo;
       try {
-        baninfo = await msg.guild.fetchBan(userid);
+        baninfo = await msg.guild.bans.fetch(userid);
         if (!baninfo) return msg.channel.send('User not banned or nonexistent.');
       } catch (e) {
         return msg.channel.send('User not banned or nonexistent.');
@@ -872,7 +880,11 @@ module.exports = [
         let guilddata = props.saved.guilds[msg.guild.id];
         if (guilddata && (guilddata.confirm_kb || guilddata.confirm_kb == null) || !guilddata) {
           let unbanconfirm = await msg.channel.send(`Are you sure you want to unban user ${baninfo.user.tag} (id ${baninfo.user.id})${unbanreason ? ' with reason ' + util.inspect(unbanreason) : ''}?`, { allowedMentions: { parse: [] } });
-          let unbanreacts = unbanconfirm.awaitReactions((react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id, { time: 60000, max: 1 });
+          let unbanreacts = unbanconfirm.awaitReactions({
+            filter: (react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id,
+            time: 60000,
+            max: 1,
+          });
           await unbanconfirm.react('✅');
           await unbanconfirm.react('❌');
           unbanreacts = await unbanreacts;
@@ -900,7 +912,7 @@ module.exports = [
       
       let baninfo;
       try {
-        baninfo = await o.guild.fetchBan(userid);
+        baninfo = await o.guild.bans.fetch(userid);
         if (!baninfo) return common.slashCmdResp(o, true, 'User not banned or nonexistent.');
       } catch (e) {
         return common.slashCmdResp(o, true, 'User not banned or nonexistent.');

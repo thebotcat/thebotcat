@@ -57,12 +57,12 @@ var https = require('https');
   for (var file of Object.values(files)) {
     for (var package in file.json.dependencies) {
       file.json.dependencies[package] = '^' + packageVersion[package];
-      file.lines = JSON.stringify(file.json, null, 2).split('\n');
-      for (var line of file.blankLines) {
-        file.lines.splice(line, 0, '  ');
-      }
-      file.text = file.lines.join('\n') + '\n';
     }
+    file.lines = JSON.stringify(file.json, null, 2).split('\n');
+    for (var line of file.blankLines) {
+      file.lines.splice(line, 0, '    ');
+    }
+    file.text = file.lines.join('\n') + '\n';
   }
 
   // replace files
