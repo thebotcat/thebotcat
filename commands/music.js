@@ -61,7 +61,7 @@ module.exports = [
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return common.regCmdResp(o, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.pause(guilddata.voice);
-      return common.regCmdResp(o, `Paused`);
+      return common.regCmdResp(o, 'Paused');
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -79,7 +79,7 @@ module.exports = [
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.pause(guilddata.voice);
-      return common.slashCmdResp(o, false, `Paused`);
+      return common.slashCmdResp(o, false, 'Paused');
     },
   },
   {
@@ -103,7 +103,7 @@ module.exports = [
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return common.regCmdResp(o, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.resume(guilddata.voice);
-      return common.regCmdResp(o, `Resumed`);
+      return common.regCmdResp(o, 'Resumed');
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -121,7 +121,7 @@ module.exports = [
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.resume(guilddata.voice);
-      return common.slashCmdResp(o, false, `Resumed`);
+      return common.slashCmdResp(o, false, 'Resumed');
     },
   },
   {
@@ -279,9 +279,9 @@ module.exports = [
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (vsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
         return common.regCmdResp(o, 'You lack permission to voteskip.');
       switch (common.clientVCManager.voteSkip(guilddata.voice, msg.author.id)) {
-        case 1: return common.regCmdResp(o, `Skipped`);
-        case 2: return common.regCmdResp(o, `Voted`);
-        case 3: return common.regCmdResp(o, `Unvoted`);
+        case 1: return common.regCmdResp(o, 'Skipped');
+        case 2: return common.regCmdResp(o, 'Voted');
+        case 3: return common.regCmdResp(o, 'Unvoted');
       }
     },
     execute_slash(o, interaction, command, args) {
@@ -299,9 +299,9 @@ module.exports = [
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (vsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
         return common.slashCmdResp(o, false, 'You lack permission to voteskip.');
       switch (common.clientVCManager.voteSkip(guilddata.voice, o.author.id)) {
-        case 1: return common.slashCmdResp(o, false, `Skipped`);
-        case 2: return common.slashCmdResp(o, false, `Voted`);
-        case 3: return common.slashCmdResp(o, false, `Unvoted`);
+        case 1: return common.slashCmdResp(o, false, 'Skipped');
+        case 2: return common.slashCmdResp(o, false, 'Voted');
+        case 3: return common.slashCmdResp(o, false, 'Unvoted');
       }
     },
   },
@@ -325,7 +325,7 @@ module.exports = [
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
         return common.regCmdResp(o, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
       common.clientVCManager.forceSkip(guilddata.voice);
-      return common.regCmdResp(o, `Skipped`);
+      return common.regCmdResp(o, 'Skipped');
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -342,7 +342,7 @@ module.exports = [
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
         return common.slashCmdResp(o, false, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
       common.clientVCManager.forceSkip(guilddata.voice);
-      return common.slashCmdResp(o, false, `Skipped`);
+      return common.slashCmdResp(o, false, 'Skipped');
     },
   },
   {
@@ -366,7 +366,7 @@ module.exports = [
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return common.regCmdResp(o, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.stopMainLoop(guilddata.voice);
-      return common.regCmdResp(o, `Stopped`);
+      return common.regCmdResp(o, 'Stopped');
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -384,7 +384,7 @@ module.exports = [
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.stopMainLoop(guilddata.voice);
-      return common.slashCmdResp(o, false, `Stopped`);
+      return common.slashCmdResp(o, false, 'Stopped');
     },
   },
   {

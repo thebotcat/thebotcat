@@ -120,7 +120,7 @@ module.exports = async msg => {
           }
           if (badwordTriggered) {
             dodelete = true;
-            let content = word.retaliation.replace(/\$\(rcontent\)/g, msg.content.length < 1800 ? common.removePings(util.inspect(msg.content)) : `Error: message length over 1800 characters`);
+            let content = word.retaliation.replace(/\$\(rcontent\)/g, msg.content.length < 1800 ? common.removePings(util.inspect(msg.content)) : 'Error: message length over 1800 characters');
             if (!isCommand || isCommand && command != 'settings') {
               if (isCommand < 2)
                 msg.channel.send(content);

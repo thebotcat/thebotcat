@@ -361,7 +361,7 @@ module.exports = [
             .setTitle(`Icon for ${guild.name}`)
             .setDescription(
               `serverid: ${guild.id}\n` +
-              `Server icon is default`
+              'Server icon is default'
             )],
         });
       } else {
@@ -409,7 +409,7 @@ module.exports = [
         return common.slashCmdResp(o, ephemeral,
           `**Icon for ${guild.name}**\n` +
           `serverid: ${guild.id}\n` +
-          `Server icon is default`);
+          'Server icon is default');
       } else {
         let baseurl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
         if (animated)
@@ -631,7 +631,7 @@ module.exports = [
       let iconURL = guild.iconURL();
       let animated = guild.icon && guild.icon.startsWith('a_');
       let baseurl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
-      let iconStr = guild.icon == null ? `Server icon is default` :
+      let iconStr = guild.icon == null ? 'Server icon is default' :
         (animated ?
         `[default](${iconURL}), ` +
         `[normal\xa0png](${baseurl}.png), ` +
@@ -683,7 +683,7 @@ module.exports = [
       let iconURL = guild.iconURL();
       let animated = guild.icon && guild.icon.startsWith('a_');
       let baseurl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
-      let iconStr = guild.icon == null ? `Server icon is default` :
+      let iconStr = guild.icon == null ? 'Server icon is default' :
         (animated ?
         `[default](<${iconURL}>), ` +
         `[normal\xa0png](<${baseurl}.png>), ` +

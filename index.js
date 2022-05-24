@@ -419,7 +419,7 @@ async function updateSlashCommands(endpoint, logfunc) {
 }
 
 async function deleteSlashCommands(endpoint) {
-  nonlogmsg(`Deleting slash commands`);
+  nonlogmsg('Deleting slash commands');
   
   var currCmds = await endpoint().get();
   
@@ -429,7 +429,7 @@ async function deleteSlashCommands(endpoint) {
     await new Promise(r => setTimeout(r, 1000));
   }
   
-  nonlogmsg(`Done deleting slash commands`);
+  nonlogmsg('Done deleting slash commands');
 }
 
 async function updateNonPubSlashCommands(endpoint, logfunc) {
@@ -488,14 +488,14 @@ cleanPropsSaved();
 async function fullUpdateSlashCommands() {
   let loggedGlobalBegin = 0, logfunc = v => {
     if (!loggedGlobalBegin) {
-      nonlogmsg(`Updating global slash commands`);
+      nonlogmsg('Updating global slash commands');
       nonlogmsg(v);
       loggedGlobalBegin = 1;
     } else nonlogmsg(v);
   };
   
   await updateSlashCommands(() => client.api.applications(client.user.id).commands, logfunc);
-  if (loggedGlobalBegin) nonlogmsg(`Done updating global slash commands`);
+  if (loggedGlobalBegin) nonlogmsg('Done updating global slash commands');
   
   let loggedGuildsUpdated = [];
 
@@ -505,7 +505,7 @@ async function fullUpdateSlashCommands() {
     let loggedOneGuildBegin = false, logfunc = v => {
       if (!loggedOneGuildBegin) {
         if (!loggedGlobalBegin) {
-          nonlogmsg(`Updated global slash commands`);
+          nonlogmsg('Updated global slash commands');
           loggedGuildsUpdated.forEach(x => nonlogmsg(`Updated slash commands for guild ${x}`));
           loggedGlobalBegin = 2;
         }
@@ -515,7 +515,7 @@ async function fullUpdateSlashCommands() {
       } else nonlogmsg(v);
     };
     await updateNonPubSlashCommands(() => client.api.applications(client.user.id).guilds(guildid).commands, logfunc);
-    if (loggedOneGuildBegin) nonlogmsg(`Done updating slash commands for guild`);
+    if (loggedOneGuildBegin) nonlogmsg('Done updating slash commands for guild');
     else {
       if (loggedGlobalBegin < 2) loggedGuildsUpdated.push(client.guilds.cache.get(guildid).name);
       else nonlogmsg(`Updated slash commands for guild ${client.guilds.cache.get(guildid).name}`);
@@ -524,17 +524,17 @@ async function fullUpdateSlashCommands() {
   
   if (!loggedGlobalBegin) {
     if (loggedGuildsUpdated.length) {
-      nonlogmsg(`Updated global slash commands, updated guild slash commands for:`);
+      nonlogmsg('Updated global slash commands, updated guild slash commands for:');
       nonlogmsg(loggedGuildsUpdated.join(', '));
     } else {
-      nonlogmsg(`Updated global slash commands, updated guild slash commands for no guilds`);
+      nonlogmsg('Updated global slash commands, updated guild slash commands for no guilds');
     }
   } else if (loggedGlobalBegin == 1) {
     if (loggedGuildsUpdated.length) {
-      nonlogmsg(`Updated guild slash commands for:`);
+      nonlogmsg('Updated guild slash commands for:');
       nonlogmsg(loggedGuildsUpdated.join(', '));
     } else {
-      nonlogmsg(`Updated guild slash commands for no guilds`);
+      nonlogmsg('Updated guild slash commands for no guilds');
     }
   }
 }
@@ -578,7 +578,7 @@ async function populateBotStatusMessage() {
       props.botStatusMsg = { edit: () => Promise.resolve(null) };
     }
   } catch (e) {
-    console.error(`Couldn't fetch bot status message`);
+    console.error('Couldn\'t fetch bot status message');
     console.error(e);
   }
 }
@@ -619,11 +619,11 @@ client.on('guildDelete', guild => {
 });
 
 client.on('reconnecting', () => {
-  nonlogmsg(`Reconnecting!`);
+  nonlogmsg('Reconnecting!');
 });
 
 client.on('disconnect', () => {
-  nonlogmsg(`Disconnect!`);
+  nonlogmsg('Disconnect!');
 });
 
 ['messageCreate', 'voiceStateUpdate', 'interactionCreate'].forEach(evtType => {

@@ -300,7 +300,7 @@ module.exports = [
             console.log(text = `Scope too big to fit in a discord message, variables:\n${scopeVars}`);
             return common.regCmdResp(o, text);
           } else {
-            console.log(text = `Scope variables too big to fit in a discord message, use \`!calc :clear\` to wipe`);
+            console.log(text = 'Scope variables too big to fit in a discord message, use `!calc :clear` to wipe');
             return common.regCmdResp(o, text);
           }
         }
@@ -309,10 +309,10 @@ module.exports = [
         if (user.calc_scope) {
           user.calc_scope = '{}';
           schedulePropsSave();
-          console.log(text = `Cleared scope successfully`);
+          console.log(text = 'Cleared scope successfully');
           return common.regCmdResp(o, text);
         } else {
-          console.log(text = `You do not have a scope created yet`);
+          console.log(text = 'You do not have a scope created yet');
           return common.regCmdResp(o, text);
         }
       } else {
@@ -348,7 +348,7 @@ module.exports = [
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
               promise = common.regCmdResp(o, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else if (/^Error: Workerpool Worker terminated Unexpectedly/.test(res)) {
-              promise = common.regCmdResp(o, `Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)`);
+              promise = common.regCmdResp(o, 'Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)');
             } else {
               promise = common.regCmdResp(o, res);
             }
@@ -429,7 +429,7 @@ module.exports = [
             console.log(text = `Scope too big to fit in a discord message, variables:\n${scopeVars}`);
             return common.slashCmdResp(o, ephemeral, text);
           } else {
-            console.log(text = `Scope variables too big to fit in a discord message, use \`!calc :clear\` to wipe`);
+            console.log(text = 'Scope variables too big to fit in a discord message, use `!calc :clear` to wipe');
             return common.slashCmdResp(o, ephemeral, text);
           }
         }
@@ -438,10 +438,10 @@ module.exports = [
         if (user.calc_scope) {
           user.calc_scope = '{}';
           schedulePropsSave();
-          console.log(text = `Cleared scope successfully`);
+          console.log(text = 'Cleared scope successfully');
           return common.slashCmdResp(o, ephemeral, text);
         } else {
-          console.log(text = `You do not have a scope created yet`);
+          console.log(text = 'You do not have a scope created yet');
           return common.slashCmdResp(o, ephemeral, text);
         }
       } else {
@@ -477,7 +477,7 @@ module.exports = [
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
               promise = common.slashCmdResp(o, ephemeral, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else if (/^Error: Workerpool Worker terminated Unexpectedly/.test(res)) {
-              promise = common.slashCmdResp(o, ephemeral, `Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)`);
+              promise = common.slashCmdResp(o, ephemeral, 'Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)');
             } else {
               promise = common.slashCmdResp(o, ephemeral, res);
             }

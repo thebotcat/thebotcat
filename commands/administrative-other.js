@@ -62,7 +62,7 @@ module.exports = [
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || addlbotperms[msg.author.id] & 4)) return;
       let user = await common.searchUser(rawArgs.join(' '), { safeMode: false });
-      if (!user) return common.regCmdResp(o, `Query invalid`);
+      if (!user) return common.regCmdResp(o, 'Query invalid');
       let dmchannel = await user.createDM();
       return common.regCmdResp(o, `DM channel for ${user.tag} is ${dmchannel.id}, use \`!sayy <#${dmchannel.id}> content\` to speak in channel`);
     },
@@ -304,7 +304,7 @@ module.exports = [
           });
           props.execCmdProcesses.push(proc);
         } catch (e) {
-          client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: { content: `Error`, flags: 64 } });
+          client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: { content: 'Error', flags: 64 } });
           reject(e);
         }
       });

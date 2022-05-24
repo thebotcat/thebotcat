@@ -209,9 +209,9 @@ module.exports = [
       
       if (rawArgs.length == 0) {
         if (fullperms)
-          return common.regCmdResp(o, `List of settings:\nprefix, confirmkb, badwords, logchannel, mutedrole, roles, overrides, enabledcmds`);
+          return common.regCmdResp(o, 'List of settings:\nprefix, confirmkb, badwords, logchannel, mutedrole, roles, overrides, enabledcmds');
         else
-          return common.regCmdResp(o, `List of settings:\nprefix, badwords`);
+          return common.regCmdResp(o, 'List of settings:\nprefix, badwords');
       }
       
       switch (rawArgs[0]) {
@@ -345,7 +345,7 @@ module.exports = [
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
           if (rawArgs.length == 1) {
             return common.regCmdResp(o, 
-              `The current logging channel is ` + (guilddata.logging.main ? `<#${guilddata.logging.main}> (id ${guilddata.logging.main})` : `none`) + '.\n' +
+              'The current logging channel is ' + (guilddata.logging.main ? `<#${guilddata.logging.main}> (id ${guilddata.logging.main})` : 'none') + '.\n' +
               'To set logging channel to this channel run `settings logchannel set`.\n' +
               'To set logging channel to a channel run `settings logchannel set <#channel>`.\n' +
               'To turn off logging run `settings logchannel clear`.'
@@ -386,7 +386,7 @@ module.exports = [
               embeds: [{
                 title: 'Muted Role',
                 description: `The muted role is currently set to: ${guilddata.mutedrole ? '<@&' + guilddata.mutedrole + '>' : 'nothing'}\n` +
-                  `To change, run \`settings mutedrole set <@mention|id|name|query>\`.\nTo reset, run \`settings mutedrole set\`.`,
+                  'To change, run `settings mutedrole set <@mention|id|name|query>`.\nTo reset, run `settings mutedrole set`.',
               }]
             });
           } else {
@@ -1152,7 +1152,7 @@ module.exports = [
             case 'view':
               if (args[0].options[0].options[1]) {
                 if (!args[0].options[0].options[0])
-                  return common.slashCmdResp(o, true, `Role parameter by itself cannot be specified`);
+                  return common.slashCmdResp(o, true, 'Role parameter by itself cannot be specified');
                 let channelid = args[0].options[0].options[0].value;
                 if (!guilddata.overrides[channelid])
                   return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelid}>.`);
@@ -1257,7 +1257,7 @@ module.exports = [
                 
                 case 'category':
                   if (!args[0].options[0].options[1])
-                    return common.slashCmdResp(o, true, `Category must be specified.`);
+                    return common.slashCmdResp(o, true, 'Category must be specified.');
                   let category = guilddata.enabled_commands.categories[args[0].options[0].options[1].value];
                   if (category != null) {
                     return common.slashCmdResp(o, true, `The category '${args[0].options[0].options[1]?.value}' is ${category ? 'enabled' : 'disabled'}.`);
@@ -1268,7 +1268,7 @@ module.exports = [
                 
                 case 'command':
                   if (!args[0].options[0].options[1])
-                    return common.slashCmdResp(o, true, `Command must be specified.`);
+                    return common.slashCmdResp(o, true, 'Command must be specified.');
                   let command = guilddata.enabled_commands.commands[args[0].options[0].options[1].value];
                   if (command != null) {
                     return common.slashCmdResp(o, true, `The command '${args[0].options[0].options[1]?.value}' is ${command ? 'enabled' : 'disabled'}.`);
@@ -1289,7 +1289,7 @@ module.exports = [
                 
                 case 'category':
                   if (!args[0].options[0].options[2])
-                    return common.slashCmdResp(o, true, `Category must be specified.`);
+                    return common.slashCmdResp(o, true, 'Category must be specified.');
                   let category = guilddata.enabled_commands.categories[args[0].options[0].options[2].value];
                   if (category != null) {
                     guilddata.enabled_commands.categories[args[0].options[0].options[2].value] = args[0].options[0].options[1].value == 'enable';
@@ -1302,7 +1302,7 @@ module.exports = [
                 
                 case 'command':
                   if (!args[0].options[0].options[2])
-                    return common.slashCmdResp(o, true, `Command must be specified.`);
+                    return common.slashCmdResp(o, true, 'Command must be specified.');
                   let command = guilddata.enabled_commands.commands[args[0].options[0].options[2].value];
                   if (command != null) {
                     guilddata.enabled_commands.commands[args[0].options[0].options[2].value] = args[0].options[0].options[1].value == 'enable';
