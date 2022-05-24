@@ -6,43 +6,43 @@ module.exports = [
     execute(o, msg, rawArgs) {
       if (!persData.special_guilds_set.has(msg.guild.id)) return;
       if (!common.isAdmin(msg)) return;
-      if (rawArgs[1]) {
-        if (rawArgs[0] == 'roles') {
-          let promises = [ msg.channel.send('@ everyone').then(x => x.edit('@everyone')) ];
-          let roles = Array.from(msg.guild.roles.cache.values()).map(x => `<@&${x.id}>`);
-          for (var i = 0; i < roles.length; i += 90) {
-            promises.push(msg.channel.send({ content: roles.slice(i, i + 90).join(''), allowedMentions: { parse: ['roles'] } }).then(x => x.delete()));
-          }
-          return Promise.allSettled(promises);
-        } else if (rawArgs[0] == 'members') {
-          if (msg.guild.memberCount > 1000)
-            return msg.channel.send('Error: too many members in guild to ping all members.');
-          let promises = [ msg.channel.send('@ everyone').then(x => x.edit('@everyone')) ];
-          let members = Array.from(msg.guild.members.cache.values()).filter(x => !x.user.bot).map(x => `<@${x.id}>`);
-          for (var i = 0; i < members.length; i += 95) {
-            promises.push(msg.channel.send({ content: members.slice(i, i + 95).join(''), allowedMentions: { parse: ['users'] } }).then(x => x.delete()));
-          }
-          return Promise.allSettled(promises);
-        }
-      } else {
-        if (rawArgs[0] == 'roles') {
-          let promises = [];
-          let roles = Array.from(msg.guild.roles.cache.values()).map(x => `<@&${x.id}>`);
-          for (var i = 0; i < roles.length; i += 90) {
-            promises.push(msg.channel.send({ content: roles.slice(i, i + 90).join(''), allowedMentions: { parse: ['roles'] } }));
-          }
-          return Promise.allSettled(promises);
-        } else if (rawArgs[0] == 'members') {
-          if (msg.guild.memberCount > 1000)
-            return msg.channel.send('Error: too many members in guild to ping all members.');
-          let promises = [];
-          let members = Array.from(msg.guild.members.cache.values()).filter(x => !x.user.bot).map(x => `<@${x.id}>`);
-          for (var i = 0; i < members.length; i += 95) {
-            promises.push(msg.channel.send({ content: members.slice(i, i + 95).join(''), allowedMentions: { parse: ['users'] } }));
-          }
-          return Promise.allSettled(promises);
-        }
+
+      let doRoles, hidden = Boolean(rawArgs[1]);
+
+      if (rawArgs[0] == 'members')
+        doRoles = false;
+      else if (rawArgs[0] == 'roles')
+        doRoles = true;
+      else
+        return msg.channel.send('Error: argument must be either members or roles.');
+
+      if (!doRoles && msg.guild.memberCount > 1000)
+        return msg.channel.send('Error: too many members in guild to ping all members.');
+      
+      let promises = [];
+      if (hidden) {
+        promises.push(
+          msg.channel.send('@ everyone')
+            .then(x => x.edit({ content: '@everyone', allowedMentions: { parse: ['everyone'] } }))
+        );
       }
+
+      let step = doRoles ? 90 : 95;
+
+      let entries = Array.from(msg.guild[doRoles ? 'roles' : 'members'].cache.values());
+      if (doRoles) entries = entries.map(x => `<@&${x.id}>`);
+      else entries = entries.filter(x => !x.user.bot).map(x => `<@${x.id}>`);
+
+      for (var i = 0; i < entries.length; i += step) {
+        let promise = msg.channel.send({
+          content: entries.slice(i, i + step).join(''),
+          allowedMentions: { parse: [doRoles ? 'roles' : 'users'] } 
+        });
+        if (hidden) promise = promise.then(x => x.delete());
+        promises.push(promise);
+      }
+
+      return Promise.allSettled(promises);
     },
   },
   {

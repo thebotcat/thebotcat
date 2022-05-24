@@ -1,5 +1,3 @@
-consolidate @_everyone command hidden and not hidden versions
-
 voice and music commands need fixing
 
 finish migrating to o.regCmdResp
