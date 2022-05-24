@@ -1,5 +1,5 @@
-use objects for regCmdResp and slashCmdResp
-fix mentions especially on troll commands
+add echo debug command
+consolidate @_everyone command hidden and not hidden versions
 
 voice and music commands need fixing
 
@@ -16,6 +16,7 @@ get rid of unnecessary use of word successfully
 -- Release --
 
 botcat confirmkb doesnt work on slash commands
+use objects for regCmdResp and slashCmdResp
 
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well
@@ -41,6 +42,7 @@ find out some use for elements in message like buttons and select elements, also
   right click on a message to calculate its contents, if someone says "it needs 2*2 oranges and 7+8 apples" then print the results of each seperate expression
 add reason to lock and other audited actions
 add searching to unban command
+contentCommand and contentCommandNonSlash are duplicate functions
 
 emphemeral message chat feature
 make pseudo tagscript implementation in common and use it

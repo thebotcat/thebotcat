@@ -191,7 +191,7 @@ for (var i = 0, numCommands = commandKeys.length / 25; i < numCommands; i++) {
 
 commandKeys.forEach(x => exports.push({
   name: x,
-  flags: 0b011110,
+  flags: commands[x].type.endsWith('_multi') ? 0b011110 : 0b011111,
   execute: contentCommand,
 }));
 

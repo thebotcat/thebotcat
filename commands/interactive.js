@@ -182,7 +182,7 @@ module.exports = [
     execute(o, msg, rawArgs) {
       let choice = common.randInt(0, rawArgs.length);
       choice = rawArgs[choice];
-      return msg.channel.send(`Random choice: ${choice}`, { allowedMentions: { parse: [] } });
+      return msg.channel.send(`Random choice: ${choice}`);
     },
     execute_slash(o, interaction, command, args) {
       let choices = args.filter(x => x != null && x.name != 'ephemeral');
@@ -293,12 +293,12 @@ module.exports = [
         let text;
         if (user.calc_scope.length <= 2000) {
           console.log(text = user.calc_scope);
-          return msg.channel.send(text, { allowedMentions: { parse: [] } });
+          return msg.channel.send(text);
         } else {
           let scopeVars = Reflect.ownKeys(JSON.parse(user.calc_scope)).join(', ');
           if (scopeVars.length <= 1950) {
             console.log(text = `Scope too big to fit in a discord message, variables:\n${scopeVars}`);
-            return msg.channel.send(text, { allowedMentions: { parse: [] } });
+            return msg.channel.send(text);
           } else {
             console.log(text = `Scope variables too big to fit in a discord message, use \`!calc :clear\` to wipe`);
             return msg.channel.send(text);
@@ -338,7 +338,7 @@ module.exports = [
               if (shared_calc_scope_new && shared_calc_scope_new.length > 2 ** 20) throw new Error('Shared calc scope size too large');
               res = `Result: ${res}`;
             }
-            promise = msg.channel.send(res, { allowedMentions: { parse: [] } });
+            promise = msg.channel.send(res);
             if (calc_scope_new) user.calc_scope = calc_scope_new;
             if (shared_calc_scope_new && props.saved.users.default) props.saved.users.default.calc_scope = shared_calc_scope_new;
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
@@ -350,7 +350,7 @@ module.exports = [
             } else if (/^Error: Workerpool Worker terminated Unexpectedly/.test(res)) {
               promise = msg.channel.send(`Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)`);
             } else {
-              promise = msg.channel.send(res, { allowedMentions: { parse: [] } });
+              promise = msg.channel.send(res);
             }
           } finally {
             calccontext--;
@@ -385,7 +385,7 @@ module.exports = [
             shared_calc_scope_new = (props.saved.users.default ? props.saved.users.default.calc_scope : '{}') != shared_calc_scope_new ? shared_calc_scope_new : null;
             if (calc_scope_new && calc_scope_new.length > 2 ** 20) throw new Error('Calc scope size too large');
             if (shared_calc_scope_new && shared_calc_scope_new.length > 2 ** 20) throw new Error('Shared calc scope size too large');
-            promise = msg.channel.send(res, { allowedMentions: { parse: [] } });
+            promise = msg.channel.send(res);
             if (calc_scope_new) user.calc_scope = calc_scope_new;
             if (shared_calc_scope_new && props.saved.users.default) props.saved.users.default.calc_scope = shared_calc_scope_new;
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
@@ -395,7 +395,7 @@ module.exports = [
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
               promise = msg.channel.send(`Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else {
-              promise = msg.channel.send(res, { allowedMentions: { parse: [] } });
+              promise = msg.channel.send(res);
             }
           } finally {
             global.calccontext = null;
@@ -541,10 +541,10 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 3, name: 'arguments', description: 'all non slash command arguments in one string parameter' } ],
     execute(o, msg, rawArgs) {
-      return msg.channel.send(JSON.stringify({ rawArgs, args: o.args, kwargs: o.kwargs }).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'), { allowedMentions: { parse: [] } });
+      return msg.channel.send(JSON.stringify({ rawArgs, args: o.args, kwargs: o.kwargs }).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
     execute_slash(o, interaction, command, args) {
-      return common.slashCmdResp(o, true, JSON.stringify(common.parseArgs(args[0] && args[0].value || '')).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'), { allowedMentions: { parse: [] } });
+      return common.slashCmdResp(o, true, JSON.stringify(common.parseArgs(args[0] && args[0].value || '')).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
   },
   {
@@ -553,7 +553,7 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 3, name: 'goe', description: 'mama' } ],
     execute(o, msg, rawArgs) {
-      return msg.channel.send(rawArgs[0] ? 'val: ' + rawArgs[0] : 'no val', { allowedMentions: { parse: [] } });
+      return msg.channel.send(rawArgs[0] ? 'val: ' + rawArgs[0] : 'no val',);
     },
     execute_slash(o, interaction, command, args) {
       return common.slashCmdResp(o, false, args[0] ? 'val: ' + args[0].value : 'no val');

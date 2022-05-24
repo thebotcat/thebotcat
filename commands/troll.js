@@ -11,7 +11,7 @@ module.exports = [
           let promises = [ msg.channel.send('@ everyone').then(x => x.edit('@everyone')) ];
           let roles = Array.from(msg.guild.roles.cache.values()).map(x => `<@&${x.id}>`);
           for (var i = 0; i < roles.length; i += 90) {
-            promises.push(msg.channel.send(roles.slice(i, i + 90).join(''), { allowedMentions: { parse: ['everyone'] } }).then(x => x.delete()));
+            promises.push(msg.channel.send({ content: roles.slice(i, i + 90).join(''), allowedMentions: { parse: ['roles'] } }).then(x => x.delete()));
           }
           return Promise.allSettled(promises);
         } else if (rawArgs[0] == 'members') {
@@ -20,7 +20,7 @@ module.exports = [
           let promises = [ msg.channel.send('@ everyone').then(x => x.edit('@everyone')) ];
           let members = Array.from(msg.guild.members.cache.values()).filter(x => !x.user.bot).map(x => `<@${x.id}>`);
           for (var i = 0; i < members.length; i += 95) {
-            promises.push(msg.channel.send(members.slice(i, i + 95).join(''), { allowedMentions: { parse: ['everyone'] } }).then(x => x.delete()));
+            promises.push(msg.channel.send({ content: members.slice(i, i + 95).join(''), allowedMentions: { parse: ['users'] } }).then(x => x.delete()));
           }
           return Promise.allSettled(promises);
         }
@@ -29,7 +29,7 @@ module.exports = [
           let promises = [];
           let roles = Array.from(msg.guild.roles.cache.values()).map(x => `<@&${x.id}>`);
           for (var i = 0; i < roles.length; i += 90) {
-            promises.push(msg.channel.send(roles.slice(i, i + 90).join(''), { allowedMentions: { parse: ['everyone'] } }));
+            promises.push(msg.channel.send({ content: roles.slice(i, i + 90).join(''), allowedMentions: { parse: ['roles'] } }));
           }
           return Promise.allSettled(promises);
         } else if (rawArgs[0] == 'members') {
@@ -38,7 +38,7 @@ module.exports = [
           let promises = [];
           let members = Array.from(msg.guild.members.cache.values()).filter(x => !x.user.bot).map(x => `<@${x.id}>`);
           for (var i = 0; i < members.length; i += 95) {
-            promises.push(msg.channel.send(members.slice(i, i + 95).join(''), { allowedMentions: { parse: ['everyone'] } }));
+            promises.push(msg.channel.send({ content: members.slice(i, i + 95).join(''), allowedMentions: { parse: ['users'] } }));
           }
           return Promise.allSettled(promises);
         }
@@ -53,7 +53,7 @@ module.exports = [
       if (!(common.isAdmin(msg) || msg.guild.id == persData.ids.guild.v0)) return;
       let members = Array.from(msg.guild.members.cache.values()).filter(x => !x.user.bot);
       let random_member = members[common.randInt(0, members.length)];
-      return msg.channel.send(`Random ping: <@!${random_member.user.id}>`, { allowedMentions: { parse: ['everyone'] } });
+      return msg.channel.send({ content: `Random ping: <@!${random_member.user.id}>`, allowedMentions: { parse: ['users'] } });
     },
   },
 ];

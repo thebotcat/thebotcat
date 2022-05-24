@@ -3,24 +3,27 @@ module.exports = [
     name: 'say',
     description_slash: 'sends a message as botcat in the current channel',
     flags: 0b111100,
-    options: [ { type: 3, name: 'expression', description: 'what to say', required: true } ],
+    options: [
+      { type: 3, name: 'expression', description: 'what to say', required: true },
+      { type: 5, name: 'mention', description: 'whether the bot should mention (defaults to true)' },
+    ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg) || addlbotperms[msg.author.id] & 3)) return;
-      let text = o.argstring;
+      let text = rawArgs[0] ?? '', mention = rawArgs[1] ? common.stringToBoolean(rawArgs[1]) : true;
       nonlogmsg(`say from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(text)}`);
       if (global.confirmeval && common.isConfirmDeveloper(msg)) {
         if (!(await confirmeval(`say from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(text)}`)))
           return;
       } else if (common.isConfirmDeveloper(msg) && !common.isDeveloper(msg)) return;
       msg.delete();
-      return msg.channel.send(text);
+      return common.regCmdResp(o, text, mention);
     },
     async execute_slash(o, interaction, command, args) {
       if (!(common.isDeveloper(o) || addlbotperms[o.author.id] & 3)) return common.slashCmdResp(o, true, 'dev only command');
-      let text = args[0].value;
+      let text = args[0].value, mention = args[1] ? args[1].value : true;
       nonlogmsg(`say from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${util.inspect(text)}`);
-      common.slashCmdResp(o, true, 'said');
-      return o.channel.send(text);
+      await common.regCmdResp(o, text, mention);
+      return common.slashCmdResp(o, true, 'said');
     },
   },
   {
@@ -30,6 +33,7 @@ module.exports = [
     options: [
       { type: 7, name: 'channel', description: 'the channel', required: true },
       { type: 3, name: 'expression', description: 'what to say', required: true },
+      { type: 5, name: 'mention', description: 'whether the bot should mention (defaults to true)' },
     ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg) || addlbotperms[msg.author.id] & 2)) return;
@@ -37,20 +41,19 @@ module.exports = [
         if (!(await confirmeval(`sayy from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${common.explainChannel(channel, 1)}: ${util.inspect(text)}`)))
           return;
       } else if (common.isConfirmDeveloper(msg) && !common.isDeveloper(msg)) return;
-      let argr = o.argstring.split(' ');
-      let channelid = argr[0].slice(2, argr[0].length - 1), text = argr.slice(1).join(' ');
-      let channel;
-      if (channel = client.channels.cache.get(channelid)) {
+      let channelid = rawArgs[0].slice(2, rawArgs[0].length - 1), text = rawArgs[1], mention = rawArgs[2] ? common.stringToBoolean(rawArgs[2]) : true;
+      let channel = client.channels.cache.get(channelid);
+      if (channel) {
         nonlogmsg(`sayy from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${common.explainChannel(channel, 1)}: ${util.inspect(text)}`);
-        return channel.send(text);
+        return channel.send({ content: text, ...(mention ? { allowedMentions: { parse: ['users', 'roles', 'everyone'] } } : null) });
       }
     },
     async execute_slash(o, interaction, command, args) {
       if (!(common.isDeveloper(o) || addlbotperms[o.author.id] & 2)) return common.slashCmdResp(o, true, 'dev only command');
-      let channel = client.channels.cache.get(args[0].value), text = args[1].value;
+      let channel = client.channels.cache.get(args[0].value), text = args[1].value, mention = args[2] ? args[2].value : true;
       nonlogmsg(`sayy from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${common.explainChannel(channel, 1)}: ${util.inspect(text)}`);
-      common.slashCmdResp(o, true, 'said');
-      return channel.send(text);
+      await channel.send({ content: text, ...(mention ? { allowedMentions: { parse: ['users', 'roles', 'everyone'] } } : null) });
+      return common.slashCmdResp(o, true, 'said');
     },
   },
   {

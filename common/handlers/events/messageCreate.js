@@ -85,8 +85,8 @@ module.exports = async msg => {
       if (!(commands[i].flags & 1 && command == cmdstring || !(commands[i].flags & 1) && cmdstring.startsWith(command))) continue;
       if (cmdstring[command.length] != ' ' && cmdstring[command.length] != '\n' && cmdstring.length > command.length) continue;
       if (msg.guild && (
-        commands[i].flags & 2 && (command != 'settings' &&
-          props.saved.guilds[msg.guild.id] && (
+        commands[i].flags & 2 && (
+          command != 'settings' && props.saved.guilds[msg.guild.id] && (
             !props.saved.guilds[msg.guild.id].enabled_commands.global ||
             props.saved.guilds[msg.guild.id].enabled_commands.categories[commands[i].category] == false ||
             props.saved.guilds[msg.guild.id].enabled_commands.commands[command] == false ||
@@ -161,7 +161,7 @@ module.exports = async msg => {
         return await commandObject.execute(o, msg, rawArgs);
     } catch (e) {
       if (e instanceof common.BotError) {
-        return msg.channel.send(`Error: ${e.message}`, { allowedMentions: { parse: [] } });
+        return msg.channel.send(`Error: ${e.message}`);
       } else throw e;
     }
   }

@@ -689,7 +689,7 @@ module.exports = [
       try {
         let guilddata = props.saved.guilds[msg.guild.id];
         if (guilddata && (guilddata.confirm_kb || guilddata.confirm_kb == null) || !guilddata) {
-          let kickconfirm = await msg.channel.send(`Are you sure you want to kick user ${member.user.tag} (id ${member.id})${kickreason ? ' with reason ' + util.inspect(kickreason) : ''}?`, { allowedMentions: { parse: [] } });
+          let kickconfirm = await msg.channel.send(`Are you sure you want to kick user ${member.user.tag} (id ${member.id})${kickreason ? ' with reason ' + util.inspect(kickreason) : ''}?`);
           let kickreacts = kickconfirm.awaitReactions({
             filter: (react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id,
             time: 60000,
@@ -785,7 +785,7 @@ module.exports = [
       try {
         let guilddata = props.saved.guilds[msg.guild.id];
         if (guilddata && (guilddata.confirm_kb || guilddata.confirm_kb == null) || !guilddata) {
-          let banconfirm = await msg.channel.send(`Are you sure you want to ban user ${user.tag} (id ${user.id})${banreason ? ' with reason ' + util.inspect(banreason) : ''}?`, { allowedMentions: { parse: [] } });
+          let banconfirm = await msg.channel.send(`Are you sure you want to ban user ${user.tag} (id ${user.id})${banreason ? ' with reason ' + util.inspect(banreason) : ''}?`);
           let banreacts = banconfirm.awaitReactions({
             filter: (react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id,
             time: 60000,
@@ -879,7 +879,7 @@ module.exports = [
       try {
         let guilddata = props.saved.guilds[msg.guild.id];
         if (guilddata && (guilddata.confirm_kb || guilddata.confirm_kb == null) || !guilddata) {
-          let unbanconfirm = await msg.channel.send(`Are you sure you want to unban user ${baninfo.user.tag} (id ${baninfo.user.id})${unbanreason ? ' with reason ' + util.inspect(unbanreason) : ''}?`, { allowedMentions: { parse: [] } });
+          let unbanconfirm = await msg.channel.send(`Are you sure you want to unban user ${baninfo.user.tag} (id ${baninfo.user.id})${unbanreason ? ' with reason ' + util.inspect(unbanreason) : ''}?`);
           let unbanreacts = unbanconfirm.awaitReactions({
             filter: (react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id,
             time: 60000,

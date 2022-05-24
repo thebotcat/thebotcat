@@ -67,11 +67,14 @@ function onMsgOneArgSetHelper(o, val) {
   });
 }
 
-function regCmdResp(o, message) {
-  return o.msg.channel.send(message);
+function regCmdResp(o, message, mention) {
+  if (mention)
+    return o.channel.send({ content: message, allowedMentions: { parse: ['users', 'roles', 'everyone'] } });
+  else
+    return o.channel.send(message);
 }
 
-function slashCmdResp(o, ephemeral, message) {
+function slashCmdResp(o, ephemeral, message, mention) {
   if (typeof message == 'object') {
     return o.interaction.reply({
       embeds: [message],
@@ -80,6 +83,7 @@ function slashCmdResp(o, ephemeral, message) {
   } else {
     return o.interaction.reply({
       content: message,
+      ...(mention ? { allowedMentions: { parse: ['users', 'roles', 'everyone'] } } : null),
       ephemeral,
     });
   }
