@@ -6,8 +6,6 @@ fix anything that uses o.guild, o.channel, o.author, o.member in regular command
 use proper discord.js v13 api to create slash commands instead of making a raw api call
 use discordjs types and slash command options framework instead of using integers for type
 
-get rid of unnecessary use of word successfully
-
 -- Release --
 
 botcat confirmkb doesnt work on slash commands
