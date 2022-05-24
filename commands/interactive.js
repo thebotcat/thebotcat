@@ -535,6 +535,19 @@ module.exports = [
     },
   },
   {
+    name: 'echo',
+    description: '`!echo [string]` prints out the exact string sent to the command',
+    description_slash: 'prints out the exact string sent to the command',
+    flags: 0b111110,
+    options: [ { type: 3, name: 'string', description: 'the string parameter' } ],
+    execute(o, msg, rawArgs) {
+      return msg.channel.send(JSON.stringify(o.argstring).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
+    },
+    execute_slash(o, interaction, command, args) {
+      return common.slashCmdResp(o, true, JSON.stringify(args[0] && args[0].value || '').replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
+    },
+  },
+  {
     name: 'echoargs',
     description: '`!echoargs [arguments]` prints out the parsed version of the arguments sent to the command',
     description_slash: 'prints out the parsed version of the arguments sent to the command',

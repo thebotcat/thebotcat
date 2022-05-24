@@ -1,4 +1,3 @@
-add echo debug command
 consolidate @_everyone command hidden and not hidden versions
 
 voice and music commands need fixing
@@ -43,6 +42,7 @@ find out some use for elements in message like buttons and select elements, also
 add reason to lock and other audited actions
 add searching to unban command
 contentCommand and contentCommandNonSlash are duplicate functions
+command descriptions should use prefix
 
 emphemeral message chat feature
 make pseudo tagscript implementation in common and use it
