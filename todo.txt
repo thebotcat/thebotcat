@@ -15,6 +15,9 @@ get rid of unnecessary use of word successfully
 botcat confirmkb doesnt work on slash commands
 use objects for regCmdResp and slashCmdResp
 
+aliases for commands and rename base music commands to something more obvious
+auto join vc on play command
+
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well
 
@@ -58,6 +61,7 @@ check for embed perms and display fancy msgs if so
 make all the commands also use intelligent arguments, kwargs so the order of arguments doesnt have to be memorized
   make purge command have --before and --after params and --beforeeq and --aftereq params (taking message ids)
   purge --remove-duplicates-only
+  purge by users and/or roles
 purge command support for over 100 messages, done in parts and with a confirm before doing so
 add to guild settings
   auto disconnect from vc timeout
@@ -67,7 +71,6 @@ make user specific settings
   forcing no embeds or reacts in message reponses
   prefix in dm channels
   reply to non slash commands, default, yes, or no
-aliases for commands and rename base music commands to something more obvious
 reaction roles
 try to merge regular and slash commands, maybe rename execute to execute_message and then add execute for a merged version of the executes
 try to merge embed and non embed commands with some unified framework that does a fallback
@@ -76,4 +79,6 @@ validator for invalid gifs in content commands
 add comments to code
 add delete delay to regcmdresp, to emulate ephemeral message, also add reply true/false to it
 handle values of null in information commands and other commands
+add vc merging command (requires 2 botcats if done in the same server), playing audio from one to the other and vice versa
 make website control panel
+add sharding and live updating

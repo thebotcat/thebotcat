@@ -39,6 +39,7 @@ var vm = require('vm');
 
 // 3rd party requires
 var Discord = require('discord.js');
+var DiscordVoice = require('@discordjs/voice');
 var ytdl;
 try { ytdl = require('ytdl-core-discord'); } catch (e) { ytdl = null; }
 var math = require('./math.min.js');
@@ -46,7 +47,7 @@ var math = require('./math.min.js');
 // botcat module requires
 var common = require('./common/index');
 
-Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, ytdl, math, common });
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, math, common });
 
 // configure math.js library
 math.config({ number: 'BigNumber' });
