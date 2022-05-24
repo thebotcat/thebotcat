@@ -15,7 +15,7 @@ module.exports = [
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && playperms))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
         return msg.channel.send('You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
       let latestObj = await common.clientVCManager.addSong(guilddata.voice, rawArgs[0], msg.author.id);
       let text = `[${latestObj.desc}](<${latestObj.url}>) (${common.msecToHMS(Number(latestObj.expectedLength))}) added to queue`;
@@ -32,7 +32,7 @@ module.exports = [
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && playperms))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
         return common.slashCmdResp(o, false, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
       let latestObj = await common.clientVCManager.addSong(guilddata.voice, args[0].value, o.author.id);
       let text = `[${latestObj.desc}](<${latestObj.url}>) (${common.msecToHMS(Number(latestObj.expectedLength))}) added to queue`;
@@ -58,7 +58,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return msg.channel.send('Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.pause(guilddata.voice);
       return msg.channel.send(`Paused`);
@@ -76,7 +76,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.pause(guilddata.voice);
       return common.slashCmdResp(o, false, `Paused`);
@@ -100,7 +100,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return msg.channel.send('Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.resume(guilddata.voice);
       return msg.channel.send(`Resumed`);
@@ -118,7 +118,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.resume(guilddata.voice);
       return common.slashCmdResp(o, false, `Resumed`);
@@ -145,7 +145,7 @@ module.exports = [
         let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
         let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
         let vcmembers = Array.from(channel.members.keys());
-        if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
+        if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
           return msg.channel.send('Only admins and mods can change my volume, or someone who is alone with me in a voice channel.');
         let wantedvolume = Number(rawArgs[0]);
         if (isNaN(wantedvolume) || wantedvolume == Infinity || wantedvolume == -Infinity || wantedvolume < 0 || wantedvolume > 10)
@@ -169,7 +169,7 @@ module.exports = [
         let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
         let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
         let vcmembers = Array.from(channel.members.keys());
-        if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
+        if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
           return common.slashCmdResp(o, false, 'Only admins and mods can change my volume, or someone who is alone with me in a voice channel.');
         let wantedvolume = Number(args[0].value);
         if (isNaN(wantedvolume) || wantedvolume == Infinity || wantedvolume == -Infinity || wantedvolume < 0 || wantedvolume > 10)
@@ -196,7 +196,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return msg.channel.send('Only admins and mods can toggle loop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.toggleLoop(guilddata.voice);
       return msg.channel.send(`Toggled loop to ${guilddata.voice.loop ? 'enabled' : 'disabled'}`);
@@ -213,7 +213,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can toggle loop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.toggleLoop(guilddata.voice);
       return common.slashCmdResp(o, false, `Toggled loop to ${guilddata.voice.loop ? 'enabled' : 'disabled'}`);
@@ -236,7 +236,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return msg.channel.send('Only admins and mods can toggle queue loop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.toggleQueueLoop(guilddata.voice);
       return msg.channel.send(`Toggled queue loop to ${guilddata.voice.loopqueue ? 'enabled' : 'disabled'}`);
@@ -253,7 +253,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can toggle queue loop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.toggleQueueLoop(guilddata.voice);
       return common.slashCmdResp(o, false, `Toggled queue loop to ${guilddata.voice.loopqueue ? 'enabled' : 'disabled'}`);
@@ -276,7 +276,7 @@ module.exports = [
       if (!guilddata.voice.dispatcher) return msg.channel.send('Error: no song is playing');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.VOTESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, vsperms = common.constants.botRolePermBits.VOTESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (vsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelID == channel.id)))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (vsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
         return msg.channel.send('You lack permission to voteskip.');
       switch (common.clientVCManager.voteSkip(guilddata.voice, msg.author.id)) {
         case 1: return msg.channel.send(`Skipped`);
@@ -296,7 +296,7 @@ module.exports = [
       if (!guilddata.voice.dispatcher) return common.slashCmdResp(o, false, 'Error: no song is playing');
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.VOTESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, vsperms = common.constants.botRolePermBits.VOTESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (vsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelID == channel.id)))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (vsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
         return common.slashCmdResp(o, false, 'You lack permission to voteskip.');
       switch (common.clientVCManager.voteSkip(guilddata.voice, o.author.id)) {
         case 1: return common.slashCmdResp(o, false, `Skipped`);
@@ -322,7 +322,7 @@ module.exports = [
       if (!guilddata.voice.dispatcher) return msg.channel.send('Error: no song is playing');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelID == channel.id)))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
         return msg.channel.send('Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
       common.clientVCManager.forceSkip(guilddata.voice);
       return msg.channel.send(`Skipped`);
@@ -339,7 +339,7 @@ module.exports = [
       if (!guilddata.voice.dispatcher) return common.slashCmdResp(o, false, 'Error: no song is playing');
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelID == channel.id)))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
         return common.slashCmdResp(o, false, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
       common.clientVCManager.forceSkip(guilddata.voice);
       return common.slashCmdResp(o, false, `Skipped`);
@@ -363,7 +363,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((msg.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
         return msg.channel.send('Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.stopMainLoop(guilddata.voice);
       return msg.channel.send(`Stopped`);
@@ -381,7 +381,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
-      if (!((o.member.voice.channelID == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(o.author.id) && playperms)))
         return common.slashCmdResp(o, false, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.stopMainLoop(guilddata.voice);
       return common.slashCmdResp(o, false, `Stopped`);

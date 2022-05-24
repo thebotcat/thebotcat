@@ -14,8 +14,8 @@ module.exports = [
       }
       let channel;
       if (rawArgs.length == 0) {
-        if (!msg.member.voice.channelID) return msg.channel.send('You are not in a voice channel.');
-        channel = msg.guild.channels.cache.get(msg.member.voice.channelID);
+        if (!msg.member.voice.channelId) return msg.channel.send('You are not in a voice channel.');
+        channel = msg.guild.channels.cache.get(msg.member.voice.channelId);
       } else {
         if (!/<#[0-9]+>/.test(rawArgs[0])) return msg.channel.send('Invalid channel mention.');
         channel = msg.guild.channels.cache.find(x => x.id == rawArgs[0].slice(2, -1));
@@ -26,7 +26,7 @@ module.exports = [
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, leaveperms = perms & common.constants.botRolePermBits.LEAVE_VC, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!joinperms || guilddata.voice.channel && !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL'))
         return msg.channel.send('You do not have permission to get me to join the voice channel.');
-      if (msg.member.voice.channelID != channel.id && !remoteperms)
+      if (msg.member.voice.channelId != channel.id && !remoteperms)
         return msg.channel.send('You do not have permission to get me to join channels remotely.');
       if (channel.full && !leaveperms)
         return msg.channel.send('You do not have permission to get me to join full channels.');
@@ -50,8 +50,8 @@ module.exports = [
       }
       let channel;
       if (!args[0]) {
-        if (!o.member.voice.channelID) return common.slashCmdResp(o, false, 'You are not in a voice channel.');
-        channel = o.guild.channels.cache.get(o.member.voice.channelID);
+        if (!o.member.voice.channelId) return common.slashCmdResp(o, false, 'You are not in a voice channel.');
+        channel = o.guild.channels.cache.get(o.member.voice.channelId);
       } else {
         channel = o.guild.channels.cache.find(x => x.id == args[0].value);
         if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, false, 'Cannot join channel outside of this guild.');
@@ -61,7 +61,7 @@ module.exports = [
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, leaveperms = perms & common.constants.botRolePermBits.LEAVE_VC, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!joinperms || guilddata.voice.channel && !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
         return common.slashCmdResp(o, false, 'You do not have permission to get me to join the voice channel.');
-      if (o.member.voice.channelID != channel.id && !remoteperms)
+      if (o.member.voice.channelId != channel.id && !remoteperms)
         return common.slashCmdResp(o, false, 'You do not have permission to get me to join channels remotely.');
       if (channel.full && !leaveperms)
         return common.slashCmdResp(o, false, 'You do not have permission to get me to join full channels.');
@@ -94,10 +94,10 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.LEAVE_VC | common.constants.botRolePermBits.REMOTE_CMDS);
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, leaveperms = perms & common.constants.botRolePermBits.LEAVE_VC, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (joinperms || leaveperms) {
-        if (!(joinperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && (guilddata.voice.songslist.length == 0 || msg.member.voice.channelID != channel.id))) {
+        if (!(joinperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && (guilddata.voice.songslist.length == 0 || msg.member.voice.channelId != channel.id))) {
           if (!leaveperms)
             return msg.channel.send('You do not have permission to get me to leave the voice channel.');
-          if (msg.member.voice.channelID != channel.id && !remoteperms)
+          if (msg.member.voice.channelId != channel.id && !remoteperms)
             return msg.channel.send('You do not have permission to get me to leave channels remotely.');
         }
         await common.clientVCManager.leave(guilddata.voice);
@@ -118,10 +118,10 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.LEAVE_VC | common.constants.botRolePermBits.REMOTE_CMDS);
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, leaveperms = perms & common.constants.botRolePermBits.LEAVE_VC, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (joinperms || leaveperms) {
-        if (!(joinperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && (guilddata.voice.songslist.length == 0 || o.member.voice.channelID != channel.id))) {
+        if (!(joinperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && (guilddata.voice.songslist.length == 0 || o.member.voice.channelId != channel.id))) {
           if (!leaveperms)
             return common.slashCmdResp(o, false, 'You do not have permission to get me to leave the voice channel.');
-          if (o.member.voice.channelID != channel.id && !remoteperms)
+          if (o.member.voice.channelId != channel.id && !remoteperms)
             return common.slashCmdResp(o, false, 'You do not have permission to get me to leave channels remotely.');
         }
         await common.clientVCManager.leave(guilddata.voice);
@@ -148,7 +148,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.MANAGE_BOT | common.constants.botRolePermBits.REMOTE_CMDS);
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, manageperms = perms & common.constants.botRolePermBits.MANAGE_BOT, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (joinperms && manageperms) {
-        if (msg.member.voice.channelID != channel.id && !remoteperms)
+        if (msg.member.voice.channelId != channel.id && !remoteperms)
           return msg.channel.send('You do not have permission to get me to toggle my selfmute status remotely.');
         common.clientVCManager.toggleSelfMute(guilddata.voice);
         return msg.channel.send(`Set self mute to ${guilddata.voice.connection.voice.selfMute ? 'enabled' : 'disabled'}`);
@@ -168,7 +168,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.MANAGE_BOT | common.constants.botRolePermBits.REMOTE_CMDS);
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, manageperms = perms & common.constants.botRolePermBits.MANAGE_BOT, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (joinperms && manageperms) {
-        if (o.member.voice.channelID != channel.id && !remoteperms)
+        if (o.member.voice.channelId != channel.id && !remoteperms)
           return common.slashCmdResp(o, false, 'You do not have permission to get me to toggle my selfmute status remotely.');
         common.clientVCManager.toggleSelfMute(guilddata.voice);
         return common.slashCmdResp(o, false, `Set self mute to ${guilddata.voice.connection.voice.selfMute ? 'enabled' : 'disabled'}`);
@@ -194,7 +194,7 @@ module.exports = [
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.MANAGE_BOT | common.constants.botRolePermBits.REMOTE_CMDS);
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, manageperms = perms & common.constants.botRolePermBits.MANAGE_BOT, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (joinperms && manageperms) {
-        if (msg.member.voice.channelID != channel.id && !remoteperms)
+        if (msg.member.voice.channelId != channel.id && !remoteperms)
           return msg.channel.send('You do not have permission to get me to toggle my selfdeafen status remotely.');
         common.clientVCManager.toggleSelfDeaf(guilddata.voice);
         return msg.channel.send(`Set self deaf to ${guilddata.voice.connection.voice.selfDeaf ? 'enabled' : 'disabled'}`);
@@ -214,7 +214,7 @@ module.exports = [
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.MANAGE_BOT | common.constants.botRolePermBits.REMOTE_CMDS);
       let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, manageperms = perms & common.constants.botRolePermBits.MANAGE_BOT, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (joinperms && manageperms) {
-        if (o.member.voice.channelID != channel.id && !remoteperms)
+        if (o.member.voice.channelId != channel.id && !remoteperms)
           return common.slashCmdResp(o, false, 'You do not have permission to get me to toggle my selfdeafen status remotely.');
         common.clientVCManager.toggleSelfDeaf(guilddata.voice);
         return common.slashCmdResp(o, false, `Set self deaf to ${guilddata.voice.connection.voice.selfDeaf ? 'enabled' : 'disabled'}`);

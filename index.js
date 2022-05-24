@@ -544,13 +544,13 @@ async function standardWakeHandlers() {
     console.log('Checking for new messages in send only channel');
     let channel = client.channels.cache.get(persData.ids.channel.v1), messages;
     try {
-      while (channel.lastMessageID != props.saved.misc.sendmsgid) {
+      while (channel.lastMessageId != props.saved.misc.sendmsgid) {
         console.log('New messages detected');
         messages = await channel.messages.fetch({ after: props.saved.misc.sendmsgid });
         console.log('Loaded up to 50 new messages');
         messages = Array.from(messages.values()).sort((a, b) => { a = a.createdTimestamp; b = b.createdTimestamp; if (a > b) { return 1; } else if (a < b) { return -1; } else { return 0; } });
         if (messages.length == 0) {
-          props.saved.misc.sendmsgid = channel.lastMessageID;
+          props.saved.misc.sendmsgid = channel.lastMessageId;
           break;
         }
         for (var i = 0; i < messages.length; i++) {

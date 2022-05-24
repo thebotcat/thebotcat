@@ -13,7 +13,7 @@ module.exports = async (oldState, newState) => {
   }
   
   if (oldState.id == client.user.id) {
-    if (!newState.channelID)
+    if (!newState.channelId)
       common.clientVCManager.leave(guilddata.voice);
     else
       guilddata.voice.channel = newState.channel;
