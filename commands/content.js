@@ -63,72 +63,72 @@ try {
 function contentCommand(o, msg, rawArgs) {
   let obj = commands[o.commandObject.name];
   switch (obj.type) {
-    case 'text': return msg.channel.send(obj.content);
+    case 'text': return common.regCmdResp(o, obj.content);
     case 'text_reply': return msg.reply(obj.content);
     case 'text_multi_reply':
       if (rawArgs.length == 0) {
         return msg.reply(obj.contents[common.randInt(0, obj.contents.length)]);
       } else if (rawArgs[0] == 'count') {
-        return msg.channel.send(`The command has ${obj.contents.length} entries.`);
+        return common.regCmdResp(o, `The command has ${obj.contents.length} entries.`);
       } else {
         let num = Number(rawArgs[0]);
-        if (!Number.isSafeInteger(num)) return msg.channel.send('Invalid command entry number.');
-        if (num < 1) return msg.channel.send('Entry number must be greater than or equal to 1.');
-        if (num > obj.contents.length) return msg.channel.send(`Entry number greater than number of items. (${obj.contents.length})`);
+        if (!Number.isSafeInteger(num)) return common.regCmdResp(o, 'Invalid command entry number.');
+        if (num < 1) return common.regCmdResp(o, 'Entry number must be greater than or equal to 1.');
+        if (num > obj.contents.length) return common.regCmdResp(o, `Entry number greater than number of items. (${obj.contents.length})`);
         return msg.reply(obj.contents[num - 1]);
       }
     case 'image':
-      return msg.channel.send({ embeds: [{ title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } }] });
+      return common.regCmdResp(o, { embeds: [{ title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } }] });
     case 'image_multi':
       if (rawArgs.length == 0) {
         let embed = obj.embeds[common.randInt(0, obj.embeds.length)];
-        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
+        return common.regCmdResp(o, { embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       } else if (rawArgs[0] == 'count') {
-        return msg.channel.send(`The command has ${obj.embeds.length} entries.`);
+        return common.regCmdResp(o, `The command has ${obj.embeds.length} entries.`);
       } else {
         let num = Number(rawArgs[0]);
-        if (!Number.isSafeInteger(num)) return msg.channel.send('Invalid command entry number.');
-        if (num < 1) return msg.channel.send('Entry number must be greater than or equal to 1.');
-        if (num > obj.embeds.length) return msg.channel.send(`Entry number greater than number of items. (${obj.embeds.length})`);
+        if (!Number.isSafeInteger(num)) return common.regCmdResp(o, 'Invalid command entry number.');
+        if (num < 1) return common.regCmdResp(o, 'Entry number must be greater than or equal to 1.');
+        if (num > obj.embeds.length) return common.regCmdResp(o, `Entry number greater than number of items. (${obj.embeds.length})`);
         let embed = obj.embeds[num - 1];
-        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
+        return common.regCmdResp(o, { embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       }
   }
 }
 
 function contentCommandNonSlash(o, msg, rawArgs) {
   let obj = commands[rawArgs[0] ? rawArgs[0].replaceAll('_', ' ') : ''];
-  if (!obj) return msg.channel.send('Invalid content name.');
+  if (!obj) return common.regCmdResp(o, 'Invalid content name.');
   switch (obj.type) {
-    case 'text': return msg.channel.send(obj.content);
+    case 'text': return common.regCmdResp(o, obj.content);
     case 'text_reply': return msg.reply(obj.content);
     case 'text_multi_reply':
       if (!rawArgs[1]) {
         return msg.reply(obj.contents[common.randInt(0, obj.contents.length)]);
       } else if (rawArgs[1] == 'count') {
-        return msg.channel.send(`The command has ${obj.contents.length} entries.`);
+        return common.regCmdResp(o, `The command has ${obj.contents.length} entries.`);
       } else {
         let num = Number(rawArgs[1]);
-        if (!Number.isSafeInteger(num)) return msg.channel.send('Invalid command entry number.');
-        if (num < 1) return msg.channel.send('Entry number must be greater than or equal to 1.');
-        if (num > obj.contents.length) return msg.channel.send(`Entry number greater than number of items. (${obj.contents.length})`);
+        if (!Number.isSafeInteger(num)) return common.regCmdResp(o, 'Invalid command entry number.');
+        if (num < 1) return common.regCmdResp(o, 'Entry number must be greater than or equal to 1.');
+        if (num > obj.contents.length) return common.regCmdResp(o, `Entry number greater than number of items. (${obj.contents.length})`);
         return msg.reply(obj.contents[num - 1]);
       }
     case 'image':
-      return msg.channel.send({ embeds: [{ title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } }] });
+      return common.regCmdResp(o, { embeds: [{ title: obj.title, description: obj.desc, image: { url: obj.image }, footer: { text: obj.footer } }] });
     case 'image_multi':
       if (!rawArgs[1]) {
         let embed = obj.embeds[common.randInt(0, obj.embeds.length)];
-        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
+        return common.regCmdResp(o, { embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       } else if (rawArgs[1] == 'count') {
-        return msg.channel.send(`The command has ${obj.embeds.length} entries.`);
+        return common.regCmdResp(o, `The command has ${obj.embeds.length} entries.`);
       } else {
         let num = Number(rawArgs[1]);
-        if (!Number.isSafeInteger(num)) return msg.channel.send('Invalid command entry number.');
-        if (num < 1) return msg.channel.send('Entry number must be greater than or equal to 1.');
-        if (num > obj.embeds.length) return msg.channel.send(`Entry number greater than number of items. (${obj.embeds.length})`);
+        if (!Number.isSafeInteger(num)) return common.regCmdResp(o, 'Invalid command entry number.');
+        if (num < 1) return common.regCmdResp(o, 'Entry number must be greater than or equal to 1.');
+        if (num > obj.embeds.length) return common.regCmdResp(o, `Entry number greater than number of items. (${obj.embeds.length})`);
         let embed = obj.embeds[num - 1];
-        return msg.channel.send({ embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
+        return common.regCmdResp(o, { embeds: [{ title: embed.title, description: embed.desc, image: { url: embed.image }, footer: { text: embed.footer } }] });
       }
   }
 }
@@ -204,7 +204,7 @@ exports.push(
     execute(o, msg, rawArgs) {
       let len = Math.min(Math.max(Math.floor(Number(rawArgs[0])), 3), 100);
       if (len != len || len < 4) {
-        return msg.channel.send('lamomamoemao');
+        return common.regCmdResp(o, 'lamomamoemao');
       } else {
         len -= 4;
         let text = '', lastchar = 'o';
@@ -213,7 +213,7 @@ exports.push(
         for (; len >= 0; len--)
           text += lastchar = options.filter(x => x != lastchar)[randints[len]];
         if (text[text.length - 1] != 'o') text += 'o';
-        return msg.channel.send(`lamo${text}`);
+        return common.regCmdResp(o, `lamo${text}`);
       }
     },
     execute_slash(o, interaction, command, args) {

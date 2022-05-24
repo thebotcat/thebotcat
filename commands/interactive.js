@@ -6,7 +6,7 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
-      return msg.channel.send(`I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
+      return common.regCmdResp(o, `I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
     execute_slash(o, interaction, command, args) {
       let ephemeral = args[0] ? args[0].value : true;
@@ -49,7 +49,7 @@ module.exports = [
       if (modifier != null) try { modifier = BigInt(modifier); } catch (e) { try { modifier = BigInt(Math.floor(Number(modifier))); } catch (e) { modifier = null; } }
       
       let size = (sides.toString().length + 2) * (times + 1);
-      if (size > 1960) return msg.channel.send(`Limit on times for the given sides value is ${Math.floor(1960 / (sides.toString().length + 2) - 1)}`);
+      if (size > 1960) return common.regCmdResp(o, `Limit on times for the given sides value is ${Math.floor(1960 / (sides.toString().length + 2) - 1)}`);
       
       let result = [];
       if (Number.isFinite(times) && times <= 10000) {
@@ -57,7 +57,7 @@ module.exports = [
           result.push(common.randInt(1n, sides + 1n));
       }
       
-      return msg.channel.send(`Result of rolling a ${times}d${sides}${modifier != null ? (modifier < 0 ? modifier : '+' + modifier) : ''}: ${result.join(', ')}${result.length > 1 || modifier != null && result.length == 1 ? '; ' : ''}${result.length > 1 || result.length == 0 || modifier != null ? 'total ' + (result.reduce((a, c) => a + c, 0n) + (modifier != null ? modifier : 0n)) : ''}`);
+      return common.regCmdResp(o, `Result of rolling a ${times}d${sides}${modifier != null ? (modifier < 0 ? modifier : '+' + modifier) : ''}: ${result.join(', ')}${result.length > 1 || modifier != null && result.length == 1 ? '; ' : ''}${result.length > 1 || result.length == 0 || modifier != null ? 'total ' + (result.reduce((a, c) => a + c, 0n) + (modifier != null ? modifier : 0n)) : ''}`);
     },
     execute_slash(o, interaction, command, args) {
       let match, sides = args[0] ? args[0].value : 6, times, modifier;
@@ -119,15 +119,15 @@ module.exports = [
       }
       
       let minStrLen = min.toString().length, maxStrLen = max.toString().length;
-      if (minStrLen + maxStrLen + Math.max(minStrLen, maxStrLen) > 1960) return msg.channel.send('Integers too large.');
+      if (minStrLen + maxStrLen + Math.max(minStrLen, maxStrLen) > 1960) return common.regCmdResp(o, 'Integers too large.');
       
-      return msg.channel.send(`Random integer between ${min} and ${max}: ${common.randInt(min, max + 1n)}`);
+      return common.regCmdResp(o, `Random integer between ${min} and ${max}: ${common.randInt(min, max + 1n)}`);
     },
     execute_slash(o, interaction, command, args) {
       let min = (args[0] && args[0].value) ?? 0, max = (args[1] && args[1].value) ?? 1;
       
       let minStrLen = min.toString().length, maxStrLen = max.toString().length;
-      if (minStrLen + maxStrLen + Math.max(minStrLen, maxStrLen) > 1960) return msg.channel.send('Integers too large.');
+      if (minStrLen + maxStrLen + Math.max(minStrLen, maxStrLen) > 1960) return common.slashCmdResp(o, 'Integers too large.');
       
       let ephemeral = args[2] ? args[2].value : true;
       return common.slashCmdResp(o, ephemeral, `Random integer between ${min} and ${max}: ${common.randInt(min, max + 1)}`);
@@ -153,7 +153,7 @@ module.exports = [
         min = Number(rawArgs[0]); min = Number.isNaN(min) ? 0 : min;
         max = Number(rawArgs[1]); max = Number.isNaN(max) ? 1 : max;
       }
-      return msg.channel.send(`Random real number between ${min} and ${max}: ${min + common.randFloat() * (max - min)}`);
+      return common.regCmdResp(o, `Random real number between ${min} and ${max}: ${min + common.randFloat() * (max - min)}`);
     },
     execute_slash(o, interaction, command, args) {
       let min = args[0] == null ? 0 : Number(args[0].value), max = args[1] == null ? 1 : Number(args[1].value);
@@ -182,7 +182,7 @@ module.exports = [
     execute(o, msg, rawArgs) {
       let choice = common.randInt(0, rawArgs.length);
       choice = rawArgs[choice];
-      return msg.channel.send(`Random choice: ${choice}`);
+      return common.regCmdResp(o, `Random choice: ${choice}`);
     },
     execute_slash(o, interaction, command, args) {
       let choices = args.filter(x => x != null && x.name != 'ephemeral');
@@ -208,19 +208,19 @@ module.exports = [
       let replies = ['rock', 'paper', 'scissors'];
       
       let uReply = rawArgs[0];
-      if (!uReply) return msg.channel.send(`Please play with one of these responses: \`${replies.join(', ')}\``);
-      if (!replies.includes(uReply)) return msg.channel.send(`Only these responses are accepted: \`${replies.join(', ')}\``);
+      if (!uReply) return common.regCmdResp(o, `Please play with one of these responses: \`${replies.join(', ')}\``);
+      if (!replies.includes(uReply)) return common.regCmdResp(o, `Only these responses are accepted: \`${replies.join(', ')}\``);
       
       let result = replies[common.randInt(0, replies.length)];
       
       let status = common.rps(uReply, result);
       
       if (status == 0) {
-        return msg.channel.send(`It's a tie! We had the same choice. (${result})`);
+        return common.regCmdResp(o, `It's a tie! We had the same choice. (${result})`);
       } else if (status == 1) {
-        return msg.channel.send(`I chose ${result}, I won!`);
+        return common.regCmdResp(o, `I chose ${result}, I won!`);
       } else if (status == -1) {
-        return msg.channel.send(`I chose ${result}, you won!`);
+        return common.regCmdResp(o, `I chose ${result}, you won!`);
       }
     },
     execute_slash(o, interaction, command, args) {
@@ -249,7 +249,7 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 3, name: 'text', description: 'the text', required: true } ],
     execute(o, msg, rawArgs) {
-      return msg.channel.send('wrapped: ' + o.asOneArg.split('').map(x => `\\||${x}\\||`).join(''));
+      return common.regCmdResp(o, 'wrapped: ' + o.asOneArg.split('').map(x => `\\||${x}\\||`).join(''));
     },
     execute_slash(o, interaction, command, args) {
       return common.slashCmdResp(o, true, 'wrapped: ' + args[0].value.split('').map(x => `\\||${x}\\||`).join(''));
@@ -277,12 +277,12 @@ module.exports = [
       { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
-      if (!props.saved.feat.calc) return msg.channel.send('Calculation features are disabled');
+      if (!props.saved.feat.calc) return common.regCmdResp(o, 'Calculation features are disabled');
       let expr = o.asOneArg, res;
       nonlogmsg(`calculating from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(expr)}`);
       let user = props.saved.users[msg.author.id];
       if (!user) {
-        if (expr == ':view' || expr == ':clear') return msg.channel.send('User object not created yet');
+        if (expr == ':view' || expr == ':clear') return common.regCmdResp(o, 'User object not created yet');
         else {
           user = props.saved.users[msg.author.id] = common.getEmptyUserObject(props.saved.guilds[msg.guild.id]);
           schedulePropsSave();
@@ -293,15 +293,15 @@ module.exports = [
         let text;
         if (user.calc_scope.length <= 2000) {
           console.log(text = user.calc_scope);
-          return msg.channel.send(text);
+          return common.regCmdResp(o, text);
         } else {
           let scopeVars = Reflect.ownKeys(JSON.parse(user.calc_scope)).join(', ');
           if (scopeVars.length <= 1950) {
             console.log(text = `Scope too big to fit in a discord message, variables:\n${scopeVars}`);
-            return msg.channel.send(text);
+            return common.regCmdResp(o, text);
           } else {
             console.log(text = `Scope variables too big to fit in a discord message, use \`!calc :clear\` to wipe`);
-            return msg.channel.send(text);
+            return common.regCmdResp(o, text);
           }
         }
       } else if (expr == ':clear') {
@@ -310,10 +310,10 @@ module.exports = [
           user.calc_scope = '{}';
           schedulePropsSave();
           console.log(text = `Cleared scope successfully`);
-          return msg.channel.send(text);
+          return common.regCmdResp(o, text);
         } else {
           console.log(text = `You do not have a scope created yet`);
-          return msg.channel.send(text);
+          return common.regCmdResp(o, text);
         }
       } else {
         let promise, res, calc_scope_new, shared_calc_scope_new;
@@ -338,7 +338,7 @@ module.exports = [
               if (shared_calc_scope_new && shared_calc_scope_new.length > 2 ** 20) throw new Error('Shared calc scope size too large');
               res = `Result: ${res}`;
             }
-            promise = msg.channel.send(res);
+            promise = common.regCmdResp(o, res);
             if (calc_scope_new) user.calc_scope = calc_scope_new;
             if (shared_calc_scope_new && props.saved.users.default) props.saved.users.default.calc_scope = shared_calc_scope_new;
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
@@ -346,11 +346,11 @@ module.exports = [
             res = e.toString();
             console.error(res);
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
-              promise = msg.channel.send(`Error: expression timeout after ${res.slice(40, Infinity)}`);
+              promise = common.regCmdResp(o, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else if (/^Error: Workerpool Worker terminated Unexpectedly/.test(res)) {
-              promise = msg.channel.send(`Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)`);
+              promise = common.regCmdResp(o, `Error: Workerpool Worker Terminated Unexpectedly (possibly an out of memory error)`);
             } else {
-              promise = msg.channel.send(res);
+              promise = common.regCmdResp(o, res);
             }
           } finally {
             calccontext--;
@@ -385,7 +385,7 @@ module.exports = [
             shared_calc_scope_new = (props.saved.users.default ? props.saved.users.default.calc_scope : '{}') != shared_calc_scope_new ? shared_calc_scope_new : null;
             if (calc_scope_new && calc_scope_new.length > 2 ** 20) throw new Error('Calc scope size too large');
             if (shared_calc_scope_new && shared_calc_scope_new.length > 2 ** 20) throw new Error('Shared calc scope size too large');
-            promise = msg.channel.send(res);
+            promise = common.regCmdResp(o, res);
             if (calc_scope_new) user.calc_scope = calc_scope_new;
             if (shared_calc_scope_new && props.saved.users.default) props.saved.users.default.calc_scope = shared_calc_scope_new;
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
@@ -393,9 +393,9 @@ module.exports = [
             res = e.toString();
             console.error(res);
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
-              promise = msg.channel.send(`Error: expression timeout after ${res.slice(40, Infinity)}`);
+              promise = common.regCmdResp(o, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else {
-              promise = msg.channel.send(res);
+              promise = common.regCmdResp(o, res);
             }
           } finally {
             global.calccontext = null;
@@ -541,7 +541,7 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 3, name: 'string', description: 'the string parameter' } ],
     execute(o, msg, rawArgs) {
-      return msg.channel.send(JSON.stringify(o.argstring).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
+      return common.regCmdResp(o, JSON.stringify(o.argstring).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
     execute_slash(o, interaction, command, args) {
       return common.slashCmdResp(o, true, JSON.stringify(args[0] && args[0].value || '').replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
@@ -554,7 +554,7 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 3, name: 'arguments', description: 'all non slash command arguments in one string parameter' } ],
     execute(o, msg, rawArgs) {
-      return msg.channel.send(JSON.stringify({ rawArgs, args: o.args, kwargs: o.kwargs }).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
+      return common.regCmdResp(o, JSON.stringify({ rawArgs, args: o.args, kwargs: o.kwargs }).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
     execute_slash(o, interaction, command, args) {
       return common.slashCmdResp(o, true, JSON.stringify(common.parseArgs(args[0] && args[0].value || '')).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
@@ -566,7 +566,7 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 3, name: 'goe', description: 'mama' } ],
     execute(o, msg, rawArgs) {
-      return msg.channel.send(rawArgs[0] ? 'val: ' + rawArgs[0] : 'no val',);
+      return common.regCmdResp(o, rawArgs[0] ? 'val: ' + rawArgs[0] : 'no val',);
     },
     execute_slash(o, interaction, command, args) {
       return common.slashCmdResp(o, false, args[0] ? 'val: ' + args[0].value : 'no val');

@@ -14,15 +14,15 @@ module.exports = [
       else if (rawArgs[0] == 'roles')
         doRoles = true;
       else
-        return msg.channel.send('Error: argument must be either members or roles.');
+        return common.regCmdResp(o, 'Error: argument must be either members or roles.');
 
       if (!doRoles && msg.guild.memberCount > 1000)
-        return msg.channel.send('Error: too many members in guild to ping all members.');
+        return common.regCmdResp(o, 'Error: too many members in guild to ping all members.');
       
       let promises = [];
       if (hidden) {
         promises.push(
-          msg.channel.send('@ everyone')
+          common.regCmdResp(o, '@ everyone')
             .then(x => x.edit({ content: '@everyone', allowedMentions: { parse: ['everyone'] } }))
         );
       }

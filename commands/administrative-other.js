@@ -62,9 +62,9 @@ module.exports = [
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || addlbotperms[msg.author.id] & 4)) return;
       let user = await common.searchUser(rawArgs.join(' '), { safeMode: false });
-      if (!user) return msg.channel.send(`Query invalid`);
+      if (!user) return common.regCmdResp(o, `Query invalid`);
       let dmchannel = await user.createDM();
-      return msg.channel.send(`DM channel for ${user.tag} is ${dmchannel.id}, use \`!sayy <#${dmchannel.id}> content\` to speak in channel`);
+      return common.regCmdResp(o, `DM channel for ${user.tag} is ${dmchannel.id}, use \`!sayy <#${dmchannel.id}> content\` to speak in channel`);
     },
   },
   {
@@ -73,7 +73,7 @@ module.exports = [
     execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || addlbotperms[msg.author.id] & 4)) return;
       let channels = Array.from(client.channels.cache.values()).filter(x => x.type == 'dm').map(x => `${x.id}: ${x.recipient.tag}`).join('\n');
-      return msg.channel.send(`DM channels:\n${channels}`);
+      return common.regCmdResp(o, `DM channels:\n${channels}`);
     },
   },
   {
@@ -85,9 +85,9 @@ module.exports = [
       if (!(user = msg.mentions.users.first())) return;
       if (!mutelist.includes(user.id)) {
         mutelist.push(user.id);
-        return msg.channel.send(`Globally muted ${user.tag}`);
+        return common.regCmdResp(o, `Globally muted ${user.tag}`);
       } else {
-        return msg.channel.send(`${user.tag} already globally muted`);
+        return common.regCmdResp(o, `${user.tag} already globally muted`);
       }
     },
   },
@@ -101,9 +101,9 @@ module.exports = [
       let ind;
       if ((ind = mutelist.indexOf(user.id)) != -1) {
         mutelist.splice(ind, 1);
-        return msg.channel.send(`Globally unmuted ${user.tag}`);
+        return common.regCmdResp(o, `Globally unmuted ${user.tag}`);
       } else {
-        return msg.channel.send(`${user.tag} not gobally muted`);
+        return common.regCmdResp(o, `${user.tag} not gobally muted`);
       }
     },
   },
@@ -124,7 +124,7 @@ module.exports = [
           let arr = developers.filter(x => x != id);
           developers.splice(0, Infinity);
           developers.push(...arr);
-          resolve(msg.channel.send(rawArgs.slice(2, Infinity).join(' ') || 'times up fool'));
+          resolve(common.regCmdResp(o, rawArgs.slice(2, Infinity).join(' ') || 'times up fool'));
         }, Number(rawArgs[1]) || 120000);
       });
     },
@@ -146,7 +146,7 @@ module.exports = [
         // make this cancel existing timeout if command is run again
         setTimeout(() => {
           delete addlbotperms[id];
-          resolve(msg.channel.send(rawArgs.slice(3, Infinity).join(' ') || 'times up fool'));
+          resolve(common.regCmdResp(o, rawArgs.slice(3, Infinity).join(' ') || 'times up fool'));
         }, Number(rawArgs[2]) || 120000);
       });
     },
@@ -168,10 +168,10 @@ module.exports = [
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
       let cmd = o.argstring, res;
       nonlogmsg(`evaluating from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(cmd)}`);
-      if (cmd == 'deez nuts' || cmd == 'goe mama') return msg.channel.send('no');
+      if (cmd == 'deez nuts' || cmd == 'goe mama') return common.regCmdResp(o, 'no');
       if (global.confirmeval && common.isConfirmDeveloper(msg)) {
         if (!(await confirmeval(`evaluating from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(cmd)}`))) {
-          return msg.channel.send('Eval command failed');
+          return common.regCmdResp(o, 'Eval command failed');
         }
       } else if (common.isConfirmDeveloper(msg) && !common.isDeveloper(msg)) return;
       try {
@@ -180,14 +180,14 @@ module.exports = [
         var richres = new Discord.MessageEmbed()
           .setTitle('Eval Result')
           .setDescription(util.inspect(res));
-        return msg.channel.send({ embeds: [richres] });
+        return common.regCmdResp(o, { embeds: [richres] });
       } catch (e) {
         console.log('error in eval');
         console.debug(e.stack);
         var richres = new Discord.MessageEmbed()
           .setTitle('Eval Error')
           .setDescription(e.stack);
-        return msg.channel.send({ embeds: [richres] });
+        return common.regCmdResp(o, { embeds: [richres] });
       }
     },
     async execute_slash(o, interaction, command, args) {
@@ -252,7 +252,7 @@ module.exports = [
       nonlogmsg(`shell exec from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(cmd)}`);
       if (global.confirmeval && common.isConfirmDeveloper(msg)) {
         if (!(await confirmeval(`shell exec from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(cmd)}`))) {
-          return msg.channel.send('Eval command failed');
+          return common.regCmdResp(o, 'Eval command failed');
         }
       } else if (common.isConfirmDeveloper(msg) && !common.isDeveloper(msg)) return;
       return new Promise((resolve, reject) => {
@@ -264,7 +264,7 @@ module.exports = [
             var richres = new Discord.MessageEmbed()
               .setTitle('Shell Command Error')
               .setDescription(err.stack);
-            msg.channel.send({ embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
+            common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
             return;
           }
           stdout = stdout.toString(); stderr = stderr.toString();
@@ -272,7 +272,7 @@ module.exports = [
           var richres = new Discord.MessageEmbed()
             .setTitle('Shell Command Result')
             .setDescription(`*stdout*:\n${util.inspect(stdout)}\n*stderr*:\n${util.inspect(stderr)}`);
-            msg.channel.send({ embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
+            common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
         });
         props.execCmdProcesses.push(proc);
       });
@@ -315,7 +315,7 @@ module.exports = [
     flags: 0b011100,
     execute(o, msg, rawArgs) {
       if (!common.isDeveloper(msg)) return;
-      msg.channel.send('Crashing myself RIP');
+      common.regCmdResp(o, 'Crashing myself RIP');
       throw new Error('ERORRORORORO');
     },
   },

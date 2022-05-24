@@ -6,20 +6,20 @@ module.exports = [
     flags: 0b110110,
     options: [ { type: 3, name: 'url', description: 'the URL of the YouTube video to play the audio of', required: true } ],
     async execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
-      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
+      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
-        return msg.channel.send('You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
+        return common.regCmdResp(o, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
       let latestObj = await common.clientVCManager.addSong(guilddata.voice, rawArgs[0], msg.author.id);
       let text = `[${latestObj.desc}](<${latestObj.url}>) (${common.msecToHMS(Number(latestObj.expectedLength))}) added to queue`;
-      await msg.channel.send(text);
+      await common.regCmdResp(o, text);
       return common.clientVCManager.startMainLoop(guilddata.voice, msg.channel);
     },
     async execute_slash(o, interaction, command, args) {
@@ -46,22 +46,22 @@ module.exports = [
     description_slash: 'pauses the currently playing song',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
-      if (!guilddata.voice.dispatcher) return msg.channel.send('Error: no song is playing');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      if (!guilddata.voice.dispatcher) return common.regCmdResp(o, 'Error: no song is playing');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
-        return msg.channel.send('Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
+        return common.regCmdResp(o, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.pause(guilddata.voice);
-      return msg.channel.send(`Paused`);
+      return common.regCmdResp(o, `Paused`);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -88,22 +88,22 @@ module.exports = [
     description_slash: 'resumes the currently paused song',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
-      if (!guilddata.voice.dispatcher) return msg.channel.send('Error: no song is playing');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      if (!guilddata.voice.dispatcher) return common.regCmdResp(o, 'Error: no song is playing');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
-        return msg.channel.send('Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
+        return common.regCmdResp(o, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.resume(guilddata.voice);
-      return msg.channel.send(`Resumed`);
+      return common.regCmdResp(o, `Resumed`);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -131,27 +131,27 @@ module.exports = [
     flags: 0b110110,
     options: [ { type: 3, name: 'volume', description: 'the volume' } ],
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       if (rawArgs.length == 0) {
-        return msg.channel.send(`Playback volume is currently set to ${common.clientVCManager.getVolume(guilddata.voice)}`);
+        return common.regCmdResp(o, `Playback volume is currently set to ${common.clientVCManager.getVolume(guilddata.voice)}`);
       } else {
         let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
         let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
         let vcmembers = Array.from(channel.members.keys());
         if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
-          return msg.channel.send('Only admins and mods can change my volume, or someone who is alone with me in a voice channel.');
+          return common.regCmdResp(o, 'Only admins and mods can change my volume, or someone who is alone with me in a voice channel.');
         let wantedvolume = Number(rawArgs[0]);
         if (isNaN(wantedvolume) || wantedvolume == Infinity || wantedvolume == -Infinity || wantedvolume < 0 || wantedvolume > 10)
-          return msg.channel.send('Volume out of bounds or not specified.');
+          return common.regCmdResp(o, 'Volume out of bounds or not specified.');
         common.clientVCManager.setVolume(guilddata.voice, wantedvolume);
-        return msg.channel.send(`Set playback volume to ${wantedvolume}`);
+        return common.regCmdResp(o, `Set playback volume to ${wantedvolume}`);
       }
     },
     execute_slash(o, interaction, command, args) {
@@ -185,21 +185,21 @@ module.exports = [
     description_slash: 'toggles whether the currently playing song will loop',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
-        return msg.channel.send('Only admins and mods can toggle loop, or someone who is alone with me in a voice channel.');
+        return common.regCmdResp(o, 'Only admins and mods can toggle loop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.toggleLoop(guilddata.voice);
-      return msg.channel.send(`Toggled loop to ${guilddata.voice.loop ? 'enabled' : 'disabled'}`);
+      return common.regCmdResp(o, `Toggled loop to ${guilddata.voice.loop ? 'enabled' : 'disabled'}`);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -225,21 +225,21 @@ module.exports = [
     description_slash: 'toggles whether the queue will loop (when a song finishes playing its added to the end of the queue)',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
-        return msg.channel.send('Only admins and mods can toggle queue loop, or someone who is alone with me in a voice channel.');
+        return common.regCmdResp(o, 'Only admins and mods can toggle queue loop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.toggleQueueLoop(guilddata.voice);
-      return msg.channel.send(`Toggled queue loop to ${guilddata.voice.loopqueue ? 'enabled' : 'disabled'}`);
+      return common.regCmdResp(o, `Toggled queue loop to ${guilddata.voice.loopqueue ? 'enabled' : 'disabled'}`);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -265,23 +265,23 @@ module.exports = [
     description_slash: 'toggles the vote to skip the currently playing song (if 50% or over votes, it will be skipped)',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
-      if (!guilddata.voice.dispatcher) return msg.channel.send('Error: no song is playing');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      if (!guilddata.voice.dispatcher) return common.regCmdResp(o, 'Error: no song is playing');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.VOTESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, vsperms = common.constants.botRolePermBits.VOTESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (vsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
-        return msg.channel.send('You lack permission to voteskip.');
+        return common.regCmdResp(o, 'You lack permission to voteskip.');
       switch (common.clientVCManager.voteSkip(guilddata.voice, msg.author.id)) {
-        case 1: return msg.channel.send(`Skipped`);
-        case 2: return msg.channel.send(`Voted`);
-        case 3: return msg.channel.send(`Unvoted`);
+        case 1: return common.regCmdResp(o, `Skipped`);
+        case 2: return common.regCmdResp(o, `Voted`);
+        case 3: return common.regCmdResp(o, `Unvoted`);
       }
     },
     execute_slash(o, interaction, command, args) {
@@ -311,21 +311,21 @@ module.exports = [
     description_slash: 'skips the currently playing song',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
-      if (!guilddata.voice.dispatcher) return msg.channel.send('Error: no song is playing');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      if (!guilddata.voice.dispatcher) return common.regCmdResp(o, 'Error: no song is playing');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
-        return msg.channel.send('Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
+        return common.regCmdResp(o, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
       common.clientVCManager.forceSkip(guilddata.voice);
-      return msg.channel.send(`Skipped`);
+      return common.regCmdResp(o, `Skipped`);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -351,22 +351,22 @@ module.exports = [
     description_slash: 'clears the song list and stops playing',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
       let channel = guilddata.voice.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
-      if (!guilddata.voice.dispatcher) return msg.channel.send('Error: no song is playing');
+      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      if (!guilddata.voice.dispatcher) return common.regCmdResp(o, 'Error: no song is playing');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       let vcmembers = Array.from(channel.members.keys());
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || vcmembers.length == 2 && vcmembers.includes(msg.author.id) && playperms)))
-        return msg.channel.send('Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
+        return common.regCmdResp(o, 'Only admins and mods can pause / resume / stop, or someone who is alone with me in a voice channel.');
       common.clientVCManager.stopMainLoop(guilddata.voice);
-      return msg.channel.send(`Stopped`);
+      return common.regCmdResp(o, `Stopped`);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -393,20 +393,20 @@ module.exports = [
     description_slash: 'lists the currently playing song and the next songs',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
-      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
+      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let songslist = guilddata.voice.songslist;
       let text = `Currently playing ${songslist.length ? `[${songslist[0].desc}](<${songslist[0].url}>)` + (songslist[0].userid ? ' (requested by ' + (msg.guild.members.cache.get(songslist[0].userid) ? msg.guild.members.cache.get(songslist[0].userid).user.tag : 'null') + ', id ' + songslist[0].userid + ')' : '') : 'No Song'}\n` +
         (guilddata.voice.dispatcher ? `Time: ${guilddata.voice.dispatcher && songslist.length ? common.formatPlaybackBar(guilddata.voice.dispatcher.streamTime / songslist[0].expectedLength) : '---'} (${guilddata.voice.dispatcher ? common.msecToHMS(guilddata.voice.dispatcher.streamTime) : '-:--.---'} / ${songslist.length ? common.msecToHMS(songslist[0].expectedLength) : '-:--.---'})\n` +
           (guilddata.voice.voteskip.length ? `Voteskippers: ${guilddata.voice.voteskip.map(x => `${client.users.cache.get(x)?.tag} (id ${x})`).join(', ')}\n` : '') : '') +
         `Queue${songslist.length > 1 ? ':\n' + songslist.slice(1).map((x, i) => (i + 1) + '. ' + x.desc + ' (' + common.msecToHMS(x.expectedLength) + (x.userid ? ', requested by ' + (msg.guild.members.cache.get(x.userid) ? msg.guild.members.cache.get(x.userid).user.tag : 'null') + ', id ' + x.userid : '') + ')').join('\n') : ' empty'}\n` +
         `Status: ${guilddata.voice.dispatcher ? (guilddata.voice.dispatcher.paused ? 'Paused' : 'Playing') : ['Stopped', 'Running', 'Pending Skip', 'Pending Stop'][guilddata.voice.mainloop]}, Volume: ${guilddata.voice.volume}, Loop: ${guilddata.voice.loop ? '✅' : '❌'}, Queue Loop: ${guilddata.voice.queueloop ? '✅' : '❌'}, Self Muted: ${guilddata.voice.connection.voice.selfMute ? '✅' : '❌'}, Self Deafened: ${guilddata.voice.connection.voice.selfDeaf ? '✅' : '❌'}`;
-      return msg.channel.send(text);
+      return common.regCmdResp(o, text);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
@@ -431,19 +431,19 @@ module.exports = [
     description_slash: 'prints the currently playing song',
     flags: 0b110110,
     execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return msg.channel.send('Music features are disabled');
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
       if (!guilddata) {
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
-      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return msg.channel.send('I\'m not in a voice channel');
+      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let songslist = guilddata.voice.songslist;
       let text = `Currently playing ${songslist.length ? `[${songslist[0].desc}](<${songslist[0].url}>)` + (songslist[0].userid ? ' (requested by ' + (msg.guild.members.cache.get(songslist[0].userid) ? msg.guild.members.cache.get(songslist[0].userid).user.tag : 'null') + ', id ' + songslist[0].userid + ')' : '') : 'No Song'}\n` +
         (guilddata.voice.dispatcher ? `Time: ${guilddata.voice.dispatcher && songslist.length ? common.formatPlaybackBar(guilddata.voice.dispatcher.streamTime / songslist[0].expectedLength) : '---'} (${guilddata.voice.dispatcher ? common.msecToHMS(guilddata.voice.dispatcher.streamTime) : '-:--.---'} / ${songslist.length ? common.msecToHMS(songslist[0].expectedLength) : '-:--.---'})\n` +
           (guilddata.voice.voteskip.length ? `Voteskippers: ${guilddata.voice.voteskip.map(x => `${client.users.cache.get(x)?.tag} (id ${x})`).join(', ')}\n` : '') : '') +
         `Status: ${guilddata.voice.dispatcher ? (guilddata.voice.dispatcher.paused ? 'Paused' : 'Playing') : ['Stopped', 'Running', 'Pending Skip', 'Pending Stop'][guilddata.voice.mainloop]}, Volume: ${guilddata.voice.volume}, Loop: ${guilddata.voice.loop ? '✅' : '❌'}, Queue Loop: ${guilddata.voice.queueloop ? '✅' : '❌'}, Self Muted: ${guilddata.voice.connection.voice.selfMute ? '✅' : '❌'}, Self Deafened: ${guilddata.voice.connection.voice.selfDeaf ? '✅' : '❌'}`;
-      return msg.channel.send(text);
+      return common.regCmdResp(o, text);
     },
     execute_slash(o, interaction, command, args) {
       if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');

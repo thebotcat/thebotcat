@@ -68,10 +68,15 @@ function onMsgOneArgSetHelper(o, val) {
 }
 
 function regCmdResp(o, message, mention) {
-  if (mention)
-    return o.channel.send({ content: message, allowedMentions: { parse: ['users', 'roles', 'everyone'] } });
-  else
+  if (mention) {
+    if (typeof message == 'string') {
+      return o.channel.send({ content: message, allowedMentions: { parse: ['users', 'roles', 'everyone'] } });
+    } else {
+      return o.channel.send({ ...message, allowedMentions: { parse: ['users', 'roles', 'everyone'] } });
+    }
+  } else {
     return o.channel.send(message);
+  }
 }
 
 function slashCmdResp(o, ephemeral, message, mention) {

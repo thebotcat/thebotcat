@@ -1,6 +1,6 @@
-voice and music commands need fixing
+check regular commands for slashCmdResp and vice versa
 
-finish migrating to o.regCmdResp
+voice and music commands need fixing
 
 fix anything that uses o.guild, o.channel, o.author, o.member in regular commands not working, basically look closely at differences between o in messageCreate and interactionCreate
   specifically, bug with settings badwords modify
@@ -9,6 +9,7 @@ use proper discord.js v13 api to create slash commands instead of making a raw a
 use discordjs types and slash command options framework instead of using integers for type
 
 get rid of unnecessary use of word successfully
+remove unnecessary template strings
 
 -- Release --
 
@@ -77,7 +78,7 @@ try to merge embed and non embed commands with some unified framework that does 
 fix grammar in content commands and make consistent
 validator for invalid gifs in content commands
 add comments to code
-add delete delay to regcmdresp, to emulate ephemeral message, also add reply true/false to it
+add delete delay to regCmdResp, to emulate ephemeral message, also add reply true/false to it
 handle values of null in information commands and other commands
 add vc merging command (requires 2 botcats if done in the same server), playing audio from one to the other and vice versa
 make website control panel
