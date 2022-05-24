@@ -1,5 +1,3 @@
-check regular commands for slashCmdResp and vice versa
-
 voice and music commands need fixing
 
 fix anything that uses o.guild, o.channel, o.author, o.member in regular commands not working, basically look closely at differences between o in messageCreate and interactionCreate
