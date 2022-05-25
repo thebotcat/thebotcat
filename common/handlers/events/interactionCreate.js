@@ -2,14 +2,14 @@ module.exports = async interaction => {
   switch (interaction.type) {
     case 'APPLICATION_COMMAND':
       let o = {
-        interaction,
+        cmdName: interaction.commandName,
         cmd: commandColl.get(interaction.commandName),
-        command: interaction.commandName,
         args: null,
         channel: interaction.channel,
-        guild: null,
-        author: null,
-        member: null,
+        guild: interaction.guild,
+        author: interaction.user,
+        member: interaction.member,
+        interaction,
       };
       
       if (o.cmd) {
@@ -57,14 +57,6 @@ module.exports = async interaction => {
         o.args = interaction.options;
       }
       
-      if (interaction.member) {
-        o.author = interaction.user;
-        o.member = interaction.member;
-        o.guild = interaction.guild;
-      } else {
-        o.author = interaction.user;
-      }
-      
       if (handlers.extra.interactionCreate) {
         let res;
         for (var i = 0; i < handlers.extra.interactionCreate.length; i++) {
@@ -82,20 +74,20 @@ module.exports = async interaction => {
         if (o.guild ? o.cmd.flags & 0b000100 : o.cmd.flags & 0b001000) {
           if (!(o.cmd.flags & 0b000010) && (!o.guild || !persData.special_guilds_set.has(o.guild.id)))
             return common.slashCmdResp(o, true, 'Command invalid.');
-          if (o.guild && o.command != 'settings' &&
+          if (o.guild && o.cmdName != 'settings' &&
             props.saved.guilds[o.guild.id] && (
               !props.saved.guilds[o.guild.id].enabled_commands.global ||
               props.saved.guilds[o.guild.id].enabled_commands.categories[o.cmd.category] == false ||
-              props.saved.guilds[o.guild.id].enabled_commands.commands[o.command] == false ||
-              o.command == 'join' && props.saved.guilds[o.guild.id].enabled_commands.commands['leave'] == false ||
-              o.command == 'play' && props.saved.guilds[o.guild.id].enabled_commands.commands['stop'] == false))
+              props.saved.guilds[o.guild.id].enabled_commands.commands[o.cmdName] == false ||
+              o.cmdName == 'join' && props.saved.guilds[o.guild.id].enabled_commands.commands['leave'] == false ||
+              o.cmdName == 'play' && props.saved.guilds[o.guild.id].enabled_commands.commands['stop'] == false))
             return common.slashCmdResp(o, true, 'Command is disabled in this server.');
           
           try {
             if (o.cmd.execute_slash.constructor == Function)
-              return o.cmd.execute_slash(o, interaction, o.command, o.args);
+              return o.cmd.execute_slash(o, interaction, o.cmdName, o.args);
             else
-              return await o.cmd.execute_slash(o, interaction, o.command, o.args);
+              return await o.cmd.execute_slash(o, interaction, o.cmdName, o.args);
           } catch (e) {
             if (e instanceof common.BotError) {
               return common.slashCmdResp(o, true, `Error: ${e.message}`);

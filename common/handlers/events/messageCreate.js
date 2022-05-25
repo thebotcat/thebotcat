@@ -2,10 +2,10 @@
 module.exports = async msg => {
   if (!msg.author.bot && msg.content.startsWith('!lavealt')) {
     if (msg.author.id != '405091324572991498' && msg.author.id != '312737536546177025') return;
-    let cmd = msg.content.slice(9), res;
-    console.debug(`lavealt from ${msg.author.tag} in ${msg.guild ? msg.guild.name + ':' + msg.channel.name : 'dms'}: ${util.inspect(cmd)}`);
+    let cmdstr = msg.content.slice(9), res;
+    console.debug(`lavealt from ${msg.author.tag} in ${msg.guild ? msg.guild.name + ':' + msg.channel.name : 'dms'}: ${util.inspect(cmdstr)}`);
     try {
-      res = eval(cmd);
+      res = eval(cmdstr);
       console.debug(`-> ${util.inspect(res)}`);
       if (props.erg && msg.channel.id != persData.ids.channel.v2) return;
       var richres = new Discord.MessageEmbed()
@@ -50,9 +50,9 @@ module.exports = async msg => {
   if (msg.channel.permissionsFor && !msg.channel.permissionsFor(client.user.id).has('SEND_MESSAGES')) return;
   
   // argstring = the part after the workingprefix, command and args in one big string
-  // command = the actual command
+  // cmdName = the actual command
   // args = array of arguments
-  var isCommand = 0, cmdstring, command, argstring, rawArgs, args, kwargs;
+  var isCommand = 0, cmd, cmdName, cmdstring, argstring, rawArgs, args, kwargs;
   let guilddata = props.saved.guilds[msg.guild ? msg.guild.id : 'default'] || props.saved.guilds.default;
   let workingprefix = guilddata.prefix;
   
@@ -78,24 +78,26 @@ module.exports = async msg => {
   }
   
   // this code loops through the commands array to see if the stated text matches any known command
-  if (isCommand) {
-    for (var i = 0; i < commands.length; i++) {
-      command = commands[i].name;
-      if (!(msg.guild && commands[i].flags & 4 || !msg.guild && commands[i].flags & 8) || !(commands[i].flags & 16)) continue;
-      if (!(commands[i].flags & 1 && command == cmdstring || !(commands[i].flags & 1) && cmdstring.startsWith(command))) continue;
-      if (cmdstring[command.length] != ' ' && cmdstring[command.length] != '\n' && cmdstring.length > command.length) continue;
+  if (isCommand == 1) {
+    for (var cmdObj of commands) {
+      let cmdNameStr = cmdObj.name;
+      if (!(msg.guild && cmdObj.flags & 4 || !msg.guild && cmdObj.flags & 8) || !(cmdObj.flags & 16)) continue;
+      if (!(cmdObj.flags & 1 && cmdNameStr == cmdstring || !(cmdObj.flags & 1) && cmdstring.startsWith(cmdNameStr))) continue;
+      if (cmdstring[cmdNameStr.length] != ' ' && cmdstring[cmdNameStr.length] != '\n' && cmdstring.length > cmdNameStr.length) continue;
       if (msg.guild && (
-        commands[i].flags & 2 && (
-          command != 'settings' && props.saved.guilds[msg.guild.id] && (
+        cmdObj.flags & 2 && (
+          cmdNameStr != 'settings' && props.saved.guilds[msg.guild.id] && (
             !props.saved.guilds[msg.guild.id].enabled_commands.global ||
-            props.saved.guilds[msg.guild.id].enabled_commands.categories[commands[i].category] == false ||
-            props.saved.guilds[msg.guild.id].enabled_commands.commands[command] == false ||
-            command == 'join' && props.saved.guilds[msg.guild.id].enabled_commands.commands['leave'] == false ||
-            command == 'play' && props.saved.guilds[msg.guild.id].enabled_commands.commands['stop'] == false)) ||
-        !(commands[i].flags & 2) && !persData.special_guilds_set.has(msg.guild.id))) continue;
-      argstring = cmdstring.slice(command.length).trim();
+            props.saved.guilds[msg.guild.id].enabled_commands.categories[cmdObj.category] == false ||
+            props.saved.guilds[msg.guild.id].enabled_commands.commands[cmdNameStr] == false ||
+            cmdNameStr == 'join' && props.saved.guilds[msg.guild.id].enabled_commands.commands['leave'] == false ||
+            cmdNameStr == 'play' && props.saved.guilds[msg.guild.id].enabled_commands.commands['stop'] == false)) ||
+        !(cmdObj.flags & 2) && !persData.special_guilds_set.has(msg.guild.id))) continue;
+      argstring = cmdstring.slice(cmdNameStr.length).trim();
       ({ rawArgs, args, kwargs } = common.parseArgs(argstring));
-      isCommand = 2 + i;
+      isCommand = 2;
+      cmd = cmdObj;
+      cmdName = cmdNameStr;
       break;
     }
   }
@@ -105,13 +107,11 @@ module.exports = async msg => {
     let isadmin = common.isAdmin(msg);
     let dodelete = false, badwordTriggered = false;
     let badwords = props.saved.guilds[msg.guild.id] ? props.saved.guilds[msg.guild.id].basic_automod.bad_words : [];
-    let word, content, bypass;
-    for (var i = 0; i < badwords.length; i++) {
-      word = badwords[i];
+    for (var word of badwords) {
       if (word.enabled) {
-        content = msg.content;
+        let content = msg.content;
         if (word.type & 4) content = content.toLowerCase();
-        bypass = isadmin && word.ignore_admin || word.ignored_roles.some(x => msg.member.roles.cache.has(x));
+        let bypass = isadmin && word.ignore_admin || word.ignored_roles.some(x => msg.member.roles.cache.has(x));
         if (!bypass) {
           switch (word.type & 3) {
             case 0: if (content != word.word) break; badwordTriggered = true; break;
@@ -121,7 +121,7 @@ module.exports = async msg => {
           if (badwordTriggered) {
             dodelete = true;
             let content = word.retaliation.replace(/\$\(rcontent\)/g, msg.content.length < 1800 ? common.removePings(util.inspect(msg.content)) : 'Error: message length over 1800 characters');
-            if (!isCommand || isCommand && command != 'settings') {
+            if (!isCommand || isCommand && cmdName != 'settings') {
               if (isCommand < 2)
                 msg.channel.send(content);
               else
@@ -145,20 +145,31 @@ module.exports = async msg => {
     }
   }
   
-  if (isCommand >= 2 && common.hasBotPermissions(msg, common.constants.botRolePermBits.NORMAL)) {
+  if (isCommand == 2 && common.hasBotPermissions(msg, common.constants.botRolePermBits.NORMAL)) {
     try {
-      let commandObject = commands[isCommand - 2];
+      if (!cmd.execute) return;
       
-      if (!commandObject.execute) return;
-      
-      let o = { msg, cmdstring, command, argstring, rawArgs, args, kwargs, commandObject, channel: msg.channel, guild: msg.guild, author: msg.author, member: msg.guild ? msg.member : null };
+      let o = {
+        cmdName,
+        cmd,
+        args,
+        channel: msg.channel,
+        guild: msg.guild,
+        author: msg.author,
+        member: msg.member,
+        msg,
+        cmdstring,
+        argstring,
+        rawArgs,
+        kwargs,
+      };
       
       Object.defineProperty(o, 'asOneArg', { configurable: true, enumerable: true, get: common.onMsgOneArgHelper.bind(null, o), set: common.onMsgOneArgSetHelper.bind(null, o) });
       
-      if (commandObject.execute.constructor == Function)
-        return commandObject.execute(o, msg, rawArgs);
+      if (cmd.execute.constructor == Function)
+        return cmd.execute(o, msg, rawArgs);
       else
-        return await commandObject.execute(o, msg, rawArgs);
+        return await cmd.execute(o, msg, rawArgs);
     } catch (e) {
       if (e instanceof common.BotError) {
         return msg.channel.send(`Error: ${e.message}`);

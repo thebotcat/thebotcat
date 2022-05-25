@@ -61,7 +61,7 @@ try {
 }
 
 function contentCommand(o, msg, rawArgs) {
-  let obj = commands[o.commandObject.name];
+  let obj = commands[o.cmdName];
   switch (obj.type) {
     case 'text': return common.regCmdResp(o, obj.content);
     case 'text_reply': return msg.reply(obj.content);

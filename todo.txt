@@ -1,8 +1,5 @@
 voice and music commands need fixing
 
-fix anything that uses o.guild, o.channel, o.author, o.member in regular commands not working, basically look closely at differences between o in messageCreate and interactionCreate
-  specifically, bug with settings badwords modify
-
 use proper discord.js v13 api to create slash commands instead of making a raw api call
 use discordjs types and slash command options framework instead of using integers for type
 
@@ -10,6 +7,8 @@ use discordjs types and slash command options framework instead of using integer
 
 botcat confirmkb doesnt work on slash commands
 use objects for regCmdResp and slashCmdResp
+disabling vc commands should cause insta disconnect, disabling music commands should cause insta stop
+help slash command in dms shows invalid commands
 
 aliases for commands and rename base music commands to something more obvious
 auto join vc on play command
@@ -76,5 +75,8 @@ add comments to code
 add delete delay to regCmdResp, to emulate ephemeral message, also add reply true/false to it
 handle values of null in information commands and other commands
 add vc merging command (requires 2 botcats if done in the same server), playing audio from one to the other and vice versa
+split help command into `help commands` and `help topics`
+  add a topic `prefixes` saying the 3 prefixes that thebotcat has
+  help command intelligent searching
 make website control panel
 add sharding and live updating
