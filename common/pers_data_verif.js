@@ -24,9 +24,9 @@ module.exports = {
         return newObj;
       })() : {},
       ids: typeof obj.ids == 'object' ? {
-        guilds: typeof obj.ids.guilds == 'object' ? (() => {
+        guild: typeof obj.ids.guild == 'object' ? (() => {
           let newObj = {};
-          Object.keys(obj.ids.guilds).forEach(x => common.isId(obj.ids.guilds[x]) ? newObj[x] = obj.ids.guilds[x] : null);
+          Object.keys(obj.ids.guild).forEach(x => common.isId(obj.ids.guild[x]) ? newObj[x] = obj.ids.guild[x] : null);
           return newObj;
         })() : {},
         channel: typeof obj.ids.channel == 'object' ? (() => {
@@ -44,7 +44,7 @@ module.exports = {
           Object.keys(obj.ids.misc).forEach(x => common.isId(obj.ids.misc[x]) ? newObj[x] = obj.ids.misc[x] : null);
           return newObj;
         })() : {},
-      } : { guilds: {}, channel: {}, user: {}, misc: {} }
+      } : { guild: {}, channel: {}, user: {}, misc: {} }
     };
     obj.special_guilds_set = new Set(obj.special_guilds);
     return obj;

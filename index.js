@@ -519,7 +519,7 @@ async function fullUpdateSlashCommands() {
         loggedOneGuildBegin = 3;
       } else nonlogmsg(v);
     };
-    await updateNonPubSlashCommands(() => client.api.applications(client.user.id).guilds(guildid).commands, logfunc, guildid == persData.ids.guilds.v2 ? props.data_code[2] : null);
+    await updateNonPubSlashCommands(() => client.api.applications(client.user.id).guilds(guildid).commands, logfunc, guildid == persData.ids.guild.v2 ? props.data_code[2] : null);
     if (loggedOneGuildBegin) nonlogmsg('Done updating slash commands for guild');
     else {
       if (loggedGlobalBegin < 2) loggedGuildsUpdated.push(client.guilds.cache.get(guildid).name);
