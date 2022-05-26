@@ -24,9 +24,9 @@ module.exports = {
         return newObj;
       })() : {},
       ids: typeof obj.ids == 'object' ? {
-        guild: typeof obj.ids.guild == 'object' ? (() => {
+        guilds: typeof obj.ids.guilds == 'object' ? (() => {
           let newObj = {};
-          Object.keys(obj.ids.guild).forEach(x => common.isId(obj.ids.guild[x]) ? newObj[x] = obj.ids.guild[x] : null);
+          Object.keys(obj.ids.guilds).forEach(x => common.isId(obj.ids.guilds[x]) ? newObj[x] = obj.ids.guilds[x] : null);
           return newObj;
         })() : {},
         channel: typeof obj.ids.channel == 'object' ? (() => {

@@ -78,5 +78,6 @@ add vc merging command (requires 2 botcats if done in the same server), playing 
 split help command into `help commands` and `help topics`
   add a topic `prefixes` saying the 3 prefixes that thebotcat has
   help command intelligent searching
+add command to queue up a insta server mute, unmute, deafen, or undeafen as soon as a user joins the vc (use case is if user left vc before they could be unmuted)
 make website control panel
 add sharding and live updating

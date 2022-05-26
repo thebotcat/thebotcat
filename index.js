@@ -44,10 +44,13 @@ var ytdl;
 try { ytdl = require('ytdl-core-discord'); } catch (e) { ytdl = null; }
 var math = require('./math.min.js');
 
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, math });
+
 // botcat module requires
+global.props = { data_code: require('./common/data_code') };
 var common = require('./common/index');
 
-Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, math, common });
+Object.assign(global, { common });
 
 // configure math.js library
 math.config({ number: 'BigNumber' });
@@ -191,6 +194,7 @@ var props = {
   botStatusMsg: null,
   botStatusMsgResolve: null,
   execCmdProcesses: [],
+  data_code: global.props.data_code,
 };
 
 // prefix variable
@@ -432,22 +436,23 @@ async function deleteSlashCommands(endpoint) {
   nonlogmsg('Done deleting slash commands');
 }
 
-async function updateNonPubSlashCommands(endpoint, logfunc) {
+async function updateNonPubSlashCommands(endpoint, logfunc, extra) {
+  if (!extra) extra = { arr: [], coll: new Discord.Collection() };
   var currCmds = await endpoint().get();
   var currCmdsObj = {};
   currCmds.forEach(x => currCmdsObj[x.name] = x);
   
-  var commandsToDelete = currCmds.map(x => x.name).filter(x => commandColl.has(x) && (commandColl.get(x).flags & 0b100010) != 0b100000);
+  var commandsToDelete = currCmds.map(x => x.name).filter(x => (!commandColl.has(x) || (commandColl.get(x).flags & 0b100010) != 0b100000) && !extra.coll.has(x));
   var commandsToUpdate = currCmds.map(x => x.name).filter(x => {
-    if (!commandColl.has(x) || (commandColl.get(x).flags & 0b100010) != 0b100000) return false;
-    let obj = commandColl.get(x);
+    if ((!commandColl.has(x) || (commandColl.get(x).flags & 0b100010) != 0b100000) && !extra.coll.has(x)) return false;
+    let obj = commandColl.get(x) ?? extra.coll.get(x);
     obj = {
       description: obj.description_slash || obj.description,
       options: obj.options,
     };
     return slashCommandsInequal(currCmdsObj[x], obj);
   });
-  var commandsToAdd = commands.map(x => x.name).filter(x => !(x in currCmdsObj) && (commandColl.get(x).flags & 0b100010) == 0b100000);
+  var commandsToAdd = [ ...commands.map(x => x.name).filter(x => !(x in currCmdsObj) && (commandColl.get(x).flags & 0b100010) == 0b100000), ...extra.arr.map(x => x.name).filter(x => !(x in currCmdsObj) && (extra.coll.get(x).flags & 0b100010) == 0b100000) ];
   
   var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
   
@@ -459,7 +464,7 @@ async function updateNonPubSlashCommands(endpoint, logfunc) {
   
   for (var i = 0; i < commandsToUpsert.length; i++) {
     logfunc(`Upserting ${commandsToUpsert[i]}`);
-    let obj = commandColl.get(commandsToUpsert[i]);
+    let obj = commandColl.get(commandsToUpsert[i]) ?? extra.coll.get(commandsToUpsert[i]);
     obj = {
       name: obj.name,
       description: obj.description_slash || obj.description,
@@ -498,7 +503,7 @@ async function fullUpdateSlashCommands() {
   if (loggedGlobalBegin) nonlogmsg('Done updating global slash commands');
   
   let loggedGuildsUpdated = [];
-
+  
   for (var i = 0; i < persData.special_guilds.length; i++) {
     let guildid = persData.special_guilds[i];
     if (!client.guilds.cache.has(guildid)) continue;
@@ -514,7 +519,7 @@ async function fullUpdateSlashCommands() {
         loggedOneGuildBegin = 3;
       } else nonlogmsg(v);
     };
-    await updateNonPubSlashCommands(() => client.api.applications(client.user.id).guilds(guildid).commands, logfunc);
+    await updateNonPubSlashCommands(() => client.api.applications(client.user.id).guilds(guildid).commands, logfunc, guildid == persData.ids.guilds.v2 ? props.data_code[2] : null);
     if (loggedOneGuildBegin) nonlogmsg('Done updating slash commands for guild');
     else {
       if (loggedGlobalBegin < 2) loggedGuildsUpdated.push(client.guilds.cache.get(guildid).name);
@@ -739,7 +744,7 @@ process.on('exit', exitHandler);
 process.on('SIGINT', exitHandler);
 
 // defining vars as global
-Object.assign(global, { https, fs, util, v8, vm, cp, stream, Discord, ytdl, math, developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, slashCommandsInequal, updateSlashCommands, deleteSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
+Object.assign(global, { developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, slashCommandsInequal, updateSlashCommands, deleteSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
 
 Object.defineProperties(global, {
   exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },
