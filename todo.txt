@@ -1,4 +1,6 @@
-voice and music commands need fixing
+music fixing (finish checking voice)
+clientvcmanager play can handle audio file location
+when audio dispatcher errors, wait 0.1s, 0.2s, 0.5s, 1s, 2s, 5s, 10s, 20s, 30s, 60s before next attempt, then every 60s after
 
 use proper discord.js v13 api to create slash commands instead of making a raw api call
 use discordjs types and slash command options framework instead of using integers for type
@@ -81,3 +83,4 @@ split help command into `help commands` and `help topics`
 add command to queue up a insta server mute, unmute, deafen, or undeafen as soon as a user joins the vc (use case is if user left vc before they could be unmuted)
 make website control panel
 add sharding and live updating
+use es6 modules

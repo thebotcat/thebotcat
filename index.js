@@ -658,7 +658,7 @@ client.on('disconnect', () => {
 var ticks = 0, tickStatUpdInt = 30;
 var tickFuncs = [];
 function tickFunc() {
-  updateStatus();
+  if (ready3time) updateStatus();
   
   props.pCPUUsage = props.cCPUUsage;
   props.pCPUUsageDate = props.cCPUUsageDate;

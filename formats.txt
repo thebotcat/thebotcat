@@ -191,6 +191,7 @@ format for props.saved:
         [EPHEMERAL] voice : object {
           channel : null / VoiceChannel,
           connection : null / VoiceConnection,
+          player : null / AudioPlayer,
           dispatcher : null / StreamDispatcher,
           mainloop : int 0 (not playing) / 1 (playing) / 2 (skip request) / 3 (terminate song mainloop),
           songslist : array [

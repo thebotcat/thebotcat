@@ -1,3 +1,5 @@
+var GatewayOpcodes = require('discord-api-types/v10').GatewayOpcodes;
+
 // object with utility functions to manage the joining of vcs and playing of songs
 var clientVCManager = {
   // returns the inital state of a guild's voice state object
@@ -5,6 +7,7 @@ var clientVCManager = {
     return {
       channel: null,
       connection: null,
+      player: null,
       dispatcher: null,
       mainloop: 0,
       songslist: [],
@@ -20,20 +23,29 @@ var clientVCManager = {
     if (voice.channel) clientVCManager.leave(voice);
     voice.channel = channel;
     try {
-      voice.connection = await channel.join();
+      voice.connection = DiscordVoice.joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator,
+        selfMute: false,
+        selfDeaf: false,
+      });
     } catch (e) {
       voice.channel = null;
       throw e;
     }
+    voice.player = DiscordVoice.createAudioPlayer();
+    voice.connection.subscribe(voice.player);
     voice.volume = 1;
     voice.loop = false;
     voice.queueloop = false;
   },
   
   leave: function leave(voice) {
-    try { if (voice.connection) voice.connection.disconnect(); } catch (e) {}
+    try { if (voice.connection) voice.connection.destroy(); } catch (e) {}
     voice.channel = null;
     voice.connection = null;
+    voice.player = null;
     voice.dispatcher = null;
     voice.mainloop = 0;
     voice.songslist.length = 0;
@@ -44,11 +56,27 @@ var clientVCManager = {
   },
   
   toggleSelfMute: function toggleSelfMute(voice) {
-    voice.connection.voice.setSelfMute(!voice.connection.voice.selfMute);
+    props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
+      op: GatewayOpcodes.VoiceStateUpdate,
+      d: {
+        guild_id: voice.channel.guildId,
+        channel_id: voice.channel.id,
+        self_mute: !voice.channel.guild.me.voice.selfMute,
+        self_deaf: voice.channel.guild.me.voice.selfDeaf,
+      },
+    });
   },
   
   toggleSelfDeaf: function toggleSelfDeaf(voice) {
-    voice.connection.voice.setSelfDeaf(!voice.connection.voice.selfDeaf);
+    props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
+      op: GatewayOpcodes.VoiceStateUpdate,
+      d: {
+        guild_id: voice.channel.guildId,
+        channel_id: voice.channel.id,
+        self_mute: voice.channel.guild.me.voice.selfMute,
+        self_deaf: !voice.channel.guild.me.voice.selfDeaf,
+      },
+    });
   },
   
   getVolume: function getVolume(voice) {
