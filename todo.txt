@@ -1,4 +1,12 @@
 music fixing (finish checking voice)
+
+alternative for streamTime, its playbackDuration on audioResource
+move all vc and music getters to clientVCManager and implement api iterface there
+
+make music mainloop not await 15ms
+
+look through v13 changes
+
 clientvcmanager play can handle audio file location
 when audio dispatcher errors, wait 0.1s, 0.2s, 0.5s, 1s, 2s, 5s, 10s, 20s, 30s, 60s before next attempt, then every 60s after
 
@@ -81,6 +89,8 @@ split help command into `help commands` and `help topics`
   add a topic `prefixes` saying the 3 prefixes that thebotcat has
   help command intelligent searching
 add command to queue up a insta server mute, unmute, deafen, or undeafen as soon as a user joins the vc (use case is if user left vc before they could be unmuted)
+make it so only emojis or gifs can be sent in certain channels
+add docs to thebotcat so commands can be seen without having to add and use the bot
 make website control panel
 add sharding and live updating
 use es6 modules

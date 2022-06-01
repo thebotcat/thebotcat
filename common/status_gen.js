@@ -37,39 +37,23 @@ function getBotcatStatusMessage(embeds) {
 
 function getBotcatFullStatusMessage(embeds, statusMsg) {
   if (embeds != false) {
-    if (statusMsg)
-      return {
-        embeds: [{
-          title: 'Thebotcat Status',
-          fields: [
-            { name: 'Node Version', value: process.version, inline: true },
-            { name: 'Bot Version', value: version, inline: true },
-            { name: 'Uptime', value: `${common.msecToHMSs(client.uptime)} (${ticks} ticks)`, inline: false },
-            { name: 'CPU User', value: props.CPUUsage ? (props.CPUUsage.user * 100).toFixed(3) + '%' : 'N/A', inline: true },
-            { name: 'CPU System', value: props.CPUUsage ? (props.CPUUsage.system * 100).toFixed(3) + '%' : 'N/A', inline: true },
-            { name: 'CPU Total', value: props.CPUUsage ? ((props.CPUUsage.user + props.CPUUsage.system) * 100).toFixed(3) + '%' : 'N/A', inline: true },
-            { name: 'Memory', value: props.memoryUsage ? (props.memoryUsage.rss / 2 ** 20).toFixed(3) + 'M' : 'N/A', inline: false },
-            { name: 'Last Tick', value: props.cCPUUsageDate ? common.fancyDateString(props.cCPUUsageDate) : 'N/A', inline: false },
-          ],
-        }],
-      };
-    else
-      return {
-        embeds: [{
-          title: 'Thebotcat Status',
-          fields: [
-            { name: 'Node Version', value: process.version, inline: true },
-            { name: 'Bot Version', value: version, inline: true },
-            { name: 'Uptime', value: `${common.msecToHMSs(client.uptime)} (${ticks} ticks)`, inline: false },
-            { name: 'CPU User', value: props.CPUUsage ? (props.CPUUsage.user * 100).toFixed(3) + '%' : 'N/A', inline: true },
-            { name: 'CPU System', value: props.CPUUsage ? (props.CPUUsage.system * 100).toFixed(3) + '%' : 'N/A', inline: true },
-            { name: 'CPU Total', value: props.CPUUsage ? ((props.CPUUsage.user + props.CPUUsage.system) * 100).toFixed(3) + '%' : 'N/A', inline: true },
-            { name: 'Memory', value: props.memoryUsage ? (props.memoryUsage.rss / 2 ** 20).toFixed(3) + 'M' : 'N/A', inline: false },
-            { name: 'Last Tick', value: props.cCPUUsageDate ? common.fancyDateString(props.cCPUUsageDate) : 'N/A', inline: false },
-            { name: 'Current Time', value: common.fancyDateString(new Date()), inline: false },
-          ],
-        }],
-      };
+    return {
+      embeds: [{
+        title: 'Thebotcat Status',
+        fields: [
+          { name: 'Node Ver', value: process.version, inline: true },
+          { name: 'D.JS Ver', value: Discord.version, inline: true },
+          { name: 'Bot Ver', value: version, inline: true },
+          { name: 'Uptime', value: `${common.msecToHMSs(client.uptime)} (${ticks} ticks)`, inline: false },
+          { name: 'CPU User', value: props.CPUUsage ? (props.CPUUsage.user * 100).toFixed(3) + '%' : 'N/A', inline: true },
+          { name: 'CPU System', value: props.CPUUsage ? (props.CPUUsage.system * 100).toFixed(3) + '%' : 'N/A', inline: true },
+          { name: 'CPU Total', value: props.CPUUsage ? ((props.CPUUsage.user + props.CPUUsage.system) * 100).toFixed(3) + '%' : 'N/A', inline: true },
+          { name: 'Memory', value: props.memoryUsage ? (props.memoryUsage.rss / 2 ** 20).toFixed(3) + 'M' : 'N/A', inline: false },
+          { name: 'Last Tick', value: props.cCPUUsageDate ? common.fancyDateString(props.cCPUUsageDate) : 'N/A', inline: false },
+          ...(!statusMsg ? [ { name: 'Current Time', value: common.fancyDateString(new Date()), inline: false } ] : []),
+        ],
+      }],
+    };
   } else {
     return '**Thebotcat Status:**\n\n' +
       `Node Version: ${process.version}\n` +

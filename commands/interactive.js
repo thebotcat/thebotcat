@@ -541,10 +541,10 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 3, name: 'string', description: 'the string parameter' } ],
     execute(o, msg, rawArgs) {
-      return common.regCmdResp(o, JSON.stringify(o.argstring).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
+      return common.regCmdResp(o, 'echo: ' + JSON.stringify(o.argstring).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
     execute_slash(o, interaction, command, args) {
-      return common.slashCmdResp(o, true, JSON.stringify(args[0] && args[0].value || '').replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
+      return common.slashCmdResp(o, true, 'echo: ' + JSON.stringify(args[0] && args[0].value || '').replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
   },
   {

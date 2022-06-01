@@ -157,7 +157,7 @@ async function updateStatus() {
   let now = new Date();
   if (currentStatus != newStatus || !props.statusUpdatedAt || now.getTime() > props.statusUpdatedAt.getTime() + 24 * 60 * 60 * 1000) {
     try {
-      await client.user.setActivity(newStatus);
+      client.user.setActivity(newStatus);
       props.statusUpdatedAt = now;
     } catch (e) {
       console.error(e);
@@ -580,7 +580,7 @@ async function populateBotStatusMessage() {
     if (props.feat.version == 'normal') {
       props.botStatusMsg = await props.botStatusChannel.messages.fetch('762432760680808479');
     } else if (props.feat.version == 'canary') {
-      props.botStatusMsg = { edit: () => Promise.resolve(null) };
+      props.botStatusMsg = await props.botStatusChannel.messages.fetch('981658237533298738');
     }
   } catch (e) {
     console.error('Couldn\'t fetch bot status message');
