@@ -21,7 +21,6 @@ disabling vc commands should cause insta disconnect, disabling music commands sh
 help slash command in dms shows invalid commands
 
 aliases for commands and rename base music commands to something more obvious
-auto join vc on play command
 
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well

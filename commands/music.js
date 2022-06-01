@@ -1,10 +1,13 @@
 module.exports = [
   {
     name: 'play',
-    description: '`!play <url>` plays the audio of a YouTube URL, like every other music bot in existence',
+    description: '`!play <url> [#channel]` plays the audio of a YouTube URL, like every other music bot in existence, channel is channel to join',
     description_slash: 'plays the audio of a YouTube URL, like every other music bot in existence',
     flags: 0b110110,
-    options: [ { type: 3, name: 'url', description: 'the URL of the YouTube video to play the audio of', required: true } ],
+    options: [
+      { type: 3, name: 'url', description: 'the URL of the YouTube video to play the audio of', required: true },
+      { type: 7, name: 'channel', description: 'the voice channel' },
+    ],
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = props.saved.guilds[msg.guild.id];
@@ -12,7 +15,38 @@ module.exports = [
         props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
         schedulePropsSave();
       }
-      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
+
+      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) {
+        if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
+        let channel;
+        if (rawArgs[1] == null) {
+          if (!msg.member.voice.channelId) return common.regCmdResp(o, 'You are not in a voice channel.');
+          channel = msg.guild.channels.cache.get(msg.member.voice.channelId);
+        } else {
+          if (!/<#[0-9]+>/.test(rawArgs[1])) return common.regCmdResp(o, 'Invalid channel mention.');
+          channel = msg.guild.channels.cache.find(x => x.id == rawArgs[1].slice(2, -1));
+          if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'Cannot join channel outside of this guild.');
+        }
+        let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.LEAVE_VC | common.constants.botRolePermBits.REMOTE_CMDS);
+        let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, leaveperms = perms & common.constants.botRolePermBits.LEAVE_VC, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
+        if (!joinperms || guilddata.voice.channel && !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL'))
+          return common.regCmdResp(o, 'You do not have permission to get me to join the voice channel.');
+        if (msg.member.voice.channelId != channel.id && !remoteperms)
+          return common.regCmdResp(o, 'You do not have permission to get me to join channels remotely.');
+        if (channel.full && !leaveperms)
+          return common.regCmdResp(o, 'You do not have permission to get me to join full channels.');
+        if (guilddata.voice.channel && !(guilddata.voice.channel.members.size <= 1 && guilddata.voice.songslist.length == 0) && !leaveperms) {
+          return common.regCmdResp(o, 'You do not have permission to get me to leave other channels.');
+        }
+        try {
+          await common.clientVCManager.join(guilddata.voice, channel);
+          msg.channel.send(`Joined channel <#${channel.id}>`);
+        } catch (e) {
+          console.error(e);
+          return common.regCmdResp(o, `Error in joining channel <#${channel.id}>`);
+        }
+      }
+
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
@@ -29,7 +63,37 @@ module.exports = [
         props.saved.guilds[o.guild.id] = common.getEmptyGuildObject(o.guild.id);
         schedulePropsSave();
       }
-      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
+
+      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL')) {
+        if (!(props.saved.feat.audio & 1)) return common.slashCmdResp(o, false, 'Voice Channel features are disabled.');
+        let channel;
+        if (!args[1]) {
+          if (!o.member.voice.channelId) return common.slashCmdResp(o, false, 'You are not in a voice channel.');
+          channel = o.guild.channels.cache.get(o.member.voice.channelId);
+        } else {
+          channel = o.guild.channels.cache.find(x => x.id == args[1].value);
+          if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, false, 'Cannot join channel outside of this guild.');
+        }
+        let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.LEAVE_VC | common.constants.botRolePermBits.REMOTE_CMDS);
+        let joinperms = perms & common.constants.botRolePermBits.JOIN_VC, leaveperms = perms & common.constants.botRolePermBits.LEAVE_VC, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
+        if (!joinperms || guilddata.voice.channel && !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
+          return common.slashCmdResp(o, false, 'You do not have permission to get me to join the voice channel.');
+        if (o.member.voice.channelId != channel.id && !remoteperms)
+          return common.slashCmdResp(o, false, 'You do not have permission to get me to join channels remotely.');
+        if (channel.full && !leaveperms)
+          return common.slashCmdResp(o, false, 'You do not have permission to get me to join full channels.');
+        if (guilddata.voice.channel && !(guilddata.voice.channel.members.size <= 1 && guilddata.voice.songslist.length == 0) && !leaveperms) {
+          return common.slashCmdResp(o, false, 'You do not have permission to get me to leave other channels.');
+        }
+        try {
+          await common.clientVCManager.join(guilddata.voice, channel);
+          msg.channel.send(`Joined channel <#${channel.id}>`);
+        } catch (e) {
+          console.error(e);
+          return common.slashCmdResp(o, false, `Error in joining channel <#${channel.id}>`);
+        }
+      }
+
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
