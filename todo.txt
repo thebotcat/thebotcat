@@ -1,6 +1,6 @@
-continue music fixing (finish checking voice)
+make guilddata checker and creator into common function
 
-move all vc and music getters to clientVCManager and implement api iterface there
+continue music fixing (finish checking voice)
 
 make music mainloop not await 15ms
 
@@ -18,6 +18,7 @@ botcat confirmkb doesnt work on slash commands
 use objects for regCmdResp and slashCmdResp
 disabling vc commands should cause insta disconnect, disabling music commands should cause insta stop
 help slash command in dms shows invalid commands
+support adding whole playlists and other music providers
 
 aliases for commands and rename base music commands to something more obvious
 
@@ -43,6 +44,9 @@ timezone command (says the time in a certain timezone)
 clearduplicatemsgs command taking the number of past messages to scan through as argument, option to stop duplicate streak after another person's message or to continue (also add same option to purge command's remove duplicate mode)
 find out some use for elements in message like buttons and select elements, also some use for message and user right click interactions
   right click on a message to calculate its contents, if someone says "it needs 2*2 oranges and 7+8 apples" then print the results of each seperate expression
+  something similar to echo command that prints contents of previous message
+  "stochastic counter" that prints the number of characters, words, sentences, and letter frequencies or smth in a message (also regular and slash command version of this)
+  play music of a video link sent in chat
 add reason to lock and other audited actions
 add searching to unban command
 contentCommand and contentCommandNonSlash are duplicate functions

@@ -151,7 +151,7 @@ module.exports = [
         if (msg.member.voice.channelId != channel.id && !remoteperms)
           return common.regCmdResp(o, 'You do not have permission to get me to toggle my selfmute status remotely.');
         common.clientVCManager.toggleSelfMute(guilddata.voice);
-        return common.regCmdResp(o, `Set self mute to ${guilddata.voice.channel.guild.me.voice.selfMute ? 'enabled' : 'disabled'}`);
+        return common.regCmdResp(o, `Set self mute to ${common.clientVCManager.getSelfMute(guilddata.voice) ? 'enabled' : 'disabled'}`);
       } else {
         return common.regCmdResp(o, 'You do not have permission to get me to toggle my selfmute status.');
       }
@@ -171,7 +171,7 @@ module.exports = [
         if (o.member.voice.channelId != channel.id && !remoteperms)
           return common.slashCmdResp(o, false, 'You do not have permission to get me to toggle my selfmute status remotely.');
         common.clientVCManager.toggleSelfMute(guilddata.voice);
-        return common.slashCmdResp(o, false, `Set self mute to ${guilddata.voice.channel.guild.me.voice.selfMute ? 'enabled' : 'disabled'}`);
+        return common.slashCmdResp(o, false, `Set self mute to ${common.clientVCManager.getSelfMute(guilddata.voice) ? 'enabled' : 'disabled'}`);
       } else {
         return common.slashCmdResp(o, false, 'You do not have permission to get me to toggle my selfmute status.');
       }
@@ -197,7 +197,7 @@ module.exports = [
         if (msg.member.voice.channelId != channel.id && !remoteperms)
           return common.regCmdResp(o, 'You do not have permission to get me to toggle my selfdeafen status remotely.');
         common.clientVCManager.toggleSelfDeaf(guilddata.voice);
-        return common.regCmdResp(o, `Set self deaf to ${guilddata.voice.channel.guild.me.voice.selfDeaf ? 'enabled' : 'disabled'}`);
+        return common.regCmdResp(o, `Set self deaf to ${common.clientVCManager.getSelfDeaf(guilddata.voice) ? 'enabled' : 'disabled'}`);
       } else {
         return common.regCmdResp(o, 'You do not have permission to get me to toggle my selfdeafen status.');
       }
@@ -217,7 +217,7 @@ module.exports = [
         if (o.member.voice.channelId != channel.id && !remoteperms)
           return common.slashCmdResp(o, false, 'You do not have permission to get me to toggle my selfdeafen status remotely.');
         common.clientVCManager.toggleSelfDeaf(guilddata.voice);
-        return common.slashCmdResp(o, false, `Set self deaf to ${guilddata.voice.channel.guild.me.voice.selfDeaf ? 'enabled' : 'disabled'}`);
+        return common.slashCmdResp(o, false, `Set self deaf to ${common.clientVCManager.getSelfDeaf(guilddata.voice) ? 'enabled' : 'disabled'}`);
       } else {
         return common.slashCmdResp(o, false, 'You do not have permission to get me to toggle my selfdeafen status.');
       }

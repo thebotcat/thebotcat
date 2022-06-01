@@ -55,6 +55,14 @@ var clientVCManager = {
     voice.voteskip.length = 0;
   },
   
+  getSelfMute: function getSelfMute(voice) {
+    return voice.channel.guild.me.voice.selfMute;
+  },
+
+  getSelfDeaf: function getSelfDeaf(voice) {
+    return voice.channel.guild.me.voice.selfDeaf;
+  },
+
   toggleSelfMute: function toggleSelfMute(voice) {
     // there appears to be no way to set this using guild.me.voice or VoiceConnection, so a raw api call has to be used
     props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
@@ -185,6 +193,24 @@ var clientVCManager = {
     return new Promise(resolve => {
       voice.resource.on('destroy', resolve);
     });
+  },
+
+  getCurrentTrackTime: function getCurrentTrackTime(voice) {
+    return voice.resource.playbackDuration;
+  },
+
+  getFinishedTrackTime: function getFinishedTrackTime(voice) {
+    return voice.songslist[0].expectedLength;
+  },
+
+  getStatus: function getStatus(voice) {
+    switch (voice.player.state.status) {
+      case DiscordVoice.AudioPlayerStatus.Idle: return 'Idle';
+      case DiscordVoice.AudioPlayerStatus.Buffering: return 'Buffering';
+      case DiscordVoice.AudioPlayerStatus.Playing: return 'Playing';
+      case DiscordVoice.AudioPlayerStatus.Paused: return 'Paused';
+      default: return 'Null';
+    }
   },
 };
 
