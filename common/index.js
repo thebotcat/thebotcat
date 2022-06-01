@@ -80,17 +80,23 @@ function regCmdResp(o, message, mention) {
 }
 
 function slashCmdResp(o, ephemeral, message, mention) {
+  let replyObject;
   if (typeof message == 'object') {
-    return o.interaction.reply({
+    replyObject = {
       embeds: [message],
       ephemeral,
-    });
+    };
   } else {
-    return o.interaction.reply({
+    replyObject = {
       content: message,
       ...(mention ? { allowedMentions: { parse: ['users', 'roles', 'everyone'] } } : null),
       ephemeral,
-    });
+    };
+  }
+  if (o.alreadyReplied) {
+    return o.interaction.followUp(replyObject);
+  } else {
+    return o.interaction.reply(replyObject).then(x => (o.alreadyReplied = true, x));
   }
 }
 

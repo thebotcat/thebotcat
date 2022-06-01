@@ -8,7 +8,7 @@ var clientVCManager = {
       channel: null,
       connection: null,
       player: null,
-      dispatcher: null,
+      resource: null,
       mainloop: 0,
       songslist: [],
       volume: null,
@@ -46,7 +46,7 @@ var clientVCManager = {
     voice.channel = null;
     voice.connection = null;
     voice.player = null;
-    voice.dispatcher = null;
+    voice.resource = null;
     voice.mainloop = 0;
     voice.songslist.length = 0;
     voice.volume = null;
@@ -56,6 +56,7 @@ var clientVCManager = {
   },
   
   toggleSelfMute: function toggleSelfMute(voice) {
+    // there appears to be no way to set this using guild.me.voice or VoiceConnection, so a raw api call has to be used
     props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
       op: GatewayOpcodes.VoiceStateUpdate,
       d: {
@@ -68,6 +69,7 @@ var clientVCManager = {
   },
   
   toggleSelfDeaf: function toggleSelfDeaf(voice) {
+    // there appears to be no way to set this using guild.me.voice or VoiceConnection, so a raw api call has to be used
     props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
       op: GatewayOpcodes.VoiceStateUpdate,
       d: {
@@ -84,7 +86,7 @@ var clientVCManager = {
   },
   
   setVolume: function setVolume(voice, wantedvolume) {
-    if (voice.dispatcher) voice.dispatcher.setVolume(wantedvolume);
+    if (voice.resource) voice.resource.volume.setVolume(wantedvolume);
     voice.volume = wantedvolume;
   },
   
@@ -97,11 +99,11 @@ var clientVCManager = {
   },
   
   pause: function pause(voice) {
-    voice.dispatcher.pause();
+    voice.player.pause();
   },
   
   resume: function pause(voice) {
-    voice.dispatcher.resume();
+    voice.player.unpause();
   },
   
   addSong: async function addSong(voice, url, userid) {
@@ -127,7 +129,8 @@ var clientVCManager = {
     var voiceIndex = voice.voteskip.indexOf(userid);
     if (voiceIndex > -1) voice.voteskip.splice(voiceIndex, 1);
     else voice.voteskip.push(userid);
-    if (voice.mainloop && voice.voteskip.length / Array.from(voice.channel.members.values()).filter(x => !x.user.bot).length >= 0.5) {
+    let voiceMembers = new Set(Array.from(voice.channel.members.values()).filter(x => !x.user.bot).map(x => x.id));
+    if (voice.mainloop && voice.voteskip.filter(x => voiceMembers.has(x)).length / voiceMembers.size >= 0.5) {
       voice.mainloop = 2;
       return 1;
     } else return voiceIndex > -1 ? 3 : 2;
@@ -144,20 +147,21 @@ var clientVCManager = {
       while (voice.songslist.length > 0) {
         let latestObj = voice.songslist[0];
         let stream = latestObj.stream = await ytdl(latestObj.url);
-        voice.dispatcher = voice.connection.play(stream, { type: 'opus', volume: voice.volume });
-        while (voice.dispatcher && !voice.dispatcher.destroyed) {
+        voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
+        voice.player.play(voice.resource);
+        while (voice.resource && !voice.resource.ended) {
           await new Promise(r => setTimeout(r, 15));
-          if (voice.dispatcher && voice.dispatcher.streamTime > voice.songslist[0].expectedLength - 2 && voice.mainloop != 3) voice.mainloop = 2;
+          if (voice.resource && voice.resource.playbackDuration > voice.songslist[0].expectedLength - 2 && voice.mainloop != 3) voice.mainloop = 2;
           if (voice.mainloop == 2) {
-            voice.dispatcher.destroy();
+            voice.player.stop();
             voice.voteskip.length = 0;
           } else if (voice.mainloop == 3) {
-            voice.dispatcher.destroy();
+            voice.player.stop();
             voice.songslist.length = 0;
             voice.voteskip.length = 0;
           }
         }
-        if (voice.mainloop != 2 && voice.mainloop != 3 && voice.dispatcher && voice.dispatcher.streamTime < latestObj.expectedLength - 1700)
+        if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < latestObj.expectedLength - 1700)
           msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}`);
         if (voice.mainloop == 2 || voice.mainloop == 3) {
           voice.mainloop = 1;
@@ -166,7 +170,7 @@ var clientVCManager = {
           if (voice.queueloop) voice.songslist.push(voice.songslist.splice(0, 1)[0]);
           else voice.songslist.splice(0, 1);
         }
-        voice.dispatcher = null;
+        voice.resource = null;
         if (!voice.loop) voice.voteskip.length = 0;
       }
     } catch (e) {
@@ -179,7 +183,7 @@ var clientVCManager = {
     if (voice.mainloop == 0) return;
     voice.mainloop = 3;
     return new Promise(resolve => {
-      voice.dispatcher.on('destroy', resolve);
+      voice.resource.on('destroy', resolve);
     });
   },
 };

@@ -10,6 +10,7 @@ module.exports = async interaction => {
         author: interaction.user,
         member: interaction.member,
         interaction,
+        alreadyReplied: false,
       };
       
       if (o.cmd) {

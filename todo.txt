@@ -1,6 +1,5 @@
-music fixing (finish checking voice)
+continue music fixing (finish checking voice)
 
-alternative for streamTime, its playbackDuration on audioResource
 move all vc and music getters to clientVCManager and implement api iterface there
 
 make music mainloop not await 15ms
