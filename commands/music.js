@@ -198,8 +198,12 @@ module.exports = [
         let wantedvolume = Number(rawArgs[0]);
         if (isNaN(wantedvolume) || wantedvolume == Infinity || wantedvolume == -Infinity || wantedvolume < 0 || wantedvolume > 10)
           return common.regCmdResp(o, 'Volume out of bounds or not specified.');
-        common.clientVCManager.setVolume(guilddata.voice, wantedvolume);
-        return common.regCmdResp(o, `Set playback volume to ${wantedvolume}`);
+        try {
+          common.clientVCManager.setVolume(guilddata.voice, wantedvolume);
+          return common.regCmdResp(o, `Set playback volume to ${wantedvolume}`);
+        } catch (e) {
+          return common.regCmdResp(o, `Playback volume could not be set.`);
+        }
       }
     },
     execute_slash(o, interaction, command, args) {
@@ -222,8 +226,12 @@ module.exports = [
         let wantedvolume = Number(args[0].value);
         if (isNaN(wantedvolume) || wantedvolume == Infinity || wantedvolume == -Infinity || wantedvolume < 0 || wantedvolume > 10)
           return common.slashCmdResp(o, false, 'Volume out of bounds or not specified.');
-        common.clientVCManager.setVolume(guilddata.voice, wantedvolume);
-        return common.slashCmdResp(o, false, `Set playback volume to ${wantedvolume}`);
+        try {
+          common.clientVCManager.setVolume(guilddata.voice, wantedvolume);
+          return common.slashCmdResp(o, false, `Set playback volume to ${wantedvolume}`);
+        } catch (e) {
+          return common.slashCmdResp(o, false, `Playback volume could not be set.`);
+        }
       }
     },
   },

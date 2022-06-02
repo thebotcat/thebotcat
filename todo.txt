@@ -1,5 +1,3 @@
-continue music fixing (finish checking voice)
-
 make music mainloop not await 15ms
 
 look through v13 changes
@@ -13,6 +11,7 @@ use discordjs types and slash command options framework instead of using integer
 -- Release --
 
 make say and sayy not developer commands
+play with no args should resume
 remove unnecessary break statements and other unreachable code
 help slash command in dms shows invalid commands
 use objects for regCmdResp and slashCmdResp
@@ -22,7 +21,9 @@ botcat confirmkb doesnt work on slash commands
 
 investigate all automatic saved guilddata creators, only add data to saved guilddata if it differs from the default
 aliases for commands and rename base music commands to something more obvious
+use ytdl.validateURL
 support adding whole playlists and other music providers
+get ytdl stream of next song ready when current song is 5s away from finishing
 
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well

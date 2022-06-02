@@ -154,19 +154,25 @@ var clientVCManager = {
     try {
       while (voice.songslist.length > 0) {
         let latestObj = voice.songslist[0];
-        let stream = latestObj.stream = await ytdl(latestObj.url);
+        let stream = latestObj.stream = await ytdl(latestObj.url, { filter: 'audioonly' });
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
         voice.player.play(voice.resource);
-        while (voice.resource && !voice.resource.ended) {
+        while (voice.resource && !voice.resource.ended && voice.player.state.status != DiscordVoice.AudioPlayerStatus.Idle) {
           await new Promise(r => setTimeout(r, 15));
-          if (voice.resource && voice.resource.playbackDuration > voice.songslist[0].expectedLength - 2 && voice.mainloop != 3) voice.mainloop = 2;
-          if (voice.mainloop == 2) {
-            voice.player.stop();
-            voice.voteskip.length = 0;
-          } else if (voice.mainloop == 3) {
-            voice.player.stop();
-            voice.songslist.length = 0;
-            voice.voteskip.length = 0;
+          if (voice.songslist.length) {
+            if (voice.resource && voice.resource.playbackDuration > voice.songslist[0].expectedLength - 2 && voice.mainloop != 3) voice.mainloop = 2;
+            if (voice.mainloop == 2) {
+              voice.player.unpause();
+              voice.player.stop();
+              voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
+              voice.voteskip.length = 0;
+            } else if (voice.mainloop == 3) {
+              voice.player.unpause();
+              voice.player.stop();
+              voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
+              voice.songslist.length = 0;
+              voice.voteskip.length = 0;
+            }
           }
         }
         if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < latestObj.expectedLength - 1700)
@@ -191,7 +197,7 @@ var clientVCManager = {
     if (voice.mainloop == 0) return;
     voice.mainloop = 3;
     return new Promise(resolve => {
-      voice.resource.on('destroy', resolve);
+      voice.player.on(DiscordVoice.AudioPlayerStatus.Idle, resolve);
     });
   },
 

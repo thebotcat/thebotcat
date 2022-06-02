@@ -1,6 +1,6 @@
 {
   "name": "Thebotcat",
-  "version": "1.7.0a17",
+  "version": "1.7.0b1",
   "description": "Thebotcat is a general purpose, highly configurable discord bot with a focus on administration and fun. (Bot Description: My discord bot just for your server used for administration and to keep your self nice n clean.)",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,6 @@
     "utf-8-validate": "^5.0.9",
     "workerpool": "^6.2.1",
     "ytdl-core": "^4.11.0",
-    "ytdl-core-discord": "^1.3.1",
     "zlib-sync": "^0.1.7"
   },
   "repository": {

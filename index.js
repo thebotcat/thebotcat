@@ -41,7 +41,7 @@ var vm = require('vm');
 var Discord = require('discord.js');
 var DiscordVoice = require('@discordjs/voice');
 var ytdl;
-try { ytdl = require('ytdl-core-discord'); } catch (e) { ytdl = null; }
+try { ytdl = require('ytdl-core'); } catch (e) { ytdl = null; }
 var math = require('./math.min.js');
 
 Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, math });
