@@ -494,15 +494,17 @@ cleanPropsSaved();
 // slash commands updater
 async function fullUpdateSlashCommands() {
   let loggedGlobalBegin = 0, logfunc = v => {
-    if (!loggedGlobalBegin) {
+    if (loggedGlobalBegin == 0) {
       nonlogmsg('Updating global slash commands');
       nonlogmsg(v);
       loggedGlobalBegin = 1;
-    } else nonlogmsg(v);
+    } else {
+      nonlogmsg(v);
+    }
   };
   
   await updateSlashCommands(() => client.api.applications(client.user.id).commands, logfunc);
-  if (loggedGlobalBegin) nonlogmsg('Done updating global slash commands');
+  if (loggedGlobalBegin == 1) nonlogmsg('Done updating global slash commands');
   
   let loggedGuildsUpdated = [];
   
@@ -510,26 +512,23 @@ async function fullUpdateSlashCommands() {
     let guildid = persData.special_guilds[i];
     if (!client.guilds.cache.has(guildid)) continue;
     let loggedOneGuildBegin = false, logfunc = v => {
-      if (!loggedOneGuildBegin) {
-        if (!loggedGlobalBegin) {
-          nonlogmsg('Updated global slash commands');
-          loggedGuildsUpdated.forEach(x => nonlogmsg(`Updated slash commands for guild ${x}`));
+      if (loggedOneGuildBegin == 0) {
+        if (loggedGlobalBegin == 0) {
           loggedGlobalBegin = 2;
         }
         nonlogmsg(`Updating guild ${client.guilds.cache.get(guildid).name}`);
         nonlogmsg(v);
-        loggedOneGuildBegin = 3;
-      } else nonlogmsg(v);
+        loggedOneGuildBegin = true;
+      } else {
+        nonlogmsg(v);
+      }
     };
     await updateNonPubSlashCommands(() => client.api.applications(client.user.id).guilds(guildid).commands, logfunc, guildid == persData.ids.guild.v2 ? props.data_code[2] : null);
+    loggedGuildsUpdated.push(client.guilds.cache.get(guildid).name);
     if (loggedOneGuildBegin) nonlogmsg('Done updating slash commands for guild');
-    else {
-      if (loggedGlobalBegin < 2) loggedGuildsUpdated.push(client.guilds.cache.get(guildid).name);
-      else nonlogmsg(`Updated slash commands for guild ${client.guilds.cache.get(guildid).name}`);
-    }
   }
   
-  if (!loggedGlobalBegin) {
+  if (loggedGlobalBegin == 0 || loggedGlobalBegin == 2) {
     if (loggedGuildsUpdated.length) {
       nonlogmsg('Updated global slash commands, updated guild slash commands for:');
       nonlogmsg(loggedGuildsUpdated.join(', '));
@@ -595,6 +594,8 @@ client.on('ready', async () => {
   nonlogmsg(`Logged in as ${client.user.tag}!`);
   
   updateStatus();
+
+  await populateBotStatusMessage();
   
   await fullUpdateSlashCommands();
   
@@ -605,8 +606,6 @@ client.on('ready', async () => {
   ready2time = new Date();
 
   if (props.feat.repl) startRepl();
-
-  await populateBotStatusMessage();
   
   if (props.feat.loaddms) props.saved.misc.dmchannels.forEach(x => client.channels.fetch(x));
 
@@ -657,7 +656,7 @@ client.on('disconnect', () => {
 });
 
 // tick function called every 60 seconds
-var ticks = 0, tickStatUpdInt = 30;
+var ticks = 0, tickStatUpdInt = 30, tickStatUpdNextPossible = false;
 var tickFuncs = [];
 function tickFunc() {
   if (ready3time) updateStatus();
@@ -670,14 +669,19 @@ function tickFunc() {
   props.CPUUsage = { user: (props.cCPUUsage.user - props.pCPUUsage.user) / (1000000 * frac), system: (props.cCPUUsage.system - props.pCPUUsage.system) / (1000000 * frac) };
   props.memoryUsage = process.memoryUsage();
   
-  if (ticks % tickStatUpdInt == 0 && props.botStatusMsg && props.botStatusMsgResolve == null) {
-    props.botStatusMsgResolve = props.botStatusMsg
-      .edit(common.getBotcatFullStatusMessage(true, true))
-      .then(x => props.botStatusMsgResolve = null)
-      .catch(e => { console.error(e); props.botStatusMsgResolve = null; });
+  if (ticks % tickStatUpdInt == 0 || tickStatUpdNextPossible) {
+    if (props.botStatusMsg && props.botStatusMsgResolve == null) {
+      if (tickStatUpdNextPossible) tickStatUpdNextPossible = false;
+      props.botStatusMsgResolve = props.botStatusMsg
+        .edit(common.getBotcatFullStatusMessage(true, true))
+        .then(x => props.botStatusMsgResolve = null)
+        .catch(e => { console.error(e); props.botStatusMsgResolve = null; });
+    } else {
+      tickStatUpdNextPossible = true;
+    }
   }
 
-  if (ticks % 1400 == 0 && errorCounter > 0) errorCounter = 0;
+  if (ticks % 1440 == 0 && errorCounter > 0) errorCounter = 0;
   
   for (var i = 0; i < tickFuncs.length; i++) {
     tickFuncs[i]();
@@ -762,6 +766,7 @@ Object.defineProperties(global, {
   exitHandler: { configurable: true, enumerable: true, get: () => exitHandler, set: val => exitHandler = val },
   ticks: { configurable: true, enumerable: true, get: () => ticks, set: val => ticks = val },
   tickStatUpdInt: { configurable: true, enumerable: true, get: () => tickStatUpdInt, set: val => tickStatUpdInt = val },
+  tickStatUpdNextPossible: { configurable: true, enumerable: true, get: () => tickStatUpdNextPossible, set: val => tickStatUpdNextPossible = val },
   tickFuncs: { configurable: true, enumerable: true, get: () => tickFuncs, set: val => tickFuncs = val },
   tickFunc: { configurable: true, enumerable: true, get: () => tickFunc, set: val => tickFunc = val },
   tickInt: { configurable: true, enumerable: true, get: () => tickInt, set: val => tickInt = val },
