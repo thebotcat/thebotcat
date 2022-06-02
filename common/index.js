@@ -9,113 +9,14 @@ var { fastIntLog2, randBytes, randFloat, randInt, randInts } = randomModule;
 
 var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID } = require('./time_format'); 
 
-function formatPlaybackBar(frac, numElems) {
-  if (!Number.isFinite(frac)) frac = 0;
-  if (frac < 0 || frac > 1) frac = Math.min(Math.max(frac, 0), 1);
-  if (!Number.isSafeInteger(numElems) || numElems < 0) numElems = 30;
-  var dotElem = Math.floor(frac * numElems);
-  return '-'.repeat(Math.max(dotElem, 0)) + '•' + '-'.repeat(Math.max(numElems - dotElem - 1, 0));
-}
-
 var { getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage } = require('./status_gen');
 
-function explainChannel(channel, full) {
-  if (full)
-    return channel.guild ? `${channel.guild.name}:${channel.name}` : `dms with ${channel.recipient.tag} (id ${channel.recipient.id})`;
-  else
-    return channel.guild ? `${channel.guild.name}:${channel.name}` : `dms`;
-}
-
-function stringToBoolean(str) {
-  switch (str) {
-    case 'true':
-    case 'yes':
-      return true;
-    
-    case 'false':
-    case 'no':
-      return false;
-    
-    default:
-      return null;
-  }
-}
-
-function removePings(str) {
-  return str.replace(/@/g, '@\u200b');
-}
-
-function onMsgOneArgHelper(o) {
-  let oneArg = o.argstring[0] == '"' || o.argstring[0] == '\'' ? o.rawArgs[0] : o.argstring;
-  
-  Object.defineProperty(o, 'asOneArg', {
-    configurable: true,
-    enumerable: true,
-    writable: true,
-    value: oneArg,
-  });
-  
-  return oneArg;
-}
-
-function onMsgOneArgSetHelper(o, val) {
-  Object.defineProperty(o, 'asOneArg', {
-    configurable: true,
-    enumerable: true,
-    writable: true,
-    value: val,
-  });
-}
-
-function regCmdResp(o, message, mention) {
-  if (mention) {
-    if (typeof message == 'string') {
-      return o.channel.send({ content: message, allowedMentions: { parse: ['users', 'roles', 'everyone'] } });
-    } else {
-      return o.channel.send({ ...message, allowedMentions: { parse: ['users', 'roles', 'everyone'] } });
-    }
-  } else {
-    return o.channel.send(message);
-  }
-}
-
-function slashCmdResp(o, ephemeral, message, mention) {
-  let replyObject;
-  if (typeof message == 'object') {
-    replyObject = {
-      embeds: [message],
-      ephemeral,
-    };
-  } else {
-    replyObject = {
-      content: message,
-      ...(mention ? { allowedMentions: { parse: ['users', 'roles', 'everyone'] } } : null),
-      ephemeral,
-    };
-  }
-  if (o.alreadyReplied) {
-    return o.interaction.followUp(replyObject);
-  } else {
-    return o.interaction.reply(replyObject).then(x => (o.alreadyReplied = true, x));
-  }
-}
-
-function getGuilddata(guildId) {
-  let guilddata = props.saved.guilds[guildId];
-  if (!guilddata) return getEmptyGuildObject(guildId);
-  return guilddata;
-}
-
-function createAndGetGuilddata(guildId) {
-  let guilddata = props.saved.guilds[guildId];
-  if (!guilddata) {
-    guilddata = props.saved.guilds[guildId] = common.getEmptyGuildObject(guildId);
-    schedulePropsSave();
-  }
-  return guilddata;
-}
-
-class BotError extends Error {}
+var {
+  formatPlaybackBar,
+  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  BotError,
+  rps,
+} = require('./misc');
 
 var { BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer } = require('./worker_buf');
 
@@ -130,8 +31,6 @@ var { searchRoles, searchMembers, searchUsers, searchRole, searchMember, searchU
 var { leftPadID, getFancyGuilds, getSortedChannels, getFancyChannels } = require('./general_serialize');
 
 var invokeMessageHandler = require('./msg_invoke');
-
-var { rps } = require('./misc');
 
 var BufferStream = require('./buffer_stream');
 
@@ -148,10 +47,12 @@ module.exports = {
   get randomBytes() { return randomModule.randomBytes }, set randomBytes(val) { randomModule.randomBytes = val; },
   get randomOffset() { return randomModule.randomOffset }, set randomOffset(val) { randomModule.randomOffset = val; },
   randBytes, randFloat, randInt, randInts,
-  msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID, formatPlaybackBar,
+  msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID,
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,
+  formatPlaybackBar,
   explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
   BotError,
+  rps,
   BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer,
   isDeveloper, isConfirmDeveloper, isOwner, isAdmin, hasBotPermissions, getBotPermissions, getBotPermissionsArray, getPermissions,
   serializePermissionOverwrites,
@@ -161,7 +62,6 @@ module.exports = {
   searchRoles, searchMembers, searchUsers, searchRole, searchMember, searchUser,
   leftPadID, getFancyGuilds, getSortedChannels, getFancyChannels,
   invokeMessageHandler,
-  rps,
   BufferStream,
   clientVCManager,
   handlers,

@@ -13,6 +13,7 @@ use discordjs types and slash command options framework instead of using integer
 -- Release --
 
 make say and sayy not developer commands
+remove unnecessary break statements and other unreachable code
 help slash command in dms shows invalid commands
 use objects for regCmdResp and slashCmdResp
 disabling vc commands should cause insta disconnect, disabling music commands should cause insta stop
@@ -26,7 +27,6 @@ support adding whole playlists and other music providers
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well
 
-move all miscellaneous common functions into misc.js
 reorder arguments in settings badwords
 command that sends a message and suppresses embed on it to make "invisible" message
 add explainer for each permission and its use
