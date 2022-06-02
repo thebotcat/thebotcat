@@ -100,6 +100,21 @@ function slashCmdResp(o, ephemeral, message, mention) {
   }
 }
 
+function getGuilddata(guildId) {
+  let guilddata = props.saved.guilds[guildId];
+  if (!guilddata) return getEmptyGuildObject(guildId);
+  return guilddata;
+}
+
+function createAndGetGuilddata(guildId) {
+  let guilddata = props.saved.guilds[guildId];
+  if (!guilddata) {
+    guilddata = props.saved.guilds[guildId] = common.getEmptyGuildObject(guildId);
+    schedulePropsSave();
+  }
+  return guilddata;
+}
+
 class BotError extends Error {}
 
 var { BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer } = require('./worker_buf');
@@ -135,7 +150,7 @@ module.exports = {
   randBytes, randFloat, randInt, randInts,
   msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID, formatPlaybackBar,
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,
-  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp,
+  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
   BotError,
   BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer,
   isDeveloper, isConfirmDeveloper, isOwner, isAdmin, hasBotPermissions, getBotPermissions, getBotPermissionsArray, getPermissions,

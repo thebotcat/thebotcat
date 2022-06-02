@@ -7,11 +7,7 @@ module.exports = [
     options: [ { type: 7, name: 'channel', description: 'the voice channel' } ],
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
-      let guilddata = props.saved.guilds[msg.guild.id];
-      if (!guilddata) {
-        props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
-        schedulePropsSave();
-      }
+      let guilddata = common.createAndGetGuilddata(msg.guild.id);
       let channel;
       if (rawArgs.length == 0) {
         if (!msg.member.voice.channelId) return common.regCmdResp(o, 'You are not in a voice channel.');
@@ -84,11 +80,7 @@ module.exports = [
     flags: 0b110110,
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
-      let guilddata = props.saved.guilds[msg.guild.id];
-      if (!guilddata) {
-        props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
-        schedulePropsSave();
-      }
+      let guilddata = common.createAndGetGuilddata(msg.guild.id);
       let channel = guilddata.voice.channel;
       if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.LEAVE_VC | common.constants.botRolePermBits.REMOTE_CMDS);
@@ -138,11 +130,7 @@ module.exports = [
     flags: 0b110110,
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
-      let guilddata = props.saved.guilds[msg.guild.id];
-      if (!guilddata) {
-        props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
-        schedulePropsSave();
-      }
+      let guilddata = common.createAndGetGuilddata(msg.guild.id);
       let channel = guilddata.voice.channel;
       if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.MANAGE_BOT | common.constants.botRolePermBits.REMOTE_CMDS);
@@ -184,11 +172,7 @@ module.exports = [
     flags: 0b110110,
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
-      let guilddata = props.saved.guilds[msg.guild.id];
-      if (!guilddata) {
-        props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
-        schedulePropsSave();
-      }
+      let guilddata = common.createAndGetGuilddata(msg.guild.id);
       let channel = guilddata.voice.channel;
       if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.MANAGE_BOT | common.constants.botRolePermBits.REMOTE_CMDS);

@@ -35,15 +35,12 @@ function hasBotPermissions(msg, permMask, channel) {
   if (!msg.guild) return permMask & commonConstants.botRolePermBits.NORMAL;
   if (!msg.member) return 0;
   
-  if (!props.saved.guilds[msg.guild.id]) {
-    props.saved.guilds[msg.guild.id] = common.getEmptyGuildObject(msg.guild.id);
-    schedulePropsSave();
-  }
+  let guilddata = common.getGuilddata(msg.guild.id);
   
   if (channel === undefined) channel = msg.channel;
   
-  let guildPerms = props.saved.guilds[msg.guild.id].perms,
-    channelOverrides = channel ? props.saved.guilds[msg.guild.id].overrides[channel.id] : null;
+  let guildPerms = guilddata.perms,
+    channelOverrides = channel ? guilddata.overrides[channel.id] : null;
   let guildPermKeys = Object.keys(guildPerms),
     channelOverrideKeys = channelOverrides ? Object.keys(channelOverrides) : null;
   
@@ -118,8 +115,8 @@ function hasBotPermissions(msg, permMask, channel) {
   if (permMask & commonConstants.botRolePermBits.MUTE &&
     !(channelPerms & commonConstants.botRolePermBits.MUTE) &&
     (msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_ROLES) &&
-      (props.saved.guilds[msg.guild.id].mutedrole == null ||
-        msg.member.roles.highest.position > msg.guild.roles.cache.get(props.saved.guilds[msg.guild.id].mutedrole).position) || isOwner(msg)))
+      (guilddata.mutedrole == null ||
+        msg.member.roles.highest.position > msg.guild.roles.cache.get(guilddata.mutedrole).position) || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.MUTE;
   
   if (permMask & commonConstants.botRolePermBits.KICK &&

@@ -1,5 +1,3 @@
-make guilddata checker and creator into common function
-
 continue music fixing (finish checking voice)
 
 make music mainloop not await 15ms
@@ -14,13 +12,16 @@ use discordjs types and slash command options framework instead of using integer
 
 -- Release --
 
-botcat confirmkb doesnt work on slash commands
+make say and sayy not developer commands
+help slash command in dms shows invalid commands
 use objects for regCmdResp and slashCmdResp
 disabling vc commands should cause insta disconnect, disabling music commands should cause insta stop
-help slash command in dms shows invalid commands
-support adding whole playlists and other music providers
+add default key to enabled_cmds for category and command, and commands are only listed if they are different than the default
+botcat confirmkb doesnt work on slash commands
 
+investigate all automatic saved guilddata creators, only add data to saved guilddata if it differs from the default
 aliases for commands and rename base music commands to something more obvious
+support adding whole playlists and other music providers
 
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well

@@ -231,6 +231,7 @@ if (!props.saved) {
 }
 
 // setting propsSaved aliases
+if (!props.saved.guilds) props.saved.guilds = {};
 Object.keys(persData.propssaved_alias).forEach(x => {
   let alias = persData.propssaved_alias[x];
   Object.defineProperty(props.saved.guilds, x, {
@@ -240,6 +241,7 @@ Object.keys(persData.propssaved_alias).forEach(x => {
   });
 });
 
+if (!props.saved.guilds.default) props.saved.guilds.default = {};
 Object.defineProperty(props.saved.guilds.default, 'prefix', {
   configurable: true, enumerable: false, get: () => defaultprefix, set: val => defaultprefix = val,
 });
