@@ -26,4 +26,4 @@ COPY --chown=thebotcat:thebotcat ./commands /home/thebotcat/commands
 
 #RUN [ "sed", "-i", "s/version: 'canary'/version: 'normal'/", "/home/thebotcat/index.js" ]
 
-CMD node index.js
+CMD [ "node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js" ]
