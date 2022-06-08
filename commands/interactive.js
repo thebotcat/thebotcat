@@ -4,7 +4,7 @@ module.exports = [
     description: '`!coinflip` returns heads or tails with 50% probability each',
     description_slash: 'returns heads or tails with 50% probability each',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       return common.regCmdResp(o, `I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
@@ -19,10 +19,10 @@ module.exports = [
     description_slash: 'rolls a dice with the given number of sides (defaulting to 6), the given number of times',
     flags: 0b111110,
     options: [
-      { type: 3, name: 'sides', description: 'the number of sides of the die, or dnd notation' },
-      { type: 4, name: 'times', description: 'the number of times to roll' },
-      { type: 4, name: 'modifier', description: 'the modifier to add at the end' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'STRING', name: 'sides', description: 'the number of sides of the die, or dnd notation' },
+      { type: 'INTEGER', name: 'times', description: 'the number of times to roll' },
+      { type: 'INTEGER', name: 'modifier', description: 'the modifier to add at the end' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let match, sides, times, modifier;
@@ -106,9 +106,9 @@ module.exports = [
     description_slash: 'returns a random integer between min and max (inclusive)',
     flags: 0b111110,
     options: [
-      { type: 4, name: 'min', description: 'the minimum number that can be returned' },
-      { type: 4, name: 'max', description: 'the maximum number that can be returned' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'INTEGER', name: 'min', description: 'the minimum number that can be returned' },
+      { type: 'INTEGER', name: 'max', description: 'the maximum number that can be returned' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let min = 0n, max = 1n;
@@ -139,9 +139,9 @@ module.exports = [
     description_slash: 'returns a random real number between min and max (inclusive lower bound)',
     flags: 0b111110,
     options: [
-      { type: 3, name: 'min', description: 'the minimum number that can be returned' },
-      { type: 3, name: 'max', description: 'the maximum number that can be returned' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'STRING', name: 'min', description: 'the minimum number that can be returned' },
+      { type: 'STRING', name: 'max', description: 'the maximum number that can be returned' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let min, max;
@@ -168,16 +168,16 @@ module.exports = [
     description_slash: 'picks a random option from the choices given',
     flags: 0b111110,
     options: [
-      { type: 3, name: '1', description: 'the first choice' },
-      { type: 3, name: '2', description: 'the second choice' },
-      { type: 3, name: '3', description: 'the third choice' },
-      { type: 3, name: '4', description: 'the fourth choice' },
-      { type: 3, name: '5', description: 'the fifth choice' },
-      { type: 3, name: '6', description: 'the sixth choice' },
-      { type: 3, name: '7', description: 'the seventh choice' },
-      { type: 3, name: '8', description: 'the eigth choice' },
-      { type: 3, name: '9', description: 'the ninth choice' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'STRING', name: '1', description: 'the first choice' },
+      { type: 'STRING', name: '2', description: 'the second choice' },
+      { type: 'STRING', name: '3', description: 'the third choice' },
+      { type: 'STRING', name: '4', description: 'the fourth choice' },
+      { type: 'STRING', name: '5', description: 'the fifth choice' },
+      { type: 'STRING', name: '6', description: 'the sixth choice' },
+      { type: 'STRING', name: '7', description: 'the seventh choice' },
+      { type: 'STRING', name: '8', description: 'the eigth choice' },
+      { type: 'STRING', name: '9', description: 'the ninth choice' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let choice = common.randInt(0, rawArgs.length);
@@ -199,10 +199,10 @@ module.exports = [
     flags: 0b111110,
     options: [
       {
-        type: 3, name: 'choice', description: 'your choice', required: true,
+        type: 'STRING', name: 'choice', description: 'your choice', required: true,
         choices: [ { name: 'rock', value: 'rock' }, { name: 'paper', value: 'paper' }, { name: 'scissors', value: 'scissors' } ],
       },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let replies = ['rock', 'paper', 'scissors'];
@@ -247,7 +247,7 @@ module.exports = [
     description: '`!spoilerbubblewrap <text>` returns text to copy paste that contains the original text wrapped in spoilers for every character',
     description_slash: 'returns text to copy paste that contains the original text wrapped in spoilers for every character',
     flags: 0b111110,
-    options: [ { type: 3, name: 'text', description: 'the text', required: true } ],
+    options: [ { type: 'STRING', name: 'text', description: 'the text', required: true } ],
     execute(o, msg, rawArgs) {
       return common.regCmdResp(o, 'wrapped: ' + o.asOneArg.split('').map(x => `\\||${x}\\||`).join(''));
     },
@@ -273,8 +273,8 @@ module.exports = [
     description_slash: 'calculates an expression using math.js evaluate, do `help calc` for more information',
     flags: 0b111110,
     options: [
-      { type: 3, name: 'expression', description: 'the expression to evaluate' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'STRING', name: 'expression', description: 'the expression to evaluate' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.feat.calc) return common.regCmdResp(o, 'Calculation features are disabled');
@@ -539,7 +539,7 @@ module.exports = [
     description: '`!echo [string]` prints out the exact string sent to the command',
     description_slash: 'prints out the exact string sent to the command',
     flags: 0b111110,
-    options: [ { type: 3, name: 'string', description: 'the string parameter' } ],
+    options: [ { type: 'STRING', name: 'string', description: 'the string parameter' } ],
     execute(o, msg, rawArgs) {
       return common.regCmdResp(o, 'echo: ' + JSON.stringify(o.argstring).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
@@ -552,7 +552,7 @@ module.exports = [
     description: '`!echoargs [arguments]` prints out the parsed version of the arguments sent to the command',
     description_slash: 'prints out the parsed version of the arguments sent to the command',
     flags: 0b111110,
-    options: [ { type: 3, name: 'arguments', description: 'all non slash command arguments in one string parameter' } ],
+    options: [ { type: 'STRING', name: 'arguments', description: 'all non slash command arguments in one string parameter' } ],
     execute(o, msg, rawArgs) {
       return common.regCmdResp(o, JSON.stringify({ rawArgs, args: o.args, kwargs: o.kwargs }).replace(/@/g, '@\u200b').replace(/(<)/g, '\\$1'));
     },
@@ -564,7 +564,7 @@ module.exports = [
     name: 'lathe',
     description: 'lathe strategies',
     flags: 0b111110,
-    options: [ { type: 3, name: 'goe', description: 'mama' } ],
+    options: [ { type: 'STRING', name: 'goe', description: 'mama' } ],
     execute(o, msg, rawArgs) {
       return common.regCmdResp(o, rawArgs[0] ? 'val: ' + rawArgs[0] : 'no val',);
     },
@@ -576,7 +576,7 @@ module.exports = [
     name: 'lathe2',
     description: 'this one doesnt send a message in the channel so nobody knows you ran it oOo',
     flags: 0b101110,
-    options: [ { type: 3, name: 'goe', description: 'mama' } ],
+    options: [ { type: 'STRING', name: 'goe', description: 'mama' } ],
     execute_slash(o, interaction, command, args) {
       return common.slashCmdResp(o, true, args[0] ? 'val: ' + args[0].value : 'no val');
     },
@@ -593,7 +593,7 @@ module.exports = [
     name: 'lathe4',
     description: 'deferred ack version',
     flags: 0b101110,
-    options: [ { type: 3, name: 'goe', description: 'mama' } ],
+    options: [ { type: 'STRING', name: 'goe', description: 'mama' } ],
     execute_slash(o, interaction, command, args) {
       client.api.interactions(interaction.id, interaction.token).callback.post({ data: { type: 5 } });
       setTimeout(() => {

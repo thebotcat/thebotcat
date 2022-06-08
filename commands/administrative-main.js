@@ -6,11 +6,11 @@ module.exports = [
     flags: 0b110110,
     options: [
       {
-        type: 3, name: 'value', description: 'to suppress or unsuppress embeds', required: true,
+        type: 'STRING', name: 'value', description: 'to suppress or unsuppress embeds', required: true,
         choices: [ { name: 'suppress', value: 'suppress' }, { name: 'unsuppress', value: 'unsuppress' } ],
       },
-      { type: 3, name: 'messageid', description: 'id of message or message link', required: true },
-      { type: 7, name: 'channel', description: 'channel the message is in' },
+      { type: 'STRING', name: 'messageid', description: 'id of message or message link', required: true },
+      { type: 'CHANNEL', name: 'channel', description: 'channel the message is in' },
     ],
     async execute(o, msg, rawArgs) {
       let suppress, match, channel, targetMsg;
@@ -86,8 +86,8 @@ module.exports = [
     description_slash: 'sets slowmode in a text channel',
     flags: 0b110110,
     options: [
-      { type: 4, name: 'slowmode', description: 'slowmode in seconds', required: true },
-      { type: 7, name: 'channel', description: 'the channel' },
+      { type: 'INTEGER', name: 'slowmode', description: 'slowmode in seconds', required: true },
+      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
     ],
     async execute(o, msg, rawArgs) {
       let seconds, channel;
@@ -162,8 +162,8 @@ module.exports = [
     description_slash: 'sets the bitrate of a voice channel',
     flags: 0b110110,
     options: [
-      { type: 4, name: 'bitrate', description: 'bitrate in bytes per second', required: true },
-      { type: 7, name: 'channel', description: 'the voice channel', required: true },
+      { type: 'INTEGER', name: 'bitrate', description: 'bitrate in bytes per second', required: true },
+      { type: 'CHANNEL', name: 'channel', description: 'the voice channel', required: true },
     ],
     async execute(o, msg, rawArgs) {
       let bitrate, channel;
@@ -240,8 +240,8 @@ module.exports = [
     description_slash: 'deletes messages from a channel',
     flags: 0b111110,
     options: [
-      { type: 4, name: 'amount', description: 'amount of messages to purge', required: true },
-      { type: 7, name: 'channel', description: 'the channel' },
+      { type: 'INTEGER', name: 'amount', description: 'amount of messages to purge', required: true },
+      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
     ],
     async execute(o, msg, rawArgs) {
       let msgs, channel;
@@ -291,8 +291,8 @@ module.exports = [
     description_slash: 'locks a channel, preventing anyone other than moderators from sending messages in it',
     flags: 0b110110,
     options: [
-      { type: 7, name: 'channel', description: 'the channel' },
-      { type: 3, name: 'reason', description: 'the reason to lock' },
+      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
+      { type: 'STRING', name: 'reason', description: 'the reason to lock' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -433,8 +433,8 @@ module.exports = [
     description_slash: 'unlocks a channel, resetting permissions to what they were before the lock',
     flags: 0b110110,
     options: [
-      { type: 7, name: 'channel', description: 'the channel' },
-      { type: 3, name: 'reason', description: 'the reason to unlock' },
+      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
+      { type: 'STRING', name: 'reason', description: 'the reason to unlock' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -519,8 +519,8 @@ module.exports = [
     description_slash: 'mutes someone by adding the muted role to them',
     flags: 0b110110,
     options: [
-      { type: 6, name: 'member', description: 'the member to mute', required: true },
-      { type: 3, name: 'reason', description: 'the reason to mute' },
+      { type: 'USER', name: 'member', description: 'the member to mute', required: true },
+      { type: 'STRING', name: 'reason', description: 'the reason to mute' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -589,8 +589,8 @@ module.exports = [
     description_slash: 'unmutes someone by removing the muted role from them',
     flags: 0b110110,
     options: [
-      { type: 6, name: 'member', description: 'the member to unmute', required: true },
-      { type: 3, name: 'reason', description: 'the reason to unmute' },
+      { type: 'USER', name: 'member', description: 'the member to unmute', required: true },
+      { type: 'STRING', name: 'reason', description: 'the reason to unmute' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -657,8 +657,8 @@ module.exports = [
     description_slash: 'kicks someone from this guild',
     flags: 0b110110,
     options: [
-      { type: 6, name: 'member', description: 'the member to kick', required: true },
-      { type: 3, name: 'reason', description: 'optional kick reason' },
+      { type: 'USER', name: 'member', description: 'the member to kick', required: true },
+      { type: 'STRING', name: 'reason', description: 'optional kick reason' },
     ],
     async execute(o, msg, rawArgs) {
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.KICK))
@@ -752,8 +752,8 @@ module.exports = [
     description_slash: 'bans someone from this guild',
     flags: 0b110110,
     options: [
-      { type: 6, name: 'member', description: 'the member to ban', required: true },
-      { type: 3, name: 'reason', description: 'optional ban reason' },
+      { type: 'USER', name: 'member', description: 'the member to ban', required: true },
+      { type: 'STRING', name: 'reason', description: 'optional ban reason' },
     ],
     async execute(o, msg, rawArgs) {
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
@@ -849,8 +849,8 @@ module.exports = [
     description_slash: 'unbans someone from this guild',
     flags: 0b110110,
     options: [
-      { type: 6, name: 'member', description: 'the member to unban', required: true },
-      { type: 3, name: 'reason', description: 'optional unban reason' },
+      { type: 'USER', name: 'member', description: 'the member to unban', required: true },
+      { type: 'STRING', name: 'reason', description: 'optional unban reason' },
     ],
     async execute(o, msg, rawArgs) {
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
@@ -939,30 +939,30 @@ module.exports = [
     flags: 0b110110,
     options: [
       {
-        type: 1, name: 'view', description: 'views roles which can use the emoji',
+        type: 'SUB_COMMAND', name: 'view', description: 'views roles which can use the emoji',
         options: [
-          { type: 3, name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
         ],
       },
       {
-        type: 1, name: 'add', description: 'adds roles which can use the emoji',
+        type: 'SUB_COMMAND', name: 'add', description: 'adds roles which can use the emoji',
         options: [
-          { type: 3, name: 'emote', description: 'emote, id, or search query', required: true },
-          { type: 3, name: 'roles', description: 'roles to add' },
+          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: 'STRING', name: 'roles', description: 'roles to add' },
         ],
       },
       {
-        type: 1, name: 'remove', description: 'removes roles which can use the emoji',
+        type: 'SUB_COMMAND', name: 'remove', description: 'removes roles which can use the emoji',
         options: [
-          { type: 3, name: 'emote', description: 'emote, id, or search query', required: true },
-          { type: 3, name: 'roles', description: 'roles to remove' },
+          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: 'STRING', name: 'roles', description: 'roles to remove' },
         ],
       },
       {
-        type: 1, name: 'set', description: 'sets roles which can use the emoji',
+        type: 'SUB_COMMAND', name: 'set', description: 'sets roles which can use the emoji',
         options: [
-          { type: 3, name: 'emote', description: 'emote, id, or search query', required: true },
-          { type: 3, name: 'roles', description: 'roles to set' },
+          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: 'STRING', name: 'roles', description: 'roles to set' },
         ],
       },
     ],

@@ -6,27 +6,27 @@ module.exports = [
     flags: 0b110110,
     options: [
       {
-        type: 1, name: 'prefix', description: 'view or change my server prefix',
-        options: [ { type: 3, name: 'prefix', description: 'the prefix' } ],
+        type: 'SUB_COMMAND', name: 'prefix', description: 'view or change my server prefix',
+        options: [ { type: 'STRING', name: 'prefix', description: 'the prefix' } ],
       },
       {
-        type: 1, name: 'confirmkb', description: 'view or set whether there is confirmation on the kick, ban, and unban commands',
-        options: [ { type: 5, name: 'confirmation', description: 'confirmation' } ],
+        type: 'SUB_COMMAND', name: 'confirmkb', description: 'view or set whether there is confirmation on the kick, ban, and unban commands',
+        options: [ { type: 'BOOLEAN', name: 'confirmation', description: 'confirmation' } ],
       },
       {
-        type: 2, name: 'badwords', description: 'configures moderation on bad words',
+        type: 'SUB_COMMAND_GROUP', name: 'badwords', description: 'configures moderation on bad words',
         options: [
           {
-            type: 1, name: 'list', description: 'list all badwords or a specific word',
-            options: [ { type: 3, name: 'word', description: 'a badword' } ],
+            type: 'SUB_COMMAND', name: 'list', description: 'list all badwords or a specific word',
+            options: [ { type: 'STRING', name: 'word', description: 'a badword' } ],
           },
           {
-            type: 1, name: 'add', description: 'add a badword',
+            type: 'SUB_COMMAND', name: 'add', description: 'add a badword',
             options: [
-              { type: 3, name: 'word', description: 'the badword to add', required: true },
-              { type: 3, name: 'retaliation', description: 'the retaliation for saying the badword', required: true },
+              { type: 'STRING', name: 'word', description: 'the badword to add', required: true },
+              { type: 'STRING', name: 'retaliation', description: 'the retaliation for saying the badword', required: true },
               {
-                type: 4, name: 'type', description: 'type flags for badword', required: true,
+                type: 'INTEGER', name: 'type', description: 'type flags for badword', required: true,
                 choices: [
                   { name: '0: entire message is badword, case sensitive', value: 0 },
                   { name: '1: message split by spaces contains badword, case sensitive', value: 1 },
@@ -36,22 +36,22 @@ module.exports = [
                   { name: '6: badword is substring in message, case insensitive', value: 6 },
                 ],
               },
-              { type: 5, name: 'enabled', description: 'whether the word is enabled' },
-              { type: 5, name: 'ignore_admin', description: 'whether the badword can be said by admins' },
-              { type: 3, name: 'ignored_roles', description: 'roles who can say the badword' },
+              { type: 'BOOLEAN', name: 'enabled', description: 'whether the word is enabled' },
+              { type: 'BOOLEAN', name: 'ignore_admin', description: 'whether the badword can be said by admins' },
+              { type: 'STRING', name: 'ignored_roles', description: 'roles who can say the badword' },
             ],
           },
           {
-            type: 1, name: 'remove', description: 'remove a badword',
-            options: [ { type: 3, name: 'word', description: 'the badword to remove', required: true } ],
+            type: 'SUB_COMMAND', name: 'remove', description: 'remove a badword',
+            options: [ { type: 'STRING', name: 'word', description: 'the badword to remove', required: true } ],
           },
           {
-            type: 1, name: 'modify', description: 'modify a badword',
+            type: 'SUB_COMMAND', name: 'modify', description: 'modify a badword',
             options: [
-              { type: 3, name: 'word', description: 'the badword to modify', required: true },
-              { type: 3, name: 'retaliation', description: 'the retaliation for saying the badword' },
+              { type: 'STRING', name: 'word', description: 'the badword to modify', required: true },
+              { type: 'STRING', name: 'retaliation', description: 'the retaliation for saying the badword' },
               {
-                type: 4, name: 'type', description: 'type flags for badword',
+                type: 'INTEGER', name: 'type', description: 'type flags for badword',
                 choices: [
                   { name: '0: entire message is badword, case sensitive', value: 0 },
                   { name: '1: message split by spaces contains badword, case sensitive', value: 1 },
@@ -61,129 +61,129 @@ module.exports = [
                   { name: '6: badword is substring in message, case insensitive', value: 6 },
                 ],
               },
-              { type: 5, name: 'enabled', description: 'whether the word is enabled' },
-              { type: 5, name: 'ignore_admin', description: 'whether the badword can be said by admins' },
-              { type: 3, name: 'ignored_roles', description: 'roles who can say the badword' },
+              { type: 'BOOLEAN', name: 'enabled', description: 'whether the word is enabled' },
+              { type: 'BOOLEAN', name: 'ignore_admin', description: 'whether the badword can be said by admins' },
+              { type: 'STRING', name: 'ignored_roles', description: 'roles who can say the badword' },
             ],
           },
         ],
       },
       {
-        type: 2, name: 'logchannel', description: 'view or set server logging channel',
+        type: 'SUB_COMMAND_GROUP', name: 'logchannel', description: 'view or set server logging channel',
         options: [
-          { type: 1, name: 'view', description: 'view server logging channel' },
+          { type: 'SUB_COMMAND', name: 'view', description: 'view server logging channel' },
           {
-            type: 1, name: 'set', description: 'set server logging channel',
-            options: [ { type: 7, name: 'logchannel', description: 'the logging channel or this channel if one isn\'t provided' } ],
+            type: 'SUB_COMMAND', name: 'set', description: 'set server logging channel',
+            options: [ { type: 'CHANNEL', name: 'logchannel', description: 'the logging channel or this channel if one isn\'t provided' } ],
           },
-          { type: 1, name: 'clear', description: 'clear server logging channel' },
+          { type: 'SUB_COMMAND', name: 'clear', description: 'clear server logging channel' },
         ],
       },
       {
-        type: 2,
+        type: 'SUB_COMMAND_GROUP',
         name: 'mutedrole',
         description: 'view or set muted role',
         options: [
           {
-            type: 1, name: 'view', description: 'view muted role'
+            type: 'SUB_COMMAND', name: 'view', description: 'view muted role'
           },
           {
-            type: 1, name: 'set', description: 'set muted role or unset if none is provided',
-            options: [ { type: 8, name: 'mutedrole', description: 'the role' } ],
+            type: 'SUB_COMMAND', name: 'set', description: 'set muted role or unset if none is provided',
+            options: [ { type: 'ROLE', name: 'mutedrole', description: 'the role' } ],
           },
         ],
       },
       {
-        type: 2, name: 'roles', description: 'view or set bot-level role permissions',
+        type: 'SUB_COMMAND_GROUP', name: 'roles', description: 'view or set bot-level role permissions',
         options: [
           {
-            type: 1, name: 'view', description: 'view roles with bot-level permissions or view permissions for one role',
-            options: [ { type: 8, name: 'role', description: 'the role' } ],
+            type: 'SUB_COMMAND', name: 'view', description: 'view roles with bot-level permissions or view permissions for one role',
+            options: [ { type: 'ROLE', name: 'role', description: 'the role' } ],
           },
           {
-            type: 1, name: 'init', description: 'create bot-level permissions for a role',
-            options: [ { type: 8, name: 'role', description: 'the role', required: true } ],
+            type: 'SUB_COMMAND', name: 'init', description: 'create bot-level permissions for a role',
+            options: [ { type: 'ROLE', name: 'role', description: 'the role', required: true } ],
           },
           {
-            type: 1, name: 'clear', description: 'remove bot-level permissions for a role',
-            options: [ { type: 8, name: 'role', description: 'the role', required: true } ],
+            type: 'SUB_COMMAND', name: 'clear', description: 'remove bot-level permissions for a role',
+            options: [ { type: 'ROLE', name: 'role', description: 'the role', required: true } ],
           },
           {
-            type: 1, name: 'setperms', description: 'set bot-level permissions for a role',
+            type: 'SUB_COMMAND', name: 'setperms', description: 'set bot-level permissions for a role',
             options: [
-              { type: 8, name: 'role', description: 'the role', required: true },
+              { type: 'ROLE', name: 'role', description: 'the role', required: true },
               {
-                type: 3, name: 'value', description: 'enable or disable permissions', required: true,
+                type: 'STRING', name: 'value', description: 'enable or disable permissions', required: true,
                 choices: [ { name: 'enable', value: 'enable'}, { name: 'disable', value: 'disable'} ],
               },
-              { type: 3, name: 'permissions', description: 'string of a permission or permissions', required: true },
+              { type: 'STRING', name: 'permissions', description: 'string of a permission or permissions', required: true },
             ]
           },
         ],
       },
       {
-        type: 2, name: 'overrides', description: 'view or set bot-level role permission overrides for channels',
+        type: 'SUB_COMMAND_GROUP', name: 'overrides', description: 'view or set bot-level role permission overrides for channels',
         options: [
           {
-            type: 1, name: 'view', description: 'view channels with overrides (bot-level), overrides for a channel, or a specific override',
+            type: 'SUB_COMMAND', name: 'view', description: 'view channels with overrides (bot-level), overrides for a channel, or a specific override',
             options: [
-              { type: 7, name: 'channel', description: 'a channel' },
-              { type: 8, name: 'role', description: 'a role' },
+              { type: 'CHANNEL', name: 'channel', description: 'a channel' },
+              { type: 'ROLE', name: 'role', description: 'a role' },
             ]
           },
           {
-            type: 1, name: 'init', description: 'create bot-level overrides for a role in a channel',
+            type: 'SUB_COMMAND', name: 'init', description: 'create bot-level overrides for a role in a channel',
             options: [
-              { type: 7, name: 'channel', description: 'the channel', required: true },
-              { type: 8, name: 'role', description: 'the role' },
+              { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
+              { type: 'ROLE', name: 'role', description: 'the role' },
             ]
           },
           {
-            type: 1, name: 'clear', description: 'remove bot-level overrides for a role in a channel',
+            type: 'SUB_COMMAND', name: 'clear', description: 'remove bot-level overrides for a role in a channel',
             options: [
-              { type: 7, name: 'channel', description: 'the channel', required: true },
-              { type: 8, name: 'role', description: 'the role' },
+              { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
+              { type: 'ROLE', name: 'role', description: 'the role' },
             ]
           },
           {
-            type: 1, name: 'setperms', description: 'set bot-level overrides for a role in a channel',
+            type: 'SUB_COMMAND', name: 'setperms', description: 'set bot-level overrides for a role in a channel',
             options: [
-              { type: 7, name: 'channel', description: 'the channel', required: true },
-              { type: 8, name: 'role', description: 'the role', required: true },
+              { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
+              { type: 'ROLE', name: 'role', description: 'the role', required: true },
               {
-                type: 3, name: 'value', description: 'enable, disable, or reset permissions', required: true,
+                type: 'STRING', name: 'value', description: 'enable, disable, or reset permissions', required: true,
                 choices: [ { name: 'enable', value: 'enable'}, { name: 'disable', value: 'disable'}, { name: 'reset', value: 'reset'} ],
               },
-              { type: 3, name: 'permissions', description: 'string of a permission or permissions', required: true },
+              { type: 'STRING', name: 'permissions', description: 'string of a permission or permissions', required: true },
             ]
           },
         ],
       },
       {
-        type: 2, name: 'enabledcmds', description: 'view or set which commands are enabled',
+        type: 'SUB_COMMAND_GROUP', name: 'enabledcmds', description: 'view or set which commands are enabled',
         options: [
           {
-            type: 1, name: 'view', description: 'view whether commands are enabled globally or for a category or command',
+            type: 'SUB_COMMAND', name: 'view', description: 'view whether commands are enabled globally or for a category or command',
             options: [
               {
-                type: 3, name: 'scope', description: 'the scope of the view', required: true,
+                type: 'STRING', name: 'scope', description: 'the scope of the view', required: true,
                 choices: [ { name: 'global', value: 'global' }, { name: 'category', value: 'category' }, { name: 'command', value: 'command' } ],
               },
-              { type: 3, name: 'cat_or_cmd', description: 'the category or command' },
+              { type: 'STRING', name: 'cat_or_cmd', description: 'the category or command' },
             ]
           },
           {
-            type: 1, name: 'set', description: 'set whether commands are enabled globally or for a category or command',
+            type: 'SUB_COMMAND', name: 'set', description: 'set whether commands are enabled globally or for a category or command',
             options: [
               {
-                type: 3, name: 'scope', description: 'the scope of the setting', required: true,
+                type: 'STRING', name: 'scope', description: 'the scope of the setting', required: true,
                 choices: [ { name: 'global', value: 'global' }, { name: 'category', value: 'category' }, { name: 'command', value: 'command' }, { name: 'all', value: 'all' } ],
               },
               {
-                type: 3, name: 'value', description: 'whether to enable or disable', required: true,
+                type: 'STRING', name: 'value', description: 'whether to enable or disable', required: true,
                 choices: [ { name: 'enable', value: 'enable' }, { name: 'disable', value: 'disable' } ],
               },
-              { type: 3, name: 'cat_or_cmd', description: 'the category or command' },
+              { type: 'STRING', name: 'cat_or_cmd', description: 'the category or command' },
             ],
           },
         ],

@@ -4,8 +4,8 @@ module.exports = [
     description_slash: 'sends a message as botcat in the current channel',
     flags: 0b111100,
     options: [
-      { type: 3, name: 'expression', description: 'what to say', required: true },
-      { type: 5, name: 'mention', description: 'whether the bot should mention (defaults to true)' },
+      { type: 'STRING', name: 'expression', description: 'what to say', required: true },
+      { type: 'BOOLEAN', name: 'mention', description: 'whether the bot should mention (defaults to true)' },
     ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg) || addlbotperms[msg.author.id] & 3)) return;
@@ -31,9 +31,9 @@ module.exports = [
     description_slash: 'sends a message as botcat in a given channel',
     flags: 0b111100,
     options: [
-      { type: 7, name: 'channel', description: 'the channel', required: true },
-      { type: 3, name: 'expression', description: 'what to say', required: true },
-      { type: 5, name: 'mention', description: 'whether the bot should mention (defaults to true)' },
+      { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
+      { type: 'STRING', name: 'expression', description: 'what to say', required: true },
+      { type: 'BOOLEAN', name: 'mention', description: 'whether the bot should mention (defaults to true)' },
     ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg) || addlbotperms[msg.author.id] & 2)) return;
@@ -163,7 +163,7 @@ module.exports = [
     name: 'eval',
     description_slash: 'evaluates.',
     flags: 0b111100,
-    options: [ { type: 3, name: 'expression', description: 'the expression to evaluate' } ],
+    options: [ { type: 'STRING', name: 'expression', description: 'the expression to evaluate' } ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
       let cmd = o.argstring, res;
@@ -210,7 +210,7 @@ module.exports = [
     name: 'evalv',
     description_slash: 'evaluates void.',
     flags: 0b111100,
-    options: [ { type: 3, name: 'expression', description: 'the expression to evaluate' } ],
+    options: [ { type: 'STRING', name: 'expression', description: 'the expression to evaluate' } ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
       let cmd = o.argstring, res;
@@ -245,7 +245,7 @@ module.exports = [
     name: 'exec',
     description_slash: 'executes.',
     flags: 0b111100,
-    options: [ { type: 3, name: 'expression', description: 'the expression to evaluate' } ],
+    options: [ { type: 'STRING', name: 'expression', description: 'the expression to evaluate' } ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
       let cmd = o.argstring, res;

@@ -179,9 +179,9 @@ for (var i = 0, numCommands = commandKeys.length / 25; i < numCommands; i++) {
     description_slash: `content${i ? i + 1 : ''}.`,
     flags: i == 0 ? 0b111110 : 0b101110,
     options: commandKeys.slice(i * 25, i * 25 + 25).map(x => ({
-      type: 1, name: x.replaceAll(' ', '_'), description: `type: ${commands[x].type.replaceAll('_', ' ')}`,
+      type: 'SUB_COMMAND', name: x.replaceAll(' ', '_'), description: `type: ${commands[x].type.replaceAll('_', ' ')}`,
       ...commands[x].type.includes('multi') && {
-        options: [ { type: 3, name: 'value', description: 'empty for random content, a number for a specific content, and \'count\' for total number of contents' } ],
+        options: [ { type: 'STRING', name: 'value', description: 'empty for random content, a number for a specific content, and \'count\' for total number of contents' } ],
       },
     })),
     ...i == 0 && { execute: contentCommandNonSlash },
@@ -200,7 +200,7 @@ exports.push(
     name: 'lamo',
     description_slash: 'puts a lamo in chat',
     flags: 0b111110,
-    options: [ { type: 4, name: 'length', description: 'length of the lamo', required: true } ],
+    options: [ { type: 'INTEGER', name: 'length', description: 'length of the lamo', required: true } ],
     execute(o, msg, rawArgs) {
       let len = Math.min(Math.max(Math.floor(Number(rawArgs[0])), 3), 100);
       if (len != len || len < 4) {

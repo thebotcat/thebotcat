@@ -5,6 +5,7 @@ when audio dispatcher errors, wait 0.1s, 0.2s, 0.5s, 1s, 2s, 5s, 10s, 20s, 30s, 
 
 use proper discord.js v13 api to create slash commands instead of making a raw api call
 use discordjs types and slash command options framework instead of using integers for type
+  integers no longer used for type but might be other things
 
 -- Release --
 

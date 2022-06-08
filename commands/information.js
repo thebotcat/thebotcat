@@ -4,8 +4,8 @@ module.exports = [
     description: '`!help` for a list of my commands\n`!help <command>` for help on a specific command',
     description_slash: 'help on commands',
     options: [
-      { type: 3, name: 'command', description: 'the command' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'STRING', name: 'command', description: 'the command' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     flags: 0b111110,
     execute(o, msg, rawArgs) {
@@ -63,7 +63,7 @@ module.exports = [
     description: '`!version` for the version of my code',
     description_slash: 'prints my version',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       return common.regCmdResp(o, `Thebotcat is version ${version}`);
     },
@@ -77,7 +77,7 @@ module.exports = [
     description: '`!uptime` for my uptime',
     description_slash: 'prints my uptime',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       common.regCmdResp(o, common.getBotcatUptimeMessage());
     },
@@ -91,7 +91,7 @@ module.exports = [
     description: '`!status` for my status',
     description_slash: 'prints my status',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       common.regCmdResp(o, common.getBotcatStatusMessage());
     },
@@ -105,7 +105,7 @@ module.exports = [
     description: '`!fullstatus` for my full status',
     description_slash: 'prints my full status',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       common.regCmdResp(o, common.getBotcatFullStatusMessage());
     },
@@ -119,7 +119,7 @@ module.exports = [
     description: '`!ping` checks my ping to the WebSocket gateway, the web, and the Discord API',
     description_slash: 'checks my ping to the WebSocket gateway, the web, and the Discord API',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       return new Promise((resolve, reject) => {
         common.regCmdResp(o, 'Checking Ping').then(m => {
@@ -161,7 +161,7 @@ module.exports = [
     description: '`!discord` for a link to my Discord Support Server',
     description_slash: 'sends a link to my Discord Support Server',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       var discord = new Discord.MessageEmbed()
         .setTitle('This is my discord support server if you wanna join click the link! https://discord.gg/NamrBZc')
@@ -178,7 +178,7 @@ module.exports = [
     description: '`!github` for a link to my GitHub repository',
     description_slash: 'sends a link to my GitHub repository',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       var github = new Discord.MessageEmbed()
         .setTitle('This is my github repository (I\'m completely open source)!\nhttps://github.com/thebotcat/thebotcat')
@@ -195,7 +195,7 @@ module.exports = [
     description: '`!invite` for my server invite link',
     description_slash: 'sends my server invite link',
     flags: 0b111110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       var invite = new Discord.MessageEmbed()
         .setTitle('My invite link, to add me to any server!\nhttps://discord.com/api/oauth2/authorize?client_id=682719630967439378&permissions=1379265775&scope=bot+applications.commands');
@@ -212,8 +212,8 @@ module.exports = [
     description_slash: 'displays someone\'s avatar or yours if a user isn\'t provided',
     flags: 0b111110,
     options: [
-      { type: 6, name: 'user', description: 'a user to display the avatar of' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'USER', name: 'user', description: 'a user to display the avatar of' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let member;
@@ -349,7 +349,7 @@ module.exports = [
     description: '`!icon` displays the server\'s icon',
     description_slash: 'displays the server\'s icon',
     flags: 0b110110,
-    options: [ { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       let guild = msg.guild;
       
@@ -443,8 +443,8 @@ module.exports = [
     description_slash: 'displays information about a user or you if a user isn\'t provided',
     flags: 0b111110,
     options: [
-      { type: 6, name: 'user', description: 'a user to display information about' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'USER', name: 'user', description: 'a user to display information about' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let user;
@@ -564,8 +564,8 @@ module.exports = [
     description_slash: 'displays information about a member or you if a member isn\'t provided',
     flags: 0b110110,
     options: [
-      { type: 6, name: 'member', description: 'a member to display information about' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'USER', name: 'member', description: 'a member to display information about' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let member;
@@ -621,8 +621,8 @@ module.exports = [
     description_slash: 'displays information about this server',
     flags: 0b110110,
     options: [
-      { type: 5, name: 'all', description: 'show all server info' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'BOOLEAN', name: 'all', description: 'show all server info' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let guild = msg.guild;
@@ -723,8 +723,8 @@ module.exports = [
     description_slash: 'sends a link to the first message in a channel',
     flags: 0b111110,
     options: [
-      { type: 7, name: 'channel', description: 'the channel' },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let channel;
@@ -762,8 +762,8 @@ module.exports = [
     description_slash: 'prints the UTC date and time of an ID in Discord',
     flags: 0b111110,
     options: [
-      { type: 3, name: 'id', description: 'the id', required: true },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'STRING', name: 'id', description: 'the id', required: true },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       try {
@@ -789,8 +789,8 @@ module.exports = [
     description_slash: 'prints the fields of an ID in Discord',
     flags: 0b111110,
     options: [
-      { type: 3, name: 'id', description: 'the id', required: true },
-      { type: 5, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: 'STRING', name: 'id', description: 'the id', required: true },
+      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       try {

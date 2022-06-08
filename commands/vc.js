@@ -4,7 +4,7 @@ module.exports = [
     description: '`!join [#channel]` for me to join a voice channel, defaulting to the one you\'re in',
     description_slash: 'for me to join a voice channel, defaulting to the one you\'re in',
     flags: 0b110110,
-    options: [ { type: 7, name: 'channel', description: 'the voice channel' } ],
+    options: [ { type: 'CHANNEL', name: 'channel', description: 'the voice channel' } ],
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
       let guilddata = common.createAndGetGuilddata(msg.guild.id);
