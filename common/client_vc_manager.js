@@ -15,12 +15,13 @@ var clientVCManager = {
       loop: null,
       queueloop: null,
       voteskip: [],
+      _settleFunc: null,
     };
   },
   
   // all of these functions have self explanatory names, and the first parameter of each function is the guild's voice state object
   join: async function join(voice, channel) {
-    if (voice.channel) clientVCManager.leave(voice);
+    if (voice.channel) exports.leave(voice);
     voice.channel = channel;
     try {
       voice.connection = DiscordVoice.joinVoiceChannel({
@@ -133,69 +134,95 @@ var clientVCManager = {
     return latestObj;
   },
   
+  setMainLoop: function (voice, mainloopVal) {
+    voice.mainloop = mainloopVal;
+    if ((!voice.mainloop || voice.mainloop == 2 || voice.mainloop == 3) && voice._settleFunc) {
+      voice._settleFunc();
+    }
+  },
+  
   voteSkip: function (voice, userid) {
     var voiceIndex = voice.voteskip.indexOf(userid);
     if (voiceIndex > -1) voice.voteskip.splice(voiceIndex, 1);
     else voice.voteskip.push(userid);
     let voiceMembers = new Set(Array.from(voice.channel.members.values()).filter(x => !x.user.bot).map(x => x.id));
     if (voice.mainloop && voice.voteskip.filter(x => voiceMembers.has(x)).length / voiceMembers.size >= 0.5) {
-      voice.mainloop = 2;
+      exports.setMainLoop(voice, 2);
       return 1;
     } else return voiceIndex > -1 ? 3 : 2;
   },
   
   forceSkip: function (voice) {
-    if (voice.mainloop) voice.mainloop = 2;
+    if (voice.mainloop) exports.setMainLoop(voice, 2);
+  },
+  
+  _mainLoopAwaitPromise: function _mainLoopAwaitPromise(voice) {
+    return new Promise(r => {
+      let alreadySettled = false;
+      let settleFunc = () => {
+        if (alreadySettled) return;
+        alreadySettled = true;
+        voice.player.removeListener(DiscordVoice.AudioPlayerStatus.Idle, voice._settleFunc);
+        voice.player.removeListener('error', voice._settleFunc);
+        voice._settleFunc = null;
+        r();
+      };
+      voice.player.on(DiscordVoice.AudioPlayerStatus.Idle, settleFunc);
+      voice.player.on('error', settleFunc);
+      voice._settleFunc = settleFunc;
+    });
   },
   
   startMainLoop: async function startMainLoop(voice, msgchannel) {
     if (voice.mainloop) return;
-    voice.mainloop = 1;
+    exports.setMainLoop(voice, 1);
     try {
       while (voice.songslist.length > 0) {
         let latestObj = voice.songslist[0];
-        let stream = latestObj.stream = await ytdl(latestObj.url, { filter: 'audioonly' });
+        // highWaterMark is temporary fix to prevent stream aborting
+        let stream = latestObj.stream = await ytdl(latestObj.url, { filter: 'audioonly', highWaterMark: 1 << 25 });
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
         voice.player.play(voice.resource);
-        while (voice.resource && !voice.resource.ended && voice.player.state.status != DiscordVoice.AudioPlayerStatus.Idle) {
-          await new Promise(r => setTimeout(r, 15));
-          if (voice.songslist.length) {
-            if (voice.resource && voice.resource.playbackDuration > voice.songslist[0].expectedLength - 2 && voice.mainloop != 3) voice.mainloop = 2;
-            if (voice.mainloop == 2) {
-              voice.player.unpause();
-              voice.player.stop();
-              voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
-              voice.voteskip.length = 0;
-            } else if (voice.mainloop == 3) {
-              voice.player.unpause();
-              voice.player.stop();
-              voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
-              voice.songslist.length = 0;
-              voice.voteskip.length = 0;
-            }
-          }
+        
+        await exports._mainLoopAwaitPromise(voice);
+        
+        if (voice.mainloop == 2) {
+          voice.player.unpause();
+          voice.player.stop();
+          voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
+          voice.voteskip.length = 0;
+        } else if (voice.mainloop == 3) {
+          voice.player.unpause();
+          voice.player.stop();
+          voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
+          voice.songslist.length = 0;
+          voice.voteskip.length = 0;
         }
+        
         if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < latestObj.expectedLength - 1700)
           msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}`);
+        
         if (voice.mainloop == 2 || voice.mainloop == 3) {
-          voice.mainloop = 1;
+          exports.setMainLoop(voice, 1);
           if (voice.songslist.length) voice.songslist.splice(0, 1);
         } else if (!voice.loop && voice.songslist.length) {
           if (voice.queueloop) voice.songslist.push(voice.songslist.splice(0, 1)[0]);
           else voice.songslist.splice(0, 1);
         }
+        
         voice.resource = null;
+        
         if (!voice.loop) voice.voteskip.length = 0;
       }
     } catch (e) {
       console.error(e);
     }
-    voice.mainloop = 0;
+    exports.setMainLoop(voice, 0);
   },
   
   stopMainLoop: function stopMainLoop(voice) {
     if (voice.mainloop == 0) return;
-    voice.mainloop = 3;
+    exports.setMainLoop(voice, 3);
     return new Promise(resolve => {
       voice.player.on(DiscordVoice.AudioPlayerStatus.Idle, resolve);
     });
@@ -220,4 +247,4 @@ var clientVCManager = {
   },
 };
 
-module.exports = clientVCManager;
+module.exports = exports = clientVCManager;
