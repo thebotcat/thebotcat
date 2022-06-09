@@ -5,9 +5,9 @@ module.exports = async (oldState, newState) => {
   
   if (handlers.extra.voiceStateUpdate) {
     let res;
-    for (var i = 0; i < handlers.extra.voiceStateUpdate.length; i++) {
-      if (handlers.extra.voiceStateUpdate[i].constructor == Function) res = handlers.extra.voiceStateUpdate[i](oldState, newState);
-      else res = await handlers.extra.voiceStateUpdate[i](oldState, newState);
+    for (var handlerFunc of handlers.extra.voiceStateUpdate) {
+      if (handlerFunc.constructor == Function) res = handlerFunc(oldState, newState);
+      else res = await handlerFunc(oldState, newState);
       if (res === 0) return;
     }
   }

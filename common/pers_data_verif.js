@@ -200,14 +200,14 @@ module.exports = {
       if (guildsIsObj) {
         let props = Object.getOwnPropertyDescriptors(obj.guilds);
         let keys = Object.keys(props);
-        for (var i = 0; i < keys.length; i++) {
-          if (props[keys[i]].enumerable && isId(keys[i]))
-            newObj.guilds[keys[i]] = perGuildFunc(obj.guilds[keys[i]], keys[i]);
-          else if (props[keys[i]].get)
-            Object.defineProperty(newObj.guilds, keys[i], {
+        for (var key of keys) {
+          if (props[key].enumerable && isId(key))
+            newObj.guilds[key] = perGuildFunc(obj.guilds[key], key);
+          else if (props[key].get)
+            Object.defineProperty(newObj.guilds, key, {
               configurable: true,
               enumerable: false,
-              get: props[keys[i]].get,
+              get: props[key].get,
             });
         }
       }
@@ -519,14 +519,14 @@ module.exports = {
       if (guildsIsObj) {
         let props = Object.getOwnPropertyDescriptors(obj.guilds);
         let keys = Object.keys(props);
-        for (var i = 0; i < keys.length; i++) {
-          if (props[keys[i]].enumerable && isId(keys[i]))
-            newObj.guilds[keys[i]] = perGuildFunc(obj.guilds[keys[i]], keys[i]);
-          else if (props[keys[i]].get)
-            Object.defineProperty(newObj.guilds, keys[i], {
+        for (var key of keys) {
+          if (props[key].enumerable && isId(key))
+            newObj.guilds[key] = perGuildFunc(obj.guilds[key], key);
+          else if (props[key].get)
+            Object.defineProperty(newObj.guilds, key, {
               configurable: true,
               enumerable: false,
-              get: props[keys[i]].get,
+              get: props[key].get,
             });
         }
       }

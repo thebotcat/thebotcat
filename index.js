@@ -453,15 +453,15 @@ async function updateSlashCommands(logfunc) {
   
   var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
   
-  for (var i = 0; i < commandsToDelete.length; i++) {
-    logfunc(`Deleting ${commandsToDelete[i].name}`);
-    await client.application.commands.delete(commandsToDelete[i]);
+  for (var commandToDelete of commandsToDelete) {
+    logfunc(`Deleting ${commandToDelete.name}`);
+    await client.application.commands.delete(commandToDelete);
     await new Promise(r => setTimeout(r, 1000));
   }
   
-  for (var i = 0; i < commandsToUpsert.length; i++) {
-    logfunc(`Upserting ${commandsToUpsert[i].name}`);
-    await client.application.commands.create(commandsToUpsert[i]);
+  for (var commandToUpsert of commandsToUpsert) {
+    logfunc(`Upserting ${commandToUpsert.name}`);
+    await client.application.commands.create(commandToUpsert);
     await new Promise(r => setTimeout(r, 1000));
   }
 }
@@ -500,15 +500,15 @@ async function updateNonPubSlashCommands(guildid, logfunc, extra) {
   
   var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
   
-  for (var i = 0; i < commandsToDelete.length; i++) {
-    logfunc(`Deleting ${commandsToDelete[i].name}`);
-    await guildCommands.delete(commandsToDelete[i]);
+  for (var commandToDelete of commandsToDelete) {
+    logfunc(`Deleting ${commandToDelete.name}`);
+    await guildCommands.delete(commandToDelete);
     await new Promise(r => setTimeout(r, 1000));
   }
   
-  for (var i = 0; i < commandsToUpsert.length; i++) {
-    logfunc(`Upserting ${commandsToUpsert[i].name}`);
-    await guildCommands.create(commandsToUpsert[i]);
+  for (var commandToUpsert of commandsToUpsert) {
+    logfunc(`Upserting ${commandToUpsert.name}`);
+    await guildCommands.create(commandToUpsert);
     await new Promise(r => setTimeout(r, 1000));
   }
 }
@@ -530,8 +530,7 @@ async function fullUpdateSlashCommands() {
   
   let loggedGuildsUpdated = [];
   
-  for (var i = 0; i < persData.special_guilds.length; i++) {
-    let guildid = persData.special_guilds[i];
+  for (var guildid of persData.special_guilds) {
     if (!client.guilds.cache.has(guildid)) continue;
     let loggedOneGuildBegin = false, logfunc = v => {
       if (loggedOneGuildBegin == 0) {
@@ -582,9 +581,9 @@ async function standardWakeHandlers() {
           props.saved.misc.sendmsgid = channel.lastMessageId;
           break;
         }
-        for (var i = 0; i < messages.length; i++) {
+        for (var message of messages) {
           console.log(`Message handlering from ${props.saved.misc.sendmsgid}`);
-          handlers.extra.message[0](messages[i]);
+          handlers.extra.message[0](message);
           await new Promise(r => setTimeout(r, 500));
         }
       }
@@ -705,8 +704,8 @@ function tickFunc() {
 
   if (ticks % 1440 == 0 && errorCounter > 0) errorCounter = 0;
   
-  for (var i = 0; i < tickFuncs.length; i++) {
-    tickFuncs[i]();
+  for (var tickFunc of tickFuncs) {
+    tickFunc();
   }
   
   ticks++;

@@ -1,5 +1,3 @@
-convert some for loops to foreach
-
 do command deleting and upserting in as few api calls as possible, batch them
 
 look through v13 changes
@@ -98,7 +96,8 @@ split help command into `help commands` and `help topics`
   help command intelligent searching
 add command to queue up a insta server mute, unmute, deafen, or undeafen as soon as a user joins the vc (use case is if user left vc before they could be unmuted)
 make it so only emojis or gifs can be sent in certain channels
-add docs to thebotcat so commands can be seen without having to add and use the bot
+add encoding, decoding, encrypting, decrypting, hashing, qr code, etc. to botcat, just some stuff from coolguy284's website (warning on encryption and hashing to not use for security purposes)
+add docs to thebotcat git repo so commands can be seen without having to add and use the bot
 make website control panel
 add sharding and live updating
 use es6 modules

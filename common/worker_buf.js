@@ -2,9 +2,8 @@ class BreakError extends Error {}
 
 // starts with an object and accesses properties of it based on the given array
 function arrayGet(obj, props) {
-  for (var i = 0; i < props.length; i++) {
-    obj = obj[props[i]];
-  }
+  for (var prop of props)
+    obj = obj[prop];
   return obj;
 }
 

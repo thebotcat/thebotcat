@@ -4,8 +4,7 @@ module.exports = {
     let rawArgs = [], args = [], kwargs = {};
     
     let part = '', mode = 0, escape = 0, escapechr = '';
-    for (var i = 0, chr; i < argstring.length; i++) {
-      chr = argstring[i];
+    for (var chr of argstring) {
       switch (mode) {
         case 0: // normal chars
           if (chr == '"') {
@@ -101,14 +100,14 @@ module.exports = {
     
     // step 2: handle flags
     let flag = null;
-    for (var i = 0; i < rawArgs.length; i++) {
-      if (rawArgs[i].startsWith('-')) {
-        flag = rawArgs[i].replace(/^-{1,2}/, '');
+    for (var rawArg of rawArgs) {
+      if (rawArg.startsWith('-')) {
+        flag = rawArg.replace(/^-{1,2}/, '');
         if (!kwargs[flag]) kwargs[flag] = [];
       } else {
-        if (!flag) args.push(rawArgs[i]);
+        if (!flag) args.push(rawArg);
         else {
-          kwargs[flag].push(rawArgs[i]);
+          kwargs[flag].push(rawArg);
         }
       }
     }

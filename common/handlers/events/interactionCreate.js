@@ -60,9 +60,9 @@ module.exports = async interaction => {
       
       if (handlers.extra.interactionCreate) {
         let res;
-        for (var i = 0; i < handlers.extra.interactionCreate.length; i++) {
-          if (handlers.extra.interactionCreate[i].constructor == Function) res = handlers.extra.interactionCreate[i](o, i);
-          else res = await handlers.extra.interactionCreate[i](o, i);
+        for (var handlerFunc of handlers.extra.interactionCreate) {
+          if (handlerFunc.constructor == Function) res = handlerFunc(o);
+          else res = await handlerFunc(o);
           if (res === 0) return;
         }
       }

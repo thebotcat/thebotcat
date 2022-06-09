@@ -31,8 +31,7 @@ function getSortedChannels(guild) {
   var unCategorizedChannels = [];
   var nonCategoryChannels = {};
   var channel, id;
-  for (var i = 0; i < channels.length; i++) {
-    channel = channels[i];
+  for (var channel of channels) {
     if (channel.type == 'GUILD_CATEGORY') categoryChannels.push(channel);
     else {
       id = channel.parent != null ? channel.parent.id : 'uncategorized';
