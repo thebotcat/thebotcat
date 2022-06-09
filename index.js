@@ -772,7 +772,7 @@ process.on('exit', exitHandler);
 process.on('SIGINT', exitHandler);
 
 // defining vars as global
-Object.assign(global, { developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, slashCommandsInequal, updateSlashCommands, deleteSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
+Object.assign(global, { developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, slashCommandsInequal, updateSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
 
 Object.defineProperties(global, {
   exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },
