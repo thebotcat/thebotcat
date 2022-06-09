@@ -1,5 +1,4 @@
 convert some for loops to foreach
-deleteSlashCommands appears to be unused
 
 do command deleting and upserting in as few api calls as possible, batch them
 

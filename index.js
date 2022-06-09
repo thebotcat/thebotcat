@@ -466,20 +466,6 @@ async function updateSlashCommands(logfunc) {
   }
 }
 
-async function deleteSlashCommands() {
-  nonlogmsg('Deleting slash commands');
-  
-  var currCmds = Array.from((await client.application.commands.fetch()).values());
-  
-  for (var i = 0; i < currCmds.length; i++) {
-    nonlogmsg(`Deleting ${currCmds[i].name}`);
-    await client.application.commands.delete(currCmds[i]);
-    await new Promise(r => setTimeout(r, 1000));
-  }
-  
-  nonlogmsg('Done deleting slash commands');
-}
-
 async function updateNonPubSlashCommands(guildid, logfunc, extra) {
   var guildCommands = client.guilds.cache.get(guildid).commands;
   if (!extra) extra = { arr: [], coll: new Discord.Collection() };
