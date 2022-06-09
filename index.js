@@ -355,128 +355,6 @@ function getCommandsCategorized(guilddata, slashContext) {
   return [commandsList, commandsCategorized];
 }
 
-function slashCommandsInequal(cmd1, cmd2) {
-  return cmd1.description != cmd2.description ||
-    Array.isArray(cmd1.options) - Array.isArray(cmd2.options) ||
-    Array.isArray(cmd1.options) && (
-      cmd1.options.length != cmd2.options.length || cmd1.options.some((y, i) =>
-        y.type != cmd2.options[i].type ||
-        y.name != cmd2.options[i].name ||
-        y.description != cmd2.options[i].description ||
-        y.required !== cmd2.options[i].required ||
-        Array.isArray(y.options) - Array.isArray(cmd2.options[i].options) ||
-        Array.isArray(y.options) && (
-          y.options.length != cmd2.options[i].options.length || y.options.some((z, j) =>
-            z.type != cmd2.options[i].options[j].type ||
-            z.name != cmd2.options[i].options[j].name ||
-            z.description != cmd2.options[i].options[j].description ||
-            z.required !== cmd2.options[i].options[j].required ||
-            Array.isArray(z.options) - Array.isArray(cmd2.options[i].options[j].options) ||
-            Array.isArray(z.options) && (
-              z.options.length != cmd2.options[i].options[j].options.length || z.options.some((w, k) =>
-                w.type != cmd2.options[i].options[j].options[k].type ||
-                w.name != cmd2.options[i].options[j].options[k].name ||
-                w.description != cmd2.options[i].options[j].options[k].description ||
-                w.required !== cmd2.options[i].options[j].options[k].required
-              )
-            )
-          )
-        )
-      )
-    );
-};
-
-async function updateSlashCommands(endpoint, logfunc) {
-  var currCmds = await endpoint().get();
-  var currCmdsObj = {};
-  currCmds.forEach(x => currCmdsObj[x.name] = x);
-  
-  var commandsToDelete = currCmds.map(x => x.name).filter(x => !commandColl.has(x) || (commandColl.get(x).flags & 0b100010) != 0b100010);
-  var commandsToUpdate = currCmds.map(x => x.name).filter(x => {
-    if (!commandColl.has(x) || (commandColl.get(x).flags & 0b100010) != 0b100010) return false;
-    let obj = commandColl.get(x);
-    obj = {
-      description: obj.description_slash || obj.description,
-      options: obj.options,
-    };
-    return slashCommandsInequal(currCmdsObj[x], obj);
-  });
-  var commandsToAdd = commands.map(x => x.name).filter(x => !(x in currCmdsObj) && (commandColl.get(x).flags & 0b100010) == 0b100010);
-  
-  var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
-  
-  for (var i = 0; i < commandsToDelete.length; i++) {
-    logfunc(`Deleting ${commandsToDelete[i]}`);
-    await endpoint()(currCmdsObj[commandsToDelete[i]].id).delete();
-    await new Promise(r => setTimeout(r, 1000));
-  }
-  
-  for (var i = 0; i < commandsToUpsert.length; i++) {
-    logfunc(`Upserting ${commandsToUpsert[i]}`);
-    let obj = commandColl.get(commandsToUpsert[i]);
-    obj = {
-      name: obj.name,
-      description: obj.description_slash || obj.description,
-      options: obj.options,
-    };
-    await endpoint().post({ data: obj });
-    await new Promise(r => setTimeout(r, 1000));
-  }
-}
-
-async function deleteSlashCommands(endpoint) {
-  nonlogmsg('Deleting slash commands');
-  
-  var currCmds = await endpoint().get();
-  
-  for (var i = 0; i < currCmds.length; i++) {
-    nonlogmsg(`Deleting ${currCmds[i].name}`);
-    await endpoint()(currCmds[i].id).delete();
-    await new Promise(r => setTimeout(r, 1000));
-  }
-  
-  nonlogmsg('Done deleting slash commands');
-}
-
-async function updateNonPubSlashCommands(endpoint, logfunc, extra) {
-  if (!extra) extra = { arr: [], coll: new Discord.Collection() };
-  var currCmds = await endpoint().get();
-  var currCmdsObj = {};
-  currCmds.forEach(x => currCmdsObj[x.name] = x);
-  
-  var commandsToDelete = currCmds.map(x => x.name).filter(x => (!commandColl.has(x) || (commandColl.get(x).flags & 0b100010) != 0b100000) && !extra.coll.has(x));
-  var commandsToUpdate = currCmds.map(x => x.name).filter(x => {
-    if ((!commandColl.has(x) || (commandColl.get(x).flags & 0b100010) != 0b100000) && !extra.coll.has(x)) return false;
-    let obj = commandColl.get(x) ?? extra.coll.get(x);
-    obj = {
-      description: obj.description_slash || obj.description,
-      options: obj.options,
-    };
-    return slashCommandsInequal(currCmdsObj[x], obj);
-  });
-  var commandsToAdd = [ ...commands.map(x => x.name).filter(x => !(x in currCmdsObj) && (commandColl.get(x).flags & 0b100010) == 0b100000), ...extra.arr.map(x => x.name).filter(x => !(x in currCmdsObj) && (extra.coll.get(x).flags & 0b100010) == 0b100000) ];
-  
-  var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
-  
-  for (var i = 0; i < commandsToDelete.length; i++) {
-    logfunc(`Deleting ${commandsToDelete[i]}`);
-    await endpoint()(currCmdsObj[commandsToDelete[i]].id).delete();
-    await new Promise(r => setTimeout(r, 1000));
-  }
-  
-  for (var i = 0; i < commandsToUpsert.length; i++) {
-    logfunc(`Upserting ${commandsToUpsert[i]}`);
-    let obj = commandColl.get(commandsToUpsert[i]) ?? extra.coll.get(commandsToUpsert[i]);
-    obj = {
-      name: obj.name,
-      description: obj.description_slash || obj.description,
-      options: obj.options,
-    };
-    await endpoint().post({ data: obj });
-    await new Promise(r => setTimeout(r, 1000));
-  }
-}
-
 // adding commmands
 addCommands(require('./commands/information.js'), 'Information');
 addCommands(require('./commands/administrative-other.js'), 'Administrative');
@@ -491,6 +369,164 @@ addCommands(require('./commands/troll.js'), 'Troll');
 // clean propssaved after commands are added
 cleanPropsSaved();
 
+function slashCommandsInequal(cmd1, cmd2) {
+  return cmd1.description != cmd2.description ||
+    Array.isArray(cmd1.options) != Array.isArray(cmd2.options) && cmd1.options?.length != cmd1.options?.length ||
+    Array.isArray(cmd1.options) && Array.isArray(cmd2.options) && (
+      cmd1.options.length != cmd2.options.length || cmd1.options.some((y, i) =>
+        y.type != cmd2.options[i].type ||
+        y.name != cmd2.options[i].name ||
+        y.description != cmd2.options[i].description ||
+        (y.required ?? false) !== (cmd2.options[i].required ?? false) ||
+        Array.isArray(y.choices) != Array.isArray(cmd2.options[i].choices) && y.choices?.length != cmd2.options[i].choices?.length ||
+        Array.isArray(y.choices) && Array.isArray(cmd2.options[i].choices) && (
+          y.choices.length != cmd2.options[i].choices.length || y.choices.some((z, j) =>
+            z.name != cmd2.options[i].choices[j].name ||
+            z.value != cmd2.options[i].choices[j].value
+          )
+        ) ||
+        Array.isArray(y.options) != Array.isArray(cmd2.options[i].options) && y.options?.length != cmd2.options[i].options?.length ||
+        Array.isArray(y.options) && Array.isArray(cmd2.options[i].options) && (
+          y.options.length != cmd2.options[i].options.length || y.options.some((z, j) =>
+            z.type != cmd2.options[i].options[j].type ||
+            z.name != cmd2.options[i].options[j].name ||
+            z.description != cmd2.options[i].options[j].description ||
+            (z.required ?? false) !== (cmd2.options[i].options[j].required ?? false) ||
+            Array.isArray(z.choices) != Array.isArray(cmd2.options[i].options[j].choices) && z.choices?.length != cmd2.options[i].options[j].choices?.length ||
+            Array.isArray(z.choices) && Array.isArray(cmd2.options[i].options[j].choices) && (
+              z.choices.length != cmd2.options[i].options[j].choices.length || z.choices.some((w, k) =>
+                w.name != cmd2.options[i].options[j].choices[k].name ||
+                w.value != cmd2.options[i].options[j].choices[k].value
+              )
+            ) ||
+            Array.isArray(z.options) != Array.isArray(cmd2.options[i].options[j].options) && z.options?.length != cmd2.options[i].options[j].options?.length ||
+            Array.isArray(z.options) && Array.isArray(cmd2.options[i].options[j].options) && (
+              z.options.length != cmd2.options[i].options[j].options.length || z.options.some((w, k) =>
+                w.type != cmd2.options[i].options[j].options[k].type ||
+                w.name != cmd2.options[i].options[j].options[k].name ||
+                w.description != cmd2.options[i].options[j].options[k].description ||
+                (w.required ?? false) !== (cmd2.options[i].options[j].options[k].required ?? false) ||
+                Array.isArray(w.choices) != Array.isArray(cmd2.options[i].options[j].options[k].choices) && w.choices?.length != cmd2.options[i].options[j].options[k].choices?.length ||
+                Array.isArray(w.choices) && Array.isArray(cmd2.options[i].options[j].options[k].choices) && (
+                  w.choices.length != cmd2.options[i].options[j].options[k].choices.length || w.choices.some((v, l) =>
+                    v.name != cmd2.options[i].options[j].options[k].choices[l].name ||
+                    v.value != cmd2.options[i].options[j].options[k].choices[l].value
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    );
+}
+
+async function updateSlashCommands(logfunc) {
+  var currCmds = Array.from((await client.application.commands.fetch()).values());
+  var currCmdsObj = {};
+  currCmds.forEach(x => currCmdsObj[x.name] = x);
+  
+  var commandsToDelete = currCmds.filter(x => !commandColl.has(x.name) || (commandColl.get(x.name).flags & 0b100010) != 0b100010);
+  
+  var commandsToUpdate = currCmds.filter(x => {
+    if (!commandColl.has(x.name) || (commandColl.get(x.name).flags & 0b100010) != 0b100010) return false;
+    let cmd = commandColl.get(x.name);
+    obj = {
+      description: cmd.description_slash || cmd.description,
+      options: cmd.options,
+    };
+    return slashCommandsInequal(currCmdsObj[x.name], obj);
+  }).map(x => {
+    let cmd = commandColl.get(x.name);
+    return {
+      name: cmd.name,
+      description: cmd.description_slash || cmd.description,
+      options: cmd.options,
+    };
+  });
+  
+  var commandsToAdd = commands.filter(x => !(x.name in currCmdsObj) && (commandColl.get(x.name).flags & 0b100010) == 0b100010).map(x => ({
+    name: x.name,
+    description: x.description_slash || x.description,
+    options: x.options,
+  }));
+  
+  var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
+  
+  for (var i = 0; i < commandsToDelete.length; i++) {
+    logfunc(`Deleting ${commandsToDelete[i].name}`);
+    await client.application.commands.delete(commandsToDelete[i]);
+    await new Promise(r => setTimeout(r, 1000));
+  }
+  
+  for (var i = 0; i < commandsToUpsert.length; i++) {
+    logfunc(`Upserting ${commandsToUpsert[i].name}`);
+    await client.application.commands.create(commandsToUpsert[i]);
+    await new Promise(r => setTimeout(r, 1000));
+  }
+}
+
+async function deleteSlashCommands() {
+  nonlogmsg('Deleting slash commands');
+  
+  var currCmds = Array.from((await client.application.commands.fetch()).values());
+  
+  for (var i = 0; i < currCmds.length; i++) {
+    nonlogmsg(`Deleting ${currCmds[i].name}`);
+    await client.application.commands.delete(currCmds[i]);
+    await new Promise(r => setTimeout(r, 1000));
+  }
+  
+  nonlogmsg('Done deleting slash commands');
+}
+
+async function updateNonPubSlashCommands(guildid, logfunc, extra) {
+  var guildCommands = client.guilds.cache.get(guildid).commands;
+  if (!extra) extra = { arr: [], coll: new Discord.Collection() };
+  var currCmds = Array.from((await guildCommands.fetch()).values());
+  var currCmdsObj = {};
+  currCmds.forEach(x => currCmdsObj[x.name] = x);
+  
+  var commandsToDelete = currCmds.filter(x => (!commandColl.has(x.name) || (commandColl.get(x.name).flags & 0b100010) != 0b100000) && !extra.coll.has(x.name));
+  
+  var commandsToUpdate = currCmds.filter(x => {
+    if ((!commandColl.has(x.name) || (commandColl.get(x.name).flags & 0b100010) != 0b100000) && !extra.coll.has(x.name)) return false;
+    let obj = commandColl.get(x.name) ?? extra.coll.get(x.name);
+    obj = {
+      description: obj.description_slash || obj.description,
+      options: obj.options,
+    };
+    return slashCommandsInequal(currCmdsObj[x.name], obj);
+  }).map(x => {
+    let cmd = commandColl.get(x.name);
+    return {
+      name: cmd.name,
+      description: cmd.description_slash || cmd.description,
+      options: cmd.options,
+    };
+  });
+  
+  var commandsToAdd = [ ...commands.filter(x => !(x.name in currCmdsObj) && (commandColl.get(x.name).flags & 0b100010) == 0b100000), ...extra.arr.filter(x => !(x.name in currCmdsObj) && (extra.coll.get(x.name).flags & 0b100010) == 0b100000) ].map(x => ({
+    name: x.name,
+    description: x.description_slash || x.description,
+    options: x.options,
+  }));
+  
+  var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
+  
+  for (var i = 0; i < commandsToDelete.length; i++) {
+    logfunc(`Deleting ${commandsToDelete[i].name}`);
+    await guildCommands.delete(commandsToDelete[i]);
+    await new Promise(r => setTimeout(r, 1000));
+  }
+  
+  for (var i = 0; i < commandsToUpsert.length; i++) {
+    logfunc(`Upserting ${commandsToUpsert[i].name}`);
+    await guildCommands.create(commandsToUpsert[i]);
+    await new Promise(r => setTimeout(r, 1000));
+  }
+}
+
 // slash commands updater
 async function fullUpdateSlashCommands() {
   let loggedGlobalBegin = 0, logfunc = v => {
@@ -503,7 +539,7 @@ async function fullUpdateSlashCommands() {
     }
   };
   
-  await updateSlashCommands(() => client.api.applications(client.user.id).commands, logfunc);
+  await updateSlashCommands(logfunc);
   if (loggedGlobalBegin == 1) nonlogmsg('Done updating global slash commands');
   
   let loggedGuildsUpdated = [];
@@ -523,7 +559,7 @@ async function fullUpdateSlashCommands() {
         nonlogmsg(v);
       }
     };
-    await updateNonPubSlashCommands(() => client.api.applications(client.user.id).guilds(guildid).commands, logfunc, guildid == persData.ids.guild.v2 ? props.data_code[2] : null);
+    await updateNonPubSlashCommands(guildid, logfunc, guildid == persData.ids.guild.v2 ? props.data_code[2] : null);
     loggedGuildsUpdated.push(client.guilds.cache.get(guildid).name);
     if (loggedOneGuildBegin) nonlogmsg('Done updating slash commands for guild');
   }

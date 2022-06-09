@@ -1,19 +1,21 @@
+convert some for loops to foreach
+deleteSlashCommands appears to be unused
+
+do command deleting and upserting in as few api calls as possible, batch them
+
 look through v13 changes
 
 clientvcmanager play can handle audio file location
-when audio dispatcher errors, wait 0.1s, 0.2s, 0.5s, 1s, 2s, 5s, 10s, 20s, 30s, 60s before next attempt, then every 60s after
-
-use proper discord.js v13 api to create slash commands instead of making a raw api call
-use discordjs types and slash command options framework instead of using integers for type
-  integers no longer used for type but might be other things
+when audio dispatcher errors, wait 0.1s, 0.2s, 0.5s, 1s, 2s, 5s, 10s, 20s, 30s, 60s before next attempt when looping, then every 60s after
 
 -- Release --
 
 make say and sayy not developer commands
 play with no args should resume
 make clientvcmanager into class, make variables camelCase, maybe do that for all non camelCase variables all throughout the code
-play command handle youtu.be and playlists
-seek command
+check slash command paramters on discord api docs, particularly add dm_permission flags and others
+play command handle youtu.be and playlists and maybe auto searching with a list of results and a prompt for confirm which can be bypassed and the first choice autopicked by passing an argument to the play command
+seek command, using begin param on ytdl maybe
 music state saving to string name, and state restoring, saves the entire songslist and state
 remove unnecessary break statements and other unreachable code
 help slash command in dms shows invalid commands
@@ -33,7 +35,7 @@ settings overrides view non slash command cannot handle role only, fix other com
 
 reorder arguments in settings badwords
 command that sends a message and suppresses embed on it to make "invisible" message
-add explainer for each permission and its use
+add explainer for each permission and its use, also for intents and partials
 rename hack command to hack-old and make hack command more dynamic
 make purge command work in dms
 make all commands reply not just content (?)
