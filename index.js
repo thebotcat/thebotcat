@@ -453,12 +453,14 @@ async function updateSlashCommands(logfunc) {
   
   var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
   
+  // no bulk delete endpoint
   for (var commandToDelete of commandsToDelete) {
     logfunc(`Deleting ${commandToDelete.name}`);
     await client.application.commands.delete(commandToDelete);
     await new Promise(r => setTimeout(r, 1000));
   }
   
+  // no bulk upsert endpoint
   for (var commandToUpsert of commandsToUpsert) {
     logfunc(`Upserting ${commandToUpsert.name}`);
     await client.application.commands.create(commandToUpsert);
@@ -500,12 +502,14 @@ async function updateNonPubSlashCommands(guildid, logfunc, extra) {
   
   var commandsToUpsert = [ ...commandsToUpdate, ...commandsToAdd ];
   
+  // no bulk delete endpoint
   for (var commandToDelete of commandsToDelete) {
     logfunc(`Deleting ${commandToDelete.name}`);
     await guildCommands.delete(commandToDelete);
     await new Promise(r => setTimeout(r, 1000));
   }
   
+  // no bulk upsert endpoint
   for (var commandToUpsert of commandsToUpsert) {
     logfunc(`Upserting ${commandToUpsert.name}`);
     await guildCommands.create(commandToUpsert);
