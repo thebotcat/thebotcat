@@ -1,17 +1,16 @@
 try and fix broken emoterole api functions
 
-clientvcmanager play can handle audio file location
-
 -- Release --
 
+remove unnecessary break statements and other unreachable code
+make clientvcmanager into class, make variables camelCase, maybe do that for all non camelCase variables all throughout the code
+add config option to always forceLoop if song error
 make say and sayy not developer commands
 play with no args should resume
-make clientvcmanager into class, make variables camelCase, maybe do that for all non camelCase variables all throughout the code
 check slash command paramters on discord api docs, particularly add dm_permission flags and others
 play command handle youtu.be and playlists and maybe auto searching with a list of results and a prompt for confirm which can be bypassed and the first choice autopicked by passing an argument to the play command
 seek command, using begin param on ytdl maybe
 music state saving to string name, and state restoring, saves the entire songslist and state
-remove unnecessary break statements and other unreachable code
 help slash command in dms shows invalid commands
 use objects for regCmdResp and slashCmdResp
 disabling vc commands should cause insta disconnect, disabling music commands should cause insta stop

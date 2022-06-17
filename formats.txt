@@ -196,10 +196,12 @@ format for props.saved:
           mainloop : int 0 (not playing) / 1 (playing) / 2 (skip request) / 3 (terminate song mainloop),
           songslist : array [
             object {
+              type: int 0 (file) / 1 (youtube)
               url : string,
               desc : string,
               expectedLength : int (msec),
-              stream : ytdl object,
+              userid : null / string,
+              stream : null / ytdl object,
             },
             ...
           ],

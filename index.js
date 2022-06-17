@@ -707,7 +707,6 @@ function exitHandler(...args) {
         console.log('Shutting down');
         propsSave();
         process.exit();
-        break;
     }
   } else {
     if (exitHandled) return;

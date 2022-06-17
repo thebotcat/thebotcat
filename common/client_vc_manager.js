@@ -1,7 +1,7 @@
 var GatewayOpcodes = require('discord-api-types/v10').GatewayOpcodes;
 
 // object with utility functions to manage the joining of vcs and playing of songs
-var clientVCManager = {
+module.exports = exports = {
   // returns the inital state of a guild's voice state object
   getEmptyVoiceObject: function getEmptyVoiceObject() {
     return {
@@ -121,22 +121,55 @@ var clientVCManager = {
   },
   
   addSong: async function addSong(voice, url, userid) {
-    if (!/^https?:\/\/(?:www.)?youtube.com\/[A-Za-z0-9?&=\-_%.]+$/.test(url)) throw new common.BotError('Invalid URL Format');
-    let info;
-    try {
-      info = await ytdl.getBasicInfo(url);
-    } catch (e) {
-      throw new common.BotError('Invalid URL');
+    let type = null;
+    
+    if (/^https?:\/\/(?:(?:www.)?youtube.com\/watch\?v=|youtu.be\/)[A-Za-z0-9?&=\-_%.]+$/.test(url))
+      type = 1;
+    if (type == null && userid && !common.isDeveloper(userid))
+      throw new common.BotError('Not a YouTube URL');
+    if (type == null) {
+      if (fs.existsSync(url))
+        type = 0;
+      if (type == null)
+        throw new common.BotError('File nonexistent');
     }
-    let songInfo = {
-      url: url,
-      desc: `${info.videoDetails.title} by ${info.videoDetails.author.name}`,
-      expectedLength: info.videoDetails.lengthSeconds * 1000,
-      stream: null,
-      userid: common.isId(userid) ? userid : null,
-    };
-    voice.songslist.push(songInfo);
-    return songInfo;
+    
+    switch (type) {
+      case 0: {
+        let songInfo = {
+          type: 0,
+          url: url,
+          desc: 'Local file',
+          expectedLength: 0,
+          userid: null,
+          stream: null,
+        };
+        voice.songslist.push(songInfo);
+        return songInfo;
+      }
+      
+      case 1: {
+        let info;
+        try {
+          info = await ytdl.getBasicInfo(url);
+        } catch (e) {
+          throw new common.BotError('Invalid URL');
+        }
+        let songInfo = {
+          type: 1,
+          url: url,
+          desc: `${info.videoDetails.title} by ${info.videoDetails.author.name}`,
+          expectedLength: info.videoDetails.lengthSeconds * 1000,
+          userid: common.isId(userid) ? userid : null,
+          stream: null,
+        };
+        voice.songslist.push(songInfo);
+        return songInfo;
+      }
+      
+      default:
+        throw new common.BotError('Invalid song type');
+    }
   },
   
   setMainLoop: function (voice, mainloopVal) {
@@ -187,7 +220,15 @@ var clientVCManager = {
       while (voice.songslist.length > 0) {
         let songInfo = voice.songslist[0];
         // highWaterMark is temporary fix to prevent stream aborting
-        let stream = songInfo.stream = await ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 1 << 25 });
+        let stream;
+        switch (songInfo.type) {
+          case 0:
+            stream = songInfo.stream = fs.createReadStream(songInfo.url);
+            break;
+          case 1:
+            stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 1 << 28 });
+            break;
+        }
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
         voice.player.play(voice.resource);
         
@@ -273,5 +314,3 @@ var clientVCManager = {
     }
   },
 };
-
-module.exports = exports = clientVCManager;

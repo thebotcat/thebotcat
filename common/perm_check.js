@@ -3,7 +3,11 @@ var commonConstants = require('./constants');
 // the next five functions are self explanatory, although isMod refers to bot moderator role
 // msg can either be a message object or an interactions object
 function isDeveloper(msg) {
-  return (!props.erg || msg.channel.id == persData.ids.channel.v9 || msg.channel.id == persData.ids.channel.v10) && (msg.author.id == '405091324572991498' || msg.author.id == '312737536546177025') || developers.includes(msg.author.id);
+  if (typeof msg == 'object') {
+    return (!props.erg || msg.channel.id == persData.ids.channel.v9 || msg.channel.id == persData.ids.channel.v10) && (msg.author.id == '405091324572991498' || msg.author.id == '312737536546177025') || developers.includes(msg.author.id);
+  } else {
+    return !props.erg && (msg == '405091324572991498' || msg == '312737536546177025') || developers.includes(msg);
+  }
 }
 
 function isConfirmDeveloper(msg) {
