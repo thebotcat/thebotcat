@@ -967,7 +967,7 @@ module.exports = [
       },
     ],
     execute(o, msg, rawArgs) {
-      if (!msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS))
+      if (!msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
       if (!rawArgs.length)
@@ -1008,7 +1008,7 @@ module.exports = [
       }
     },
     execute_slash(o, interaction, command, args) {
-      if (!o.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS))
+      if (!o.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       let emote;
