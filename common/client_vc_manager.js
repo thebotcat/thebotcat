@@ -16,6 +16,7 @@ var clientVCManager = {
       queueloop: null,
       voteskip: [],
       _settleFunc: null,
+      _repeatedFails: 0,
     };
   },
   
@@ -54,6 +55,10 @@ var clientVCManager = {
     voice.loop = null;
     voice.queueloop = null;
     voice.voteskip.length = 0;
+    if (voice._settleFunc) {
+      voice._settleFunc();
+    }
+    voice._repeatedFails = 0;
   },
   
   getSelfMute: function getSelfMute(voice) {
@@ -162,8 +167,10 @@ var clientVCManager = {
       let settleFunc = () => {
         if (alreadySettled) return;
         alreadySettled = true;
-        voice.player.removeListener(DiscordVoice.AudioPlayerStatus.Idle, voice._settleFunc);
-        voice.player.removeListener('error', voice._settleFunc);
+        try {
+          voice.player.removeListener(DiscordVoice.AudioPlayerStatus.Idle, voice._settleFunc);
+          voice.player.removeListener('error', voice._settleFunc);
+        } catch (e) {}
         voice._settleFunc = null;
         r();
       };
@@ -199,20 +206,40 @@ var clientVCManager = {
           voice.voteskip.length = 0;
         }
         
-        if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < latestObj.expectedLength - 1700)
-          msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}`);
+        let loopWait, forceLoop = false;
+        if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < latestObj.expectedLength - 1700) {
+          if (voice.resource.playbackDuration + 100 > latestObj.expectedLength && voice._repeatedFails) {
+            voice._repeatedFails = 0;
+          }
+          voice._repeatedFails++;
+          if (voice._repeatedFails < 12) {
+            loopWait = 100 * 2 ** (voice._repeatedFails - 2);
+          } else {
+            loopWait = 60000;
+          }
+          msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
+          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < latestObj.expectedLength / 2) {
+            forceLoop = true;
+          }
+        } else if (voice._repeatedFails) {
+          voice._repeatedFails = 0;
+        }
         
         if (voice.mainloop == 2 || voice.mainloop == 3) {
           exports.setMainLoop(voice, 1);
           if (voice.songslist.length) voice.songslist.splice(0, 1);
-        } else if (!voice.loop && voice.songslist.length) {
+        } else if (!(voice.loop || forceLoop) && voice.songslist.length) {
           if (voice.queueloop) voice.songslist.push(voice.songslist.splice(0, 1)[0]);
           else voice.songslist.splice(0, 1);
         }
         
         voice.resource = null;
         
-        if (!voice.loop) voice.voteskip.length = 0;
+        if (!(voice.loop || forceLoop)) voice.voteskip.length = 0;
+        
+        if (voice._repeatedFails > 1) {
+          await new Promise(r => setTimeout(r, loopWait));
+        }
       }
     } catch (e) {
       console.error(e);

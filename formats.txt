@@ -208,6 +208,7 @@ format for props.saved:
           queueloop : null / boolean,
           voteskip : array [ string (userid), ... ],
           _settleFunc : null / function,
+          _repeatedFails : int,
           [FUTURE_IMPLEMENTATION] disconnect_timestamp : int,
         },
       },
