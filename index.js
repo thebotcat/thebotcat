@@ -369,58 +369,6 @@ addCommands(require('./commands/troll.js'), 'Troll');
 // clean propssaved after commands are added
 cleanPropsSaved();
 
-function slashCommandsInequal(cmd1, cmd2) {
-  return cmd1.description != cmd2.description ||
-    Array.isArray(cmd1.options) != Array.isArray(cmd2.options) && cmd1.options?.length != cmd1.options?.length ||
-    Array.isArray(cmd1.options) && Array.isArray(cmd2.options) && (
-      cmd1.options.length != cmd2.options.length || cmd1.options.some((y, i) =>
-        y.type != cmd2.options[i].type ||
-        y.name != cmd2.options[i].name ||
-        y.description != cmd2.options[i].description ||
-        (y.required ?? false) !== (cmd2.options[i].required ?? false) ||
-        Array.isArray(y.choices) != Array.isArray(cmd2.options[i].choices) && y.choices?.length != cmd2.options[i].choices?.length ||
-        Array.isArray(y.choices) && Array.isArray(cmd2.options[i].choices) && (
-          y.choices.length != cmd2.options[i].choices.length || y.choices.some((z, j) =>
-            z.name != cmd2.options[i].choices[j].name ||
-            z.value != cmd2.options[i].choices[j].value
-          )
-        ) ||
-        Array.isArray(y.options) != Array.isArray(cmd2.options[i].options) && y.options?.length != cmd2.options[i].options?.length ||
-        Array.isArray(y.options) && Array.isArray(cmd2.options[i].options) && (
-          y.options.length != cmd2.options[i].options.length || y.options.some((z, j) =>
-            z.type != cmd2.options[i].options[j].type ||
-            z.name != cmd2.options[i].options[j].name ||
-            z.description != cmd2.options[i].options[j].description ||
-            (z.required ?? false) !== (cmd2.options[i].options[j].required ?? false) ||
-            Array.isArray(z.choices) != Array.isArray(cmd2.options[i].options[j].choices) && z.choices?.length != cmd2.options[i].options[j].choices?.length ||
-            Array.isArray(z.choices) && Array.isArray(cmd2.options[i].options[j].choices) && (
-              z.choices.length != cmd2.options[i].options[j].choices.length || z.choices.some((w, k) =>
-                w.name != cmd2.options[i].options[j].choices[k].name ||
-                w.value != cmd2.options[i].options[j].choices[k].value
-              )
-            ) ||
-            Array.isArray(z.options) != Array.isArray(cmd2.options[i].options[j].options) && z.options?.length != cmd2.options[i].options[j].options?.length ||
-            Array.isArray(z.options) && Array.isArray(cmd2.options[i].options[j].options) && (
-              z.options.length != cmd2.options[i].options[j].options.length || z.options.some((w, k) =>
-                w.type != cmd2.options[i].options[j].options[k].type ||
-                w.name != cmd2.options[i].options[j].options[k].name ||
-                w.description != cmd2.options[i].options[j].options[k].description ||
-                (w.required ?? false) !== (cmd2.options[i].options[j].options[k].required ?? false) ||
-                Array.isArray(w.choices) != Array.isArray(cmd2.options[i].options[j].options[k].choices) && w.choices?.length != cmd2.options[i].options[j].options[k].choices?.length ||
-                Array.isArray(w.choices) && Array.isArray(cmd2.options[i].options[j].options[k].choices) && (
-                  w.choices.length != cmd2.options[i].options[j].options[k].choices.length || w.choices.some((v, l) =>
-                    v.name != cmd2.options[i].options[j].options[k].choices[l].name ||
-                    v.value != cmd2.options[i].options[j].options[k].choices[l].value
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    );
-}
-
 async function updateSlashCommands(logfunc) {
   var currCmds = Array.from((await client.application.commands.fetch()).values());
   var currCmdsObj = {};
@@ -435,7 +383,7 @@ async function updateSlashCommands(logfunc) {
       description: cmd.description_slash || cmd.description,
       options: cmd.options,
     };
-    return slashCommandsInequal(currCmdsObj[x.name], obj);
+    return common.slashCommandsInequal(currCmdsObj[x.name], obj);
   }).map(x => {
     let cmd = commandColl.get(x.name);
     return {
@@ -484,7 +432,7 @@ async function updateNonPubSlashCommands(guildid, logfunc, extra) {
       description: obj.description_slash || obj.description,
       options: obj.options,
     };
-    return slashCommandsInequal(currCmdsObj[x.name], obj);
+    return common.slashCommandsInequal(currCmdsObj[x.name], obj);
   }).map(x => {
     let cmd = commandColl.get(x.name);
     return {
@@ -775,7 +723,7 @@ process.on('exit', exitHandler);
 process.on('SIGINT', exitHandler);
 
 // defining vars as global
-Object.assign(global, { developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, slashCommandsInequal, updateSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
+Object.assign(global, { developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, updateSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
 
 Object.defineProperties(global, {
   exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },

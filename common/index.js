@@ -14,6 +14,7 @@ var { getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage
 var {
   formatPlaybackBar,
   explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  slashCommandsInequal,
   BotError,
   rps,
 } = require('./misc');
@@ -51,6 +52,7 @@ module.exports = {
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,
   formatPlaybackBar,
   explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  slashCommandsInequal,
   BotError,
   rps,
   BreakError, arrayGet, sendObjThruBuffer, receiveObjThruBuffer,

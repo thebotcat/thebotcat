@@ -103,6 +103,58 @@ function createAndGetGuilddata(guildId) {
   return guilddata;
 }
 
+function slashCommandsInequal(cmd1, cmd2) {
+  return cmd1.description != cmd2.description ||
+    Array.isArray(cmd1.options) != Array.isArray(cmd2.options) && cmd1.options?.length != cmd1.options?.length ||
+    Array.isArray(cmd1.options) && Array.isArray(cmd2.options) && (
+      cmd1.options.length != cmd2.options.length || cmd1.options.some((y, i) =>
+        y.type != cmd2.options[i].type ||
+        y.name != cmd2.options[i].name ||
+        y.description != cmd2.options[i].description ||
+        (y.required ?? false) !== (cmd2.options[i].required ?? false) ||
+        Array.isArray(y.choices) != Array.isArray(cmd2.options[i].choices) && y.choices?.length != cmd2.options[i].choices?.length ||
+        Array.isArray(y.choices) && Array.isArray(cmd2.options[i].choices) && (
+          y.choices.length != cmd2.options[i].choices.length || y.choices.some((z, j) =>
+            z.name != cmd2.options[i].choices[j].name ||
+            z.value != cmd2.options[i].choices[j].value
+          )
+        ) ||
+        Array.isArray(y.options) != Array.isArray(cmd2.options[i].options) && y.options?.length != cmd2.options[i].options?.length ||
+        Array.isArray(y.options) && Array.isArray(cmd2.options[i].options) && (
+          y.options.length != cmd2.options[i].options.length || y.options.some((z, j) =>
+            z.type != cmd2.options[i].options[j].type ||
+            z.name != cmd2.options[i].options[j].name ||
+            z.description != cmd2.options[i].options[j].description ||
+            (z.required ?? false) !== (cmd2.options[i].options[j].required ?? false) ||
+            Array.isArray(z.choices) != Array.isArray(cmd2.options[i].options[j].choices) && z.choices?.length != cmd2.options[i].options[j].choices?.length ||
+            Array.isArray(z.choices) && Array.isArray(cmd2.options[i].options[j].choices) && (
+              z.choices.length != cmd2.options[i].options[j].choices.length || z.choices.some((w, k) =>
+                w.name != cmd2.options[i].options[j].choices[k].name ||
+                w.value != cmd2.options[i].options[j].choices[k].value
+              )
+            ) ||
+            Array.isArray(z.options) != Array.isArray(cmd2.options[i].options[j].options) && z.options?.length != cmd2.options[i].options[j].options?.length ||
+            Array.isArray(z.options) && Array.isArray(cmd2.options[i].options[j].options) && (
+              z.options.length != cmd2.options[i].options[j].options.length || z.options.some((w, k) =>
+                w.type != cmd2.options[i].options[j].options[k].type ||
+                w.name != cmd2.options[i].options[j].options[k].name ||
+                w.description != cmd2.options[i].options[j].options[k].description ||
+                (w.required ?? false) !== (cmd2.options[i].options[j].options[k].required ?? false) ||
+                Array.isArray(w.choices) != Array.isArray(cmd2.options[i].options[j].options[k].choices) && w.choices?.length != cmd2.options[i].options[j].options[k].choices?.length ||
+                Array.isArray(w.choices) && Array.isArray(cmd2.options[i].options[j].options[k].choices) && (
+                  w.choices.length != cmd2.options[i].options[j].options[k].choices.length || w.choices.some((v, l) =>
+                    v.name != cmd2.options[i].options[j].options[k].choices[l].name ||
+                    v.value != cmd2.options[i].options[j].options[k].choices[l].value
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    );
+}
+
 class BotError extends Error {}
 
 // normal rps, where p1 and p2 are either 'rock', 'paper', or 'scissors', and the return value is 1 if p2 wins, -1 if p1 wins, and 0 if its a tie
@@ -124,6 +176,7 @@ function rps(p1, p2) {
 module.exports = {
   formatPlaybackBar,
   explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  slashCommandsInequal,
   BotError,
   rps,
 };
