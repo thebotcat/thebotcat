@@ -1,5 +1,5 @@
 // purely for formatting, result is not a valid id string
-function leftPadID(id) {
+function leftPadId(id) {
   return id.padStart(19, ' ');
 }
 
@@ -84,4 +84,4 @@ function getFancyChannels(guild) {
     ).join('\n');
 }
 
-module.exports = { leftPadID, getFancyGuilds, getSortedChannels, getFancyChannels };
+module.exports = { leftPadId, getFancyGuilds, getSortedChannels, getFancyChannels };

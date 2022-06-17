@@ -7,7 +7,7 @@ var { recursiveReaddir } = require('./convenience');
 var randomModule = require('./random');
 var { fastIntLog2, randBytes, randFloat, randInt, randInts } = randomModule;
 
-var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID } = require('./time_format'); 
+var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IdToDate, dateToId } = require('./time_format'); 
 
 var { getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage } = require('./status_gen');
 
@@ -28,7 +28,7 @@ var { parseArgs } = require('./parse_cmd_args');
 
 var { searchRoles, searchMembers, searchUsers, searchRole, searchMember, searchUser } = require('./coll_search');
 
-var { leftPadID, getFancyGuilds, getSortedChannels, getFancyChannels } = require('./general_serialize');
+var { leftPadId, getFancyGuilds, getSortedChannels, getFancyChannels } = require('./general_serialize');
 
 var invokeMessageHandler = require('./msg_invoke');
 
@@ -47,7 +47,7 @@ module.exports = {
   get randomBytes() { return randomModule.randomBytes }, set randomBytes(val) { randomModule.randomBytes = val; },
   get randomOffset() { return randomModule.randomOffset }, set randomOffset(val) { randomModule.randomOffset = val; },
   randBytes, randFloat, randInt, randInts,
-  msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID,
+  msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IdToDate, dateToId,
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,
   formatPlaybackBar,
   explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
@@ -60,7 +60,7 @@ module.exports = {
   serializedPermissionsEqual,
   parseArgs,
   searchRoles, searchMembers, searchUsers, searchRole, searchMember, searchUser,
-  leftPadID, getFancyGuilds, getSortedChannels, getFancyChannels,
+  leftPadId, getFancyGuilds, getSortedChannels, getFancyChannels,
   invokeMessageHandler,
   BufferStream,
   clientVCManager,

@@ -768,7 +768,7 @@ module.exports = [
     execute(o, msg, rawArgs) {
       try {
         let id = rawArgs[0];
-        return common.regCmdResp(o, `Date: ${common.IDToDate(id).toISOString()}`);
+        return common.regCmdResp(o, `Date: ${common.IdToDate(id).toISOString()}`);
       } catch (e) {
         return common.regCmdResp(o, 'Invalid ID');
       }
@@ -777,7 +777,7 @@ module.exports = [
       let ephemeral = args[1] ? args[1].value : true;
       try {
         let id = args[0].value;
-        return common.slashCmdResp(o, ephemeral, `Date: ${common.IDToDate(id).toISOString()}`);
+        return common.slashCmdResp(o, ephemeral, `Date: ${common.IdToDate(id).toISOString()}`);
       } catch (e) {
         return common.slashCmdResp(o, ephemeral, 'Invalid ID');
       }

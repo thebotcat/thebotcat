@@ -24,12 +24,12 @@ function fancyDateString(date) {
   return `${fancyDateStringWD[date.getDay()]} ${fancyDateStringMD[date.getMonth()]} ${(''+date.getDate()).padStart(2, '0')} ${date.getFullYear()} ${(''+date.getHours()).padStart(2, '0')}:${(''+date.getMinutes()).padStart(2, '0')}:${(''+date.getSeconds()).padStart(2, '0')}.${(''+date.getMilliseconds()).padStart(3, '0')} UTC`;
 }
 
-function IDToDate(id) {
+function IdToDate(id) {
   return new Date(new Date('2015-01-01T00:00:00.000Z').getTime() + Number(BigInt(id) >> 22n));
 }
 
-function dateToID(date) {
+function dateToId(date) {
   return ((date.getTime() - new Date('2015-01-01T00:00:00.000Z').getTime()) << 22n).toString();
 }
 
-module.exports = { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IDToDate, dateToID };
+module.exports = { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IdToDate, dateToId };
