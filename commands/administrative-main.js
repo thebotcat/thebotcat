@@ -329,7 +329,7 @@ module.exports = [
         });
       }
       let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
-      let bits = Discord.Permissions.FLAGS['SEND_MESSAGES'] * BigInt(type & 1n) | Discord.Permissions.FLAGS['CONNECT'] * BigInt(type & 2n);
+      let bits = Discord.Permissions.FLAGS.SEND_MESSAGES * BigInt(type & 1n) | Discord.Permissions.FLAGS.CONNECT * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[msg.guild.id].perms).filter(y => y == x.id && props.saved.guilds[msg.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
           x.allow = String(BigInt(x.allow) & ~bits);
@@ -392,7 +392,7 @@ module.exports = [
         });
       }
       let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
-      let bits = Discord.Permissions.FLAGS['SEND_MESSAGES'] * BigInt(type & 1n) | Discord.Permissions.FLAGS['CONNECT'] * BigInt(type & 2n);
+      let bits = Discord.Permissions.FLAGS.SEND_MESSAGES * BigInt(type & 1n) | Discord.Permissions.FLAGS.CONNECT * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[o.guild.id].perms).filter(y => y == x.id && props.saved.guilds[o.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
           x.allow &= ~bits;
