@@ -83,7 +83,8 @@ function slashCmdResp(o, ephemeral, message, mention) {
   if (o.alreadyReplied) {
     return o.interaction.followUp(replyObject);
   } else {
-    return o.interaction.reply(replyObject).then(x => (o.alreadyReplied = true, x));
+    o.alreadyReplied = true;
+    return o.interaction.reply(replyObject);
   }
 }
 

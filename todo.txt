@@ -1,7 +1,8 @@
-look through v13 changes
+when audio dispatcher errors, wait 0.1s, 0.2s, 0.5s, 1s, 2s, 5s, 10s, 20s, 30s, 60s before next attempt when looping, then every 60s after
+
+try and fix broken emoterole api functions
 
 clientvcmanager play can handle audio file location
-when audio dispatcher errors, wait 0.1s, 0.2s, 0.5s, 1s, 2s, 5s, 10s, 20s, 30s, 60s before next attempt when looping, then every 60s after
 
 -- Release --
 
@@ -30,6 +31,7 @@ settings overrides view non slash command cannot handle role only, fix other com
 
 reorder arguments in settings badwords
 command that sends a message and suppresses embed on it to make "invisible" message
+voicemute, voicedeaf, timeout command
 add explainer for each permission and its use, also for intents and partials
 rename hack command to hack-old and make hack command more dynamic
 make purge command work in dms
@@ -54,6 +56,8 @@ add reason to lock and other audited actions
 add searching to unban command
 contentCommand and contentCommandNonSlash are duplicate functions
 command descriptions should use prefix
+use guildmembermanager.search
+use deferred ack more
 
 emphemeral message chat feature
 make pseudo tagscript implementation in common and use it

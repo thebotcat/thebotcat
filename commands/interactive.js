@@ -595,11 +595,9 @@ module.exports = [
     flags: 0b101110,
     options: [ { type: 'STRING', name: 'goe', description: 'mama' } ],
     execute_slash(o, interaction, command, args) {
-      client.api.interactions(interaction.id, interaction.token).callback.post({ data: { type: 5 } });
+      interaction.deferReply({ ephemeral: true });
       setTimeout(() => {
-        client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: {
-          content: args[0] ? 'val: ' + args[0].value : 'no val', flags: 64,
-        } });
+        interaction.editReply({ content: args[0] ? 'val: ' + args[0].value : 'no val' });
       }, 5000);
     },
   },
