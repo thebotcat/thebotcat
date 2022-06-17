@@ -128,15 +128,15 @@ var clientVCManager = {
     } catch (e) {
       throw new common.BotError('Invalid URL');
     }
-    let latestObj = {
+    let songInfo = {
       url: url,
       desc: `${info.videoDetails.title} by ${info.videoDetails.author.name}`,
       expectedLength: info.videoDetails.lengthSeconds * 1000,
       stream: null,
       userid: common.isId(userid) ? userid : null,
     };
-    voice.songslist.push(latestObj);
-    return latestObj;
+    voice.songslist.push(songInfo);
+    return songInfo;
   },
   
   setMainLoop: function (voice, mainloopVal) {
@@ -185,9 +185,9 @@ var clientVCManager = {
     exports.setMainLoop(voice, 1);
     try {
       while (voice.songslist.length > 0) {
-        let latestObj = voice.songslist[0];
+        let songInfo = voice.songslist[0];
         // highWaterMark is temporary fix to prevent stream aborting
-        let stream = latestObj.stream = await ytdl(latestObj.url, { filter: 'audioonly', highWaterMark: 1 << 25 });
+        let stream = songInfo.stream = await ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 1 << 25 });
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
         voice.player.play(voice.resource);
         
@@ -207,8 +207,8 @@ var clientVCManager = {
         }
         
         let loopWait, forceLoop = false;
-        if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < latestObj.expectedLength - 1700) {
-          if (voice.resource.playbackDuration + 100 > latestObj.expectedLength && voice._repeatedFails) {
+        if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < songInfo.expectedLength - 1700) {
+          if (voice.resource.playbackDuration + 100 > songInfo.expectedLength && voice._repeatedFails) {
             voice._repeatedFails = 0;
           }
           voice._repeatedFails++;
@@ -218,7 +218,7 @@ var clientVCManager = {
             loopWait = 60000;
           }
           msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
-          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < latestObj.expectedLength / 2) {
+          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2) {
             forceLoop = true;
           }
         } else if (voice._repeatedFails) {
