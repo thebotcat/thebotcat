@@ -120,12 +120,12 @@ module.exports = exports = {
     voice.player.unpause();
   },
   
-  addSong: async function addSong(voice, url, userid) {
+  addSong: async function addSong(voice, url, userId) {
     let type = null;
     
     if (/^https?:\/\/(?:(?:www.)?youtube.com\/watch\?v=|youtu.be\/)[A-Za-z0-9?&=\-_%.]+$/.test(url))
       type = 1;
-    if (type == null && userid && !common.isDeveloper(userid))
+    if (type == null && userId && !common.isDeveloper(userId))
       throw new common.BotError('Not a YouTube URL');
     if (type == null) {
       if (fs.existsSync(url))
@@ -141,7 +141,7 @@ module.exports = exports = {
           url: url,
           desc: 'Local file',
           expectedLength: 0,
-          userid: null,
+          userId: null,
           stream: null,
         };
         voice.songslist.push(songInfo);
@@ -160,7 +160,7 @@ module.exports = exports = {
           url: url,
           desc: `${info.videoDetails.title} by ${info.videoDetails.author.name}`,
           expectedLength: info.videoDetails.lengthSeconds * 1000,
-          userid: common.isId(userid) ? userid : null,
+          userId: common.isId(userId) ? userId : null,
           stream: null,
         };
         voice.songslist.push(songInfo);
@@ -179,10 +179,10 @@ module.exports = exports = {
     }
   },
   
-  voteSkip: function (voice, userid) {
-    var voiceIndex = voice.voteskip.indexOf(userid);
+  voteSkip: function (voice, userId) {
+    var voiceIndex = voice.voteskip.indexOf(userId);
     if (voiceIndex > -1) voice.voteskip.splice(voiceIndex, 1);
-    else voice.voteskip.push(userid);
+    else voice.voteskip.push(userId);
     let voiceMembers = new Set(Array.from(voice.channel.members.values()).filter(x => !x.user.bot).map(x => x.id));
     if (voice.mainloop && voice.voteskip.filter(x => voiceMembers.has(x)).length / voiceMembers.size >= 0.5) {
       exports.setMainLoop(voice, 2);

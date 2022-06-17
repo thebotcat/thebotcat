@@ -41,8 +41,8 @@ module.exports = [
         if (!(await confirmeval(`sayy from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${common.explainChannel(channel, 1)}: ${util.inspect(text)}`)))
           return;
       } else if (common.isConfirmDeveloper(msg) && !common.isDeveloper(msg)) return;
-      let channelid = rawArgs[0].slice(2, rawArgs[0].length - 1), text = rawArgs[1], mention = rawArgs[2] ? common.stringToBoolean(rawArgs[2]) : true;
-      let channel = client.channels.cache.get(channelid);
+      let channelId = rawArgs[0].slice(2, rawArgs[0].length - 1), text = rawArgs[1], mention = rawArgs[2] ? common.stringToBoolean(rawArgs[2]) : true;
+      let channel = client.channels.cache.get(channelId);
       if (channel) {
         nonlogmsg(`sayy from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${common.explainChannel(channel, 1)}: ${util.inspect(text)}`);
         return channel.send({ content: text, ...(mention ? { allowedMentions: { parse: ['users', 'roles', 'everyone'] } } : null) });

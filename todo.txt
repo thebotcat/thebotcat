@@ -3,7 +3,8 @@ try and fix broken emoterole api functions
 -- Release --
 
 remove unnecessary break statements and other unreachable code
-make clientvcmanager into class, make variables camelCase, maybe do that for all non camelCase variables all throughout the code
+make clientvcmanager into class (also make variables camelCase)
+make variables camelCase all throughout code
 add config option to always forceLoop if song error
 make say and sayy not developer commands
 play with no args should resume

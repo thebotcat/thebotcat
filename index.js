@@ -68,7 +68,6 @@ math.import({
       return delete args[0][args[1]];
     } else if (args.length == 1) {
       if (calccontext) return delete calccontext[args[0]];
-      else return delete args[0];
     } else throw new Error('Invalid arguments');
   },
   cryptRandom: function (...args) {
@@ -274,11 +273,11 @@ function indexeval(val) { eval(val); }
 
 // logging functions
 async function infomsg(guild, val) {
-  let guildinfo = guild ? props.saved.guilds[guild.id] : undefined, channelid;
-  if (guildinfo && (channelid = guildinfo.logging.main)) {
+  let guildInfo = guild ? props.saved.guilds[guild.id] : undefined, channelId;
+  if (guildInfo && (channelId = guildInfo.logging.main)) {
     if (persData.special_guilds_set.has(guild.id))
       nonlogmsg(`infomsg for ${guild.name}: ${val}`);
-    return (await client.channels.fetch(channelid)).send(common.removePings(val));
+    return (await client.channels.fetch(channelId)).send(common.removePings(val));
   }
 }
 
@@ -416,8 +415,8 @@ async function updateSlashCommands(logfunc) {
   }
 }
 
-async function updateNonPubSlashCommands(guildid, logfunc, extra) {
-  var guildCommands = client.guilds.cache.get(guildid).commands;
+async function updateNonPubSlashCommands(guildId, logfunc, extra) {
+  var guildCommands = client.guilds.cache.get(guildId).commands;
   if (!extra) extra = { arr: [], coll: new Discord.Collection() };
   var currCmds = Array.from((await guildCommands.fetch()).values());
   var currCmdsObj = {};
@@ -482,22 +481,22 @@ async function fullUpdateSlashCommands() {
   
   let loggedGuildsUpdated = [];
   
-  for (var guildid of persData.special_guilds) {
-    if (!client.guilds.cache.has(guildid)) continue;
+  for (var guildId of persData.special_guilds) {
+    if (!client.guilds.cache.has(guildId)) continue;
     let loggedOneGuildBegin = false, logfunc = v => {
       if (loggedOneGuildBegin == 0) {
         if (loggedGlobalBegin == 0) {
           loggedGlobalBegin = 2;
         }
-        nonlogmsg(`Updating guild ${client.guilds.cache.get(guildid).name}`);
+        nonlogmsg(`Updating guild ${client.guilds.cache.get(guildId).name}`);
         nonlogmsg(v);
         loggedOneGuildBegin = true;
       } else {
         nonlogmsg(v);
       }
     };
-    await updateNonPubSlashCommands(guildid, logfunc, guildid == persData.ids.guild.v2 ? props.data_code[2] : null);
-    loggedGuildsUpdated.push(client.guilds.cache.get(guildid).name);
+    await updateNonPubSlashCommands(guildId, logfunc, guildId == persData.ids.guild.v2 ? props.data_code[2] : null);
+    loggedGuildsUpdated.push(client.guilds.cache.get(guildId).name);
     if (loggedOneGuildBegin) nonlogmsg('Done updating slash commands for guild');
   }
   

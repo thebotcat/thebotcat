@@ -1093,43 +1093,46 @@ module.exports = [
         case 'roles':
           if (!fullperms) return silenced ? null : common.slashCmdResp(o, true, 'You do not have permission to run this command.');
           switch (args[0].options[0].name) {
-            case 'view':
+            case 'view': {
               if (!args[0].options[0].options[0]) {
                 return common.slashCmdResp(o, true, 'Roles with bot-level permissions:\n' + Object.keys(guilddata.perms).map(x => `<@&${x}>`));
               } else {
-                let roleid = args[0].options[0].options[0].value;
-                if (!guilddata.perms[roleid])
-                  return common.slashCmdResp(o, true, `No bot-level permissions for role <@&${roleid}>.`);
-                return common.slashCmdResp(o, true, `Permissions for <@&${roleid}>:\n` + 
-                  common.getBotPermissionsArray(guilddata.perms[roleid]).map(x => `${x[1] ? '🟩' : '🟥'} ${x[0]}`).join('\n'));
+                let roleId = args[0].options[0].options[0].value;
+                if (!guilddata.perms[roleId])
+                  return common.slashCmdResp(o, true, `No bot-level permissions for role <@&${roleId}>.`);
+                return common.slashCmdResp(o, true, `Permissions for <@&${roleId}>:\n` + 
+                  common.getBotPermissionsArray(guilddata.perms[roleId]).map(x => `${x[1] ? '🟩' : '🟥'} ${x[0]}`).join('\n'));
               }
               break;
+            }
             
-            case 'init':
-              let roleid = args[0].options[0].options[0].value;
-              if (guilddata.perms[roleid])
-                return common.slashCmdResp(o, false, `Bot-level permissions already exist for role <@&${roleid}>.`);
-              guilddata.perms[roleid] = guilddata.perms[o.guild.id];
+            case 'init': {
+              let roleId = args[0].options[0].options[0].value;
+              if (guilddata.perms[roleId])
+                return common.slashCmdResp(o, false, `Bot-level permissions already exist for role <@&${roleId}>.`);
+              guilddata.perms[roleId] = guilddata.perms[o.guild.id];
               schedulePropsSave();
-              return common.slashCmdResp(o, false, `Permissions created for role <@&${roleid}>.`);
+              return common.slashCmdResp(o, false, `Permissions created for role <@&${roleId}>.`);
               break;
+            }
             
-            case 'clear':
-              let roleid2 = args[0].options[0].options[0].value;
-              if (!guilddata.perms[roleid2])
-                return common.slashCmdResp(o, false, `Bot-level permissions do not exist for role <@&${roleid2}>.`);
-              if (roleid2 != o.guild.id)
-                delete guilddata.perms[roleid2];
+            case 'clear': {
+              let roleId = args[0].options[0].options[0].value;
+              if (!guilddata.perms[roleId])
+                return common.slashCmdResp(o, false, `Bot-level permissions do not exist for role <@&${roleId}>.`);
+              if (roleId != o.guild.id)
+                delete guilddata.perms[roleId];
               else
-                guilddata.perms[roleid2] = common.constants.botRolePermDef;
+                guilddata.perms[roleId] = common.constants.botRolePermDef;
               schedulePropsSave();
-              return common.slashCmdResp(o, false, `Permissions cleared for role <@&${roleid2}>.`);
+              return common.slashCmdResp(o, false, `Permissions cleared for role <@&${roleId}>.`);
               break;
+            }
             
-            case 'setperms':
-              let roleid3 = args[0].options[0].options[0].value;
-              if (!guilddata.perms[roleid3])
-                return common.slashCmdResp(o, false, `Bot-level permissions do not exist for role <@&${roleid3}>.`);
+            case 'setperms': {
+              let roleId = args[0].options[0].options[0].value;
+              if (!guilddata.perms[roleId])
+                return common.slashCmdResp(o, false, `Bot-level permissions do not exist for role <@&${roleId}>.`);
               let changedPerms = [];
               let permsToChange = args[0].options[0].options[2].value.split(' ').map(perm => {
                 let nperm = Number(perm);
@@ -1137,12 +1140,13 @@ module.exports = [
                 else return common.constants.botRolePermBits[perm];
               }).filter(x => x != null).reduce((a, c) => (changedPerms.push(common.constants.botRolePermBitsInv[c]), a + c), 0) & common.constants.botRolePermAll;
               if (args[0].options[0].options[1].value == 'enable')
-                guilddata.perms[roleid3] |= permsToChange;
+                guilddata.perms[roleId] |= permsToChange;
               else
-                guilddata.perms[roleid3] &= ~permsToChange;
+                guilddata.perms[roleId] &= ~permsToChange;
               schedulePropsSave();
-              return common.slashCmdResp(o, false, `Permissions ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[1].value == 'enable' ? 'enabled' : 'disabled'} for role <@&${roleid3}>.`);
+              return common.slashCmdResp(o, false, `Permissions ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[1].value == 'enable' ? 'enabled' : 'disabled'} for role <@&${roleId}>.`);
               break;
+            }
           }
           break;
         
@@ -1153,19 +1157,19 @@ module.exports = [
               if (args[0].options[0].options[1]) {
                 if (!args[0].options[0].options[0])
                   return common.slashCmdResp(o, true, 'Role parameter by itself cannot be specified');
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelid}>.`);
-                let roleid = args[0].options[0].options[1].value;
-                if (!guilddata.overrides[channelid][roleid])
-                  return common.slashCmdResp(o, true, `No bot-level overrides in channel <#${channelid}> for role <@&${roleid}>.`);
-                return common.slashCmdResp(o, true, `Permissions for <@&${roleid}>:\n` + 
-                  common.getBotPermissionsArray(guilddata.overrides[channelid][roleid], true).map(x => `${x[1] > 0 ? '🟩' : x[1] < 0 ? '🟥' : '⬛'} ${x[0]}`).join('\n'));
+                let channelId = args[0].options[0].options[0].value;
+                if (!guilddata.overrides[channelId])
+                  return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelId}>.`);
+                let roleId = args[0].options[0].options[1].value;
+                if (!guilddata.overrides[channelId][roleId])
+                  return common.slashCmdResp(o, true, `No bot-level overrides in channel <#${channelId}> for role <@&${roleId}>.`);
+                return common.slashCmdResp(o, true, `Permissions for <@&${roleId}>:\n` + 
+                  common.getBotPermissionsArray(guilddata.overrides[channelId][roleId], true).map(x => `${x[1] > 0 ? '🟩' : x[1] < 0 ? '🟥' : '⬛'} ${x[0]}`).join('\n'));
               } else if (args[0].options[0].options[0]) {
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelid}>.`);
-                return common.slashCmdResp(o, true, `Roles with bot-level permission overrides for <#${channelid}>:\n` + Object.keys(guilddata.overrides[channelid]).map(x => `<@&${x}>`));
+                let channelId = args[0].options[0].options[0].value;
+                if (!guilddata.overrides[channelId])
+                  return common.slashCmdResp(o, true, `No bot-level overrides for channel <#${channelId}>.`);
+                return common.slashCmdResp(o, true, `Roles with bot-level permission overrides for <#${channelId}>:\n` + Object.keys(guilddata.overrides[channelId]).map(x => `<@&${x}>`));
               } else {
                 return common.slashCmdResp(o, true, 'Channels with bot-level permission overrides:\n' + Object.keys(guilddata.overrides).map(x => `<#${x}>`));
               }
@@ -1173,53 +1177,53 @@ module.exports = [
             
             case 'init':
               if (args[0].options[0].options[1]) {
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelid}>.`);
-                let roleid = args[0].options[0].options[1].value;
-                if (guilddata.overrides[channelid][roleid])
-                  return common.slashCmdResp(o, false, `Bot-level overrides already exist in channel <#${channelid}> for role <@&${roleid}>.`);
-                guilddata.overrides[channelid][roleid] = { allows: 0, denys: 0 };
+                let channelId = args[0].options[0].options[0].value;
+                if (!guilddata.overrides[channelId])
+                  return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelId}>.`);
+                let roleId = args[0].options[0].options[1].value;
+                if (guilddata.overrides[channelId][roleId])
+                  return common.slashCmdResp(o, false, `Bot-level overrides already exist in channel <#${channelId}> for role <@&${roleId}>.`);
+                guilddata.overrides[channelId][roleId] = { allows: 0, denys: 0 };
                 schedulePropsSave();
-                return common.slashCmdResp(o, false, `Overrides created in channel <#${channelid}> for role <@&${roleid}>.`);
+                return common.slashCmdResp(o, false, `Overrides created in channel <#${channelId}> for role <@&${roleId}>.`);
               } else {
-                let channelid = args[0].options[0].options[0].value;
-                if (guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, false, `Bot-level overrides already exist for channel <#${channelid}>.`);
-                guilddata.overrides[channelid] = {};
+                let channelId = args[0].options[0].options[0].value;
+                if (guilddata.overrides[channelId])
+                  return common.slashCmdResp(o, false, `Bot-level overrides already exist for channel <#${channelId}>.`);
+                guilddata.overrides[channelId] = {};
                 schedulePropsSave();
-                return common.slashCmdResp(o, false, `Overrides created for channel <#${channelid}>.`);
+                return common.slashCmdResp(o, false, `Overrides created for channel <#${channelId}>.`);
               }
               break;
             
             case 'clear':
               if (args[0].options[0].options[1]) {
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelid}>.`);
-                let roleid = args[0].options[0].options[1].value;
-                if (!guilddata.overrides[channelid][roleid])
-                  return common.slashCmdResp(o, false, `Bot-level overrides do not exist in channel <#${channelid}> for role <@&${roleid}>.`);
-                delete guilddata.overrides[channelid][roleid];
+                let channelId = args[0].options[0].options[0].value;
+                if (!guilddata.overrides[channelId])
+                  return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelId}>.`);
+                let roleId = args[0].options[0].options[1].value;
+                if (!guilddata.overrides[channelId][roleId])
+                  return common.slashCmdResp(o, false, `Bot-level overrides do not exist in channel <#${channelId}> for role <@&${roleId}>.`);
+                delete guilddata.overrides[channelId][roleId];
                 schedulePropsSave();
-                return common.slashCmdResp(o, false, `Overrides cleared in channel <#${channelid}> for role <@&${roleid}>.`);
+                return common.slashCmdResp(o, false, `Overrides cleared in channel <#${channelId}> for role <@&${roleId}>.`);
               } else {
-                let channelid = args[0].options[0].options[0].value;
-                if (!guilddata.overrides[channelid])
-                  return common.slashCmdResp(o, false, `Bot-level overrides do not exist for channel <#${channelid}>.`);
-                delete guilddata.overrides[channelid];
+                let channelId = args[0].options[0].options[0].value;
+                if (!guilddata.overrides[channelId])
+                  return common.slashCmdResp(o, false, `Bot-level overrides do not exist for channel <#${channelId}>.`);
+                delete guilddata.overrides[channelId];
                 schedulePropsSave();
-                return common.slashCmdResp(o, false, `Overrides cleared for channel <#${channelid}>.`);
+                return common.slashCmdResp(o, false, `Overrides cleared for channel <#${channelId}>.`);
               }
               break;
             
             case 'setperms':
-              let channelid = args[0].options[0].options[0].value;
-              if (!guilddata.overrides[channelid])
-                return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelid}>.`);
-              let roleid = args[0].options[0].options[1].value;
-              if (!guilddata.overrides[channelid][roleid])
-                return common.slashCmdResp(o, false, `Bot-level overrides do not exist in channel <#${channelid}> for role <@&${roleid}>.`);
+              let channelId = args[0].options[0].options[0].value;
+              if (!guilddata.overrides[channelId])
+                return common.slashCmdResp(o, false, `No bot-level overrides for channel <#${channelId}>.`);
+              let roleId = args[0].options[0].options[1].value;
+              if (!guilddata.overrides[channelId][roleId])
+                return common.slashCmdResp(o, false, `Bot-level overrides do not exist in channel <#${channelId}> for role <@&${roleId}>.`);
               let changedPerms = [];
               let permsToChange = args[0].options[0].options[3].value.split(' ').map(perm => {
                 let nperm = Number(perm);
@@ -1228,20 +1232,20 @@ module.exports = [
               }).filter(x => x != null).reduce((a, c) => (changedPerms.push(common.constants.botRolePermBitsInv[c]), a + c), 0) & common.constants.botRolePermAll;
               switch (args[0].options[0].options[2].value) {
                 case 'enable':
-                  guilddata.overrides[channelid][roleid].allows |= permsToChange;
-                  guilddata.overrides[channelid][roleid].denys &= ~permsToChange;
+                  guilddata.overrides[channelId][roleId].allows |= permsToChange;
+                  guilddata.overrides[channelId][roleId].denys &= ~permsToChange;
                   break;
                 case 'disable':
-                  guilddata.overrides[channelid][roleid].denys |= permsToChange;
-                  guilddata.overrides[channelid][roleid].allows &= ~permsToChange;
+                  guilddata.overrides[channelId][roleId].denys |= permsToChange;
+                  guilddata.overrides[channelId][roleId].allows &= ~permsToChange;
                   break;
                 case 'reset':
-                  guilddata.overrides[channelid][roleid].allows &= ~permsToChange;
-                  guilddata.overrides[channelid][roleid].denys &= ~permsToChange;
+                  guilddata.overrides[channelId][roleId].allows &= ~permsToChange;
+                  guilddata.overrides[channelId][roleId].denys &= ~permsToChange;
                   break;
               }
               schedulePropsSave();
-              return common.slashCmdResp(o, false, `Overrides ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[2].value == 'enable' ? 'enabled' : args[0].options[0].options[2].value == 'disable' ? 'disabled' : 'reset'} in channel <#${channelid}> for role <@&${roleid}>.`);
+              return common.slashCmdResp(o, false, `Overrides ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[2].value == 'enable' ? 'enabled' : args[0].options[0].options[2].value == 'disable' ? 'disabled' : 'reset'} in channel <#${channelId}> for role <@&${roleId}>.`);
               break;
           }
           break;

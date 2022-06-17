@@ -200,7 +200,7 @@ format for props.saved:
               url : string,
               desc : string,
               expectedLength : int (msec),
-              userid : null / string,
+              userId : null / string,
               stream : null / ytdl object,
             },
             ...

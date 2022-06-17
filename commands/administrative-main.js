@@ -845,7 +845,7 @@ module.exports = [
   },
   {
     name: 'unban',
-    description: '`!unban userid [reason]` unbans someone from this guild',
+    description: '`!unban <userid> [reason]` unbans someone from this guild',
     description_slash: 'unbans someone from this guild',
     flags: 0b110110,
     options: [
@@ -859,17 +859,17 @@ module.exports = [
       if (!msg.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
         return common.regCmdResp(o, 'Error: I do not have permission to unban members.');
       
-      let userid;
+      let userId;
       if (rawArgs[0]) {
         if (/<@!?[0-9]+>|[0-9]+/.test(rawArgs[0]))
-          userid = rawArgs[0].replace(/[<@!>]/g, '');
+          userId = rawArgs[0].replace(/[<@!>]/g, '');
       }
-      if (!userid) return common.regCmdResp(o, 'Could not find user.');
+      if (!userId) return common.regCmdResp(o, 'Could not find user.');
       
-      let baninfo;
+      let banInfo;
       try {
-        baninfo = await msg.guild.bans.fetch(userid);
-        if (!baninfo) return common.regCmdResp(o, 'User not banned or nonexistent.');
+        banInfo = await msg.guild.bans.fetch(userId);
+        if (!banInfo) return common.regCmdResp(o, 'User not banned or nonexistent.');
       } catch (e) {
         return common.regCmdResp(o, 'User not banned or nonexistent.');
       }
@@ -879,7 +879,7 @@ module.exports = [
       try {
         let guilddata = props.saved.guilds[msg.guild.id];
         if (guilddata && (guilddata.confirm_kb || guilddata.confirm_kb == null) || !guilddata) {
-          let unbanconfirm = await common.regCmdResp(o, `Are you sure you want to unban user ${baninfo.user.tag} (id ${baninfo.user.id})${unbanreason ? ' with reason ' + util.inspect(unbanreason) : ''}?`);
+          let unbanconfirm = await common.regCmdResp(o, `Are you sure you want to unban user ${banInfo.user.tag} (id ${banInfo.user.id})${unbanreason ? ' with reason ' + util.inspect(unbanreason) : ''}?`);
           let unbanreacts = unbanconfirm.awaitReactions({
             filter: (react, user) => (react.emoji.name == '✅' || react.emoji.name == '❌') && user.id == msg.author.id,
             time: 60000,
@@ -891,11 +891,11 @@ module.exports = [
           if (unbanreacts.size == 0 || unbanreacts.firstKey() == '❌')
             return unbanconfirm.edit(unbanconfirm.content + '\nUnban cancelled.');
           
-          await msg.guild.members.unban(userid, `[By ${msg.author.tag} (id ${msg.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
-          return unbanconfirm.edit(unbanconfirm.content + `\n${baninfo.user.tag} (id ${baninfo.user.id}) has been successfully unbanned`);
+          await msg.guild.members.unban(userId, `[By ${msg.author.tag} (id ${msg.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
+          return unbanconfirm.edit(unbanconfirm.content + `\n${banInfo.user.tag} (id ${banInfo.user.id}) has been successfully unbanned`);
         } else {
-          await msg.guild.members.unban(userid, `[By ${msg.author.tag} (id ${msg.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
-          return common.regCmdResp(o, `${baninfo.user.tag} (id ${baninfo.user.id}) has been successfully unbanned`);
+          await msg.guild.members.unban(userId, `[By ${msg.author.tag} (id ${msg.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
+          return common.regCmdResp(o, `${banInfo.user.tag} (id ${banInfo.user.id}) has been successfully unbanned`);
         }
       } catch (e) {
         return common.regCmdResp(o, 'Error: something went wrong.');
@@ -908,12 +908,12 @@ module.exports = [
       if (!o.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
         return common.slashCmdResp(o, true, 'Error: I do not have permission to unban members.');
       
-      let userid = args[0] && args[0].value;
+      let userId = args[0] && args[0].value;
       
-      let baninfo;
+      let banInfo;
       try {
-        baninfo = await o.guild.bans.fetch(userid);
-        if (!baninfo) return common.slashCmdResp(o, true, 'User not banned or nonexistent.');
+        banInfo = await o.guild.bans.fetch(userId);
+        if (!banInfo) return common.slashCmdResp(o, true, 'User not banned or nonexistent.');
       } catch (e) {
         return common.slashCmdResp(o, true, 'User not banned or nonexistent.');
       }
@@ -921,8 +921,8 @@ module.exports = [
       let unbanreason = args[1] && args[1].value;
       
       try {
-        await o.guild.members.unban(userid, `[By ${o.author.tag} (id ${o.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
-        return common.slashCmdResp(o, false, `${baninfo.user.tag} (id ${baninfo.user.id}) has been successfully unbanned`);
+        await o.guild.members.unban(userId, `[By ${o.author.tag} (id ${o.author.id})]${unbanreason ? ' ' + unbanreason : ''}`);
+        return common.slashCmdResp(o, false, `${banInfo.user.tag} (id ${banInfo.user.id}) has been successfully unbanned`);
       } catch (e) {
         return common.slashCmdResp(o, true, 'Error: something went wrong.');
       }
