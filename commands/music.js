@@ -424,6 +424,34 @@ module.exports = [
     },
   },
   {
+    name: 'currentsong',
+    description: '`!currentsong` prints the currently playing song',
+    description_slash: 'prints the currently playing song',
+    flags: 0b110110,
+    execute(o, msg, rawArgs) {
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
+      let guilddata = common.createAndGetGuilddata(msg.guild.id);
+      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
+        common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
+        common.clientVCManager.getFullStatus(guilddata.voice);
+      return common.regCmdResp(o, text);
+    },
+    execute_slash(o, interaction, command, args) {
+      if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
+      let guilddata = props.saved.guilds[o.guild.id];
+      if (!guilddata) {
+        props.saved.guilds[o.guild.id] = common.getEmptyGuildObject(o.guild.id);
+        schedulePropsSave();
+      }
+      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
+      let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
+        common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
+        common.clientVCManager.getFullStatus(guilddata.voice);
+      return common.slashCmdResp(o, false, text);
+    },
+  },
+  {
     name: 'songslist',
     description: '`!songslist` lists the currently playing song and the next songs',
     description_slash: 'lists the currently playing song and the next songs',
@@ -449,34 +477,6 @@ module.exports = [
       let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
         common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
         `Queue${common.clientVCManager.getQueue(guilddata.voice)}\n` +
-        common.clientVCManager.getFullStatus(guilddata.voice);
-      return common.slashCmdResp(o, false, text);
-    },
-  },
-  {
-    name: 'currentsong',
-    description: '`!currentsong` prints the currently playing song',
-    description_slash: 'prints the currently playing song',
-    flags: 0b110110,
-    execute(o, msg, rawArgs) {
-      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
-      let guilddata = common.createAndGetGuilddata(msg.guild.id);
-      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'I\'m not in a voice channel');
-      let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
-        common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
-        common.clientVCManager.getFullStatus(guilddata.voice);
-      return common.regCmdResp(o, text);
-    },
-    execute_slash(o, interaction, command, args) {
-      if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
-      let guilddata = props.saved.guilds[o.guild.id];
-      if (!guilddata) {
-        props.saved.guilds[o.guild.id] = common.getEmptyGuildObject(o.guild.id);
-        schedulePropsSave();
-      }
-      if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
-      let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
-        common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
         common.clientVCManager.getFullStatus(guilddata.voice);
       return common.slashCmdResp(o, false, text);
     },
