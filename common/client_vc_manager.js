@@ -226,7 +226,7 @@ module.exports = exports = {
             stream = songInfo.stream = fs.createReadStream(songInfo.url);
             break;
           case 1:
-            stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 1 << 28 });
+            stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 2 ** 28 });
             break;
         }
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
