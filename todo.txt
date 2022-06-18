@@ -1,7 +1,3 @@
-try and fix broken emoterole api functions
-
--- Release --
-
 remove unnecessary break statements and other unreachable code
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code
@@ -102,3 +98,6 @@ add docs to thebotcat git repo so commands can be seen without having to add and
 make website control panel
 add sharding and live updating
 use es6 modules
+
+problems with discord api or discord.js:
+a guild emoji's allowed roles will not update on d.js GuildEmojiRoleManager.cache but will update on discord itself, and will also update on the cache when bot is restarted

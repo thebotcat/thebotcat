@@ -930,7 +930,7 @@ module.exports = [
   },
   {
     name: 'emoterole',
-    description: 'configures which roles can use which emoji (API broken: view says none, add is set, remove is reset)\n' +
+    description: 'configures which roles can use which emoji (API broken: view says none, remove is reset)\n' +
       '`!emoterole view <emote|id|name>` views roles which can use an emoji\n' +
       '`!emoterole add <emote|id|name> [<@role|id|name>] ...` adds roles which can use an emoji\n' +
       '`!emoterole remove <emote|id|name> [<@role|id|name>] ...` removes roles which can use an emoji\n' +
@@ -995,13 +995,13 @@ module.exports = [
       switch (rawArgs[0]) {
         case 'view':
           let origRoles = emote.roles.cache.map(x => `<@&${x.id}>`);
-          return common.regCmdResp(o, { embeds: [{ title: 'Emote Roles', description: `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? 'Roles: ' + origRoles.join(' ') : 'No Roles'}` }] });
+          return common.regCmdResp(o, { embeds: [{ title: 'Emote Roles', description: `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? origRoles.join(' ') : 'None'}` }] });
         case 'add':
           emote.roles.add(roles);
-          return common.regCmdResp(o, { embeds: [{ title: 'Roles Added', description: `${roles.length ? 'Roles: ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} added to <:${emote.name}:${emote.id}> emote` }] });
+          return common.regCmdResp(o, { embeds: [{ title: 'Roles Added', description: `${roles.length ? 'Roles ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} added to <:${emote.name}:${emote.id}> emote` }] });
         case 'remove':
           emote.roles.remove(roles);
-          return common.regCmdResp(o, { embeds: [{ title: 'Roles Removed', description: `${roles.length ? 'Roles: ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} removed from <:${emote.name}:${emote.id}> emote` }] });
+          return common.regCmdResp(o, { embeds: [{ title: 'Roles Removed', description: `${roles.length ? 'Roles ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} removed from <:${emote.name}:${emote.id}> emote` }] });
         case 'set':
           emote.roles.set(roles);
           return common.regCmdResp(o, { embeds: [{ title: 'Roles Set', description: `<:${emote.name}:${emote.id}> emote roles set to ${roles.length ? roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'}` }] });
@@ -1027,7 +1027,7 @@ module.exports = [
       switch (args[0].name) {
         case 'view':
           let origRoles = emote.roles.cache.map(x => `<@&${x.id}>`);
-          return common.slashCmdResp(o, true, `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? origRoles.join(' ') : 'No Roles'}`);
+          return common.slashCmdResp(o, true, `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? origRoles.join(' ') : 'None'}`);
         case 'add':
           emote.roles.add(roles);
           return common.slashCmdResp(o, false, `${roles.length ? 'Roles ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} added to <:${emote.name}:${emote.id}> emote`);
