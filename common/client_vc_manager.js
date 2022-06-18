@@ -64,11 +64,11 @@ module.exports = exports = {
   getSelfMute: function getSelfMute(voice) {
     return voice.channel.guild.me.voice.selfMute;
   },
-
+  
   getSelfDeaf: function getSelfDeaf(voice) {
     return voice.channel.guild.me.voice.selfDeaf;
   },
-
+  
   toggleSelfMute: function toggleSelfMute(voice) {
     // there appears to be no way to set this using guild.me.voice or VoiceConnection, so a raw api call has to be used
     props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
@@ -295,22 +295,98 @@ module.exports = exports = {
       voice.player.on(DiscordVoice.AudioPlayerStatus.Idle, resolve);
     });
   },
-
+  
   getCurrentTrackTime: function getCurrentTrackTime(voice) {
     return voice.resource.playbackDuration;
   },
-
+  
   getFinishedTrackTime: function getFinishedTrackTime(voice) {
     return voice.songslist[0].expectedLength;
   },
-
-  getStatus: function getStatus(voice) {
+  
+  getPlayStatus: function getPlayStatus(voice) {
     switch (voice.player.state.status) {
       case DiscordVoice.AudioPlayerStatus.Idle: return 'Idle';
       case DiscordVoice.AudioPlayerStatus.Buffering: return 'Buffering';
       case DiscordVoice.AudioPlayerStatus.Playing: return 'Playing';
       case DiscordVoice.AudioPlayerStatus.Paused: return 'Paused';
       default: return 'Null';
+    }
+  },
+  
+  getCurrentSong: function getCurrentSong(songInfo) {
+    return (
+        songInfo.type == 1 ?
+          `[${songInfo.desc}](<${songInfo.url}>)` :
+          songInfo.desc
+      ) +
+      ` (${common.msecToHMS(Number(songInfo.expectedLength))})`;
+  },
+  
+  getCurrentSong2: function getCurrentSong2(voice) {
+    if (voice.songslist.length) {
+      return (
+          voice.songslist[0].type == 1 ?
+            `[${voice.songslist[0].desc}](<${voice.songslist[0].url}>)` :
+            voice.songslist[0].desc
+        ) +
+        (
+          voice.songslist[0].userId ?
+            ` (requested by ${client.users.cache.get(voice.songslist[0].userId)?.tag ?? 'null'}, id ${voice.songslist[0].userId})` :
+            ''
+        );
+    } else {
+      return 'No Song';
+    }
+  },
+  
+  getTime: function getTime(voice) {
+    if (voice.resource) {
+      let timeBar = voice.songslist.length ? common.formatPlaybackBar(exports.getCurrentTrackTime(voice) / exports.getFinishedTrackTime(voice)) : '---';
+      let currentTime = common.msecToHMS(exports.getCurrentTrackTime(voice));
+      let endTime = voice.songslist.length ? common.msecToHMS(exports.getFinishedTrackTime(voice)) : '-:--.---';
+      return `Time: ${timeBar} (${currentTime} / ${endTime})\n`;
+    } else {
+      return '';
+    }
+  },
+  
+  getVoteskippers: function getVoteskippers(voice) {
+    if (voice.voteskip.length) {
+      let voteSkipList = voice.voteskip
+        .map(x => `${client.users.cache.get(x)?.tag} (id ${x})`)
+        .join(', ');
+      return `Voteskippers: ${voteSkipList}\n`;
+    } else {
+      return '';
+    }
+  },
+  
+  getTimeAndVoteskippers: function getTimeAndVoteskippers(voice) {
+    return exports.getTime(voice) +
+      exports.getVoteskippers(voice);
+  },
+  
+  getFullStatus: function getFullStatus(voice) {
+    return `Status: ${exports.getPlayStatus(voice)}, Volume: ${voice.volume}, Loop: ${voice.loop ? '✅' : '❌'}, Queue Loop: ${voice.queueloop ? '✅' : '❌'}, Self Muted: ${exports.getSelfMute(voice) ? '✅' : '❌'}, Self Deafened: ${exports.getSelfDeaf(voice) ? '✅' : '❌'}`;
+  },
+  
+  getQueue: function getQueue(voice) {
+    if (voice.songslist.length > 1) {
+      return ':\n' +
+        voice.songslist
+          .slice(1)
+          .map(
+            (x, i) => {
+              let userString = x.userId ?
+                `, requested by ${client.users.cache.get(x.userId)?.tag ?? 'null'}, id ${x.userId}` :
+                '';
+              return `${i + 1}. ${x.desc} (${common.msecToHMS(x.expectedLength)}${userString})`;
+            }
+          )
+          .join('\n');
+    } else {
+      return ' empty';
     }
   },
 };
