@@ -1,3 +1,9 @@
+add semicolon
+remove unused code
+unnecessary semicolon
+replace unnecessary template string
+unused function args and vars in code
+
 remove unnecessary break statements and other unreachable code
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code
