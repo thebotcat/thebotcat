@@ -4,6 +4,8 @@ unnecessary semicolon
 replace unnecessary template string
 unused function args and vars in code
 
+fix bug with status randomly disappearing
+
 remove unnecessary break statements and other unreachable code
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code

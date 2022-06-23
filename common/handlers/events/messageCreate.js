@@ -24,9 +24,9 @@ module.exports = async msg => {
     return;
   }
   
-  if (handlers.extra.message) {
+  if (handlers.extra.messageCreate) {
     let res;
-    for (var handlerFunc of handlers.extra.message) {
+    for (var handlerFunc of handlers.extra.messageCreate) {
       if (handlerFunc.constructor == Function) res = handlerFunc(msg);
       else res = await handlerFunc(msg);
       if (res === 0) return;
