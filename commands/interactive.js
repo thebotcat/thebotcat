@@ -6,11 +6,11 @@ module.exports = [
     flags: 0b111110,
     options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
-      return common.regCmdResp(o, `I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
+      return common.regCmdResp(o, `I'm flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
     execute_slash(o, interaction, command, args) {
       let ephemeral = args[0] ? args[0].value : true;
-      return common.slashCmdResp(o, ephemeral, `I\'m flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
+      return common.slashCmdResp(o, ephemeral, `I'm flipping a coin, and the result is...: ${common.randInt(0, 2) ? 'heads' : 'tails'}!`);
     },
   },
   {

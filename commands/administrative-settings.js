@@ -536,7 +536,7 @@ module.exports = [
                   return common.regCmdResp(o, {
                     embeds: [{
                       title: 'Permissions Updated',
-                      description: `Permissions ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${rawArgs[3] == 'enable' ? 'enabled' : 'disabled'} for role <@&${role3.id}>.`
+                      description: `Permissions ${changedPerms.map(x => `'${x}'`).join(', ')} ${rawArgs[3] == 'enable' ? 'enabled' : 'disabled'} for role <@&${role3.id}>.`
                     }]
                   });
                 }
@@ -794,7 +794,7 @@ module.exports = [
                   return common.regCmdResp(o, {
                     embeds: [{
                       title: 'Overrides Updated',
-                      description: `Overrides ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${rawArgs[1] == 'enable' ? 'enabled' : rawArgs[1] == 'disable' ? 'disabled' : 'reset'} in channel <#${channel.id}> for role <@&${role3.id}>.`
+                      description: `Overrides ${changedPerms.map(x => `'${x}'`).join(', ')} ${rawArgs[1] == 'enable' ? 'enabled' : rawArgs[1] == 'disable' ? 'disabled' : 'reset'} in channel <#${channel.id}> for role <@&${role3.id}>.`
                     }]
                   });
                 }
@@ -1100,7 +1100,7 @@ module.exports = [
               else
                 guilddata.perms[roleId] &= ~permsToChange;
               schedulePropsSave();
-              return common.slashCmdResp(o, false, `Permissions ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[1].value == 'enable' ? 'enabled' : 'disabled'} for role <@&${roleId}>.`);
+              return common.slashCmdResp(o, false, `Permissions ${changedPerms.map(x => `'${x}'`).join(', ')} ${args[0].options[0].options[1].value == 'enable' ? 'enabled' : 'disabled'} for role <@&${roleId}>.`);
             }
           }
           break;
@@ -1197,7 +1197,7 @@ module.exports = [
                   break;
               }
               schedulePropsSave();
-              return common.slashCmdResp(o, false, `Overrides ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[2].value == 'enable' ? 'enabled' : args[0].options[0].options[2].value == 'disable' ? 'disabled' : 'reset'} in channel <#${channelId}> for role <@&${roleId}>.`);
+              return common.slashCmdResp(o, false, `Overrides ${changedPerms.map(x => `'${x}'`).join(', ')} ${args[0].options[0].options[2].value == 'enable' ? 'enabled' : args[0].options[0].options[2].value == 'disable' ? 'disabled' : 'reset'} in channel <#${channelId}> for role <@&${roleId}>.`);
           }
           break;
         

@@ -316,7 +316,7 @@ module.exports = [
           `**Avatar for ${member.user.tag}**\n` +
           `userid: ${member.user.id}, color: ${member.displayHexColor}\n` +
           `links: [default](<${avatarURL}>) (avatar is default)\n` +
-          `[\[for\xa0embed\]]( ${avatarURL} )`);
+          `[[for\xa0embed]]( ${avatarURL} )`);
       } else {
         let baseurl = `https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}`;
         if (animated)
@@ -330,7 +330,7 @@ module.exports = [
             `big links: [big png](<${baseurl}.png?size=4096>), ` +
             `[big\xa0webp](<${baseurl}.webp?size=4096>), ` +
             `[big\xa0gif](<${baseurl}.gif?size=4096>)\n` +
-            `[\[for\xa0embed\]]( ${baseurl}.gif?size=4096 )`);
+            `[[for\xa0embed]]( ${baseurl}.gif?size=4096 )`);
         else
           return common.slashCmdResp(o, ephemeral,
             `**Avatar for ${member.user.tag}**\n` +
@@ -340,7 +340,7 @@ module.exports = [
             `[normal\xa0webp](<${baseurl}.webp>), ` +
             `[big\xa0png](<${baseurl}.png?size=4096>), ` +
             `[big\xa0webp](<${baseurl}.webp?size=4096>)\n` +
-            `[\[for\xa0embed\]]( ${baseurl}.png?size=4096 )`);
+            `[[for\xa0embed]]( ${baseurl}.png?size=4096 )`);
       }
     },
   },
@@ -423,7 +423,7 @@ module.exports = [
             `big links: [big png](<${baseurl}.png?size=4096>), ` +
             `[big\xa0webp](<${baseurl}.webp?size=4096>), ` +
             `[big\xa0gif](<${baseurl}.gif?size=4096>)\n` +
-            `[\[for\xa0embed\]]( ${baseurl}.gif?size=4096 )`);
+            `[[for\xa0embed]]( ${baseurl}.gif?size=4096 )`);
         else
           return common.slashCmdResp(o, ephemeral,
             `**Icon for ${guild.name}**\n` +
@@ -433,7 +433,7 @@ module.exports = [
             `[normal\xa0webp](<${baseurl}.webp>), ` +
             `[big\xa0png](<${baseurl}.png?size=4096>), ` +
             `[big\xa0webp](<${baseurl}.webp?size=4096>)\n` +
-            `[\[for\xa0embed\]]( ${baseurl}.png?size=4096 )`);
+            `[[for\xa0embed]]( ${baseurl}.png?size=4096 )`);
       }
     },
   },
@@ -524,7 +524,7 @@ module.exports = [
       let baseurl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`;
       let avatarStr = user.avatar == null ?
         `[default](<${avatarURL} ) (avatar is default)\n` +
-        `[\[for\xa0embed\]]( ${avatarURL}?size=64 )` :
+        `[[for\xa0embed]]( ${avatarURL}?size=64 )` :
           (animated ?
           `[default](<${avatarURL}>), ` +
           `[normal\xa0png](<${baseurl}.png>), ` +
@@ -533,13 +533,13 @@ module.exports = [
           `[big\xa0png](<${baseurl}.png?size=4096>), ` +
           `[big\xa0webp](<${baseurl}.webp?size=4096>), ` +
           `[big\xa0gif](<${baseurl}.gif?size=4096>)\n` +
-          `[\[for\xa0embed\]]( ${avatarURL}?size=64 )` :
+          `[[for\xa0embed]]( ${avatarURL}?size=64 )` :
           `[default](<${avatarURL}>), ` +
           `[normal\xa0png](<${baseurl}.png>), ` +
           `[normal\xa0webp](<${baseurl}.webp>), ` +
           `[big\xa0png](<${baseurl}.png?size=4096>), ` +
           `[big\xa0webp](<${baseurl}.webp?size=4096>)\n` +
-          `[\[for\xa0embed\]]( ${avatarURL}?size=64 )`);
+          `[[for\xa0embed]]( ${avatarURL}?size=64 )`);
       
       return common.slashCmdResp(o, ephemeral,
         `**User Info for ${user.tag}**\n` +
@@ -612,7 +612,7 @@ module.exports = [
         `Created At: ${createdDate.toISOString()} (${common.msecToHMSs(Date.now() - createdDate.getTime())} ago)\n` +
         `Joined At: ${joinedDate.toISOString()} (${common.msecToHMSs(Date.now() - joinedDate.getTime())} ago)\n` +
         `Roles: ${Array.from(member.roles.cache.values()).sort((a, b) => a.position > b.position ? -1 : 1).map(x => `<@&${x.id}>`).join(' ')}\n` +
-        `[\[for\xa0embed\]]( ${member.user.displayAvatarURL()}?size=64 )`);
+        `[[for\xa0embed]]( ${member.user.displayAvatarURL()}?size=64 )`);
     },
   },
   {
@@ -706,7 +706,7 @@ module.exports = [
           `Icon: ${iconStr}\n` +
           `Members: ${guild.memberCount}\n` +
           `Member Cap: ${guild.maximumMembers}` +
-          (iconURL ? `\n[\[for\xa0embed\]]( ${iconURL}?size=64 )` : ''));
+          (iconURL ? `\n[[for\xa0embed]]( ${iconURL}?size=64 )` : ''));
       else
         return common.slashCmdResp(o, ephemeral,
           `**Information for ${guild.name}**\n` +
@@ -714,7 +714,7 @@ module.exports = [
           `Created At: ${createdDate.toISOString()} (${common.msecToHMSs(Date.now() - createdDate.getTime())} ago)\n` +
           `Icon: ${iconStr}\n` +
           `Members: ${guild.memberCount}` +
-          (iconURL ? `\n[\[for\xa0embed\]]( ${iconURL}?size=64 )` : ''));
+          (iconURL ? `\n[[for\xa0embed]]( ${iconURL}?size=64 )` : ''));
     },
   },
   {
