@@ -1,5 +1,3 @@
-unused function args and vars in code
-
 fix bug with status randomly disappearing
 botcat ignoring ctrl c when repl server is closed
 

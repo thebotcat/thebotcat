@@ -248,7 +248,7 @@ module.exports = [
     options: [ { type: 'STRING', name: 'expression', description: 'the expression to evaluate' } ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
-      let cmd = o.argstring, res;
+      let cmd = o.argstring;
       nonlogmsg(`shell exec from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(cmd)}`);
       if (global.confirmeval && common.isConfirmDeveloper(msg)) {
         if (!(await confirmeval(`shell exec from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(cmd)}`))) {
@@ -279,7 +279,7 @@ module.exports = [
     },
     async execute_slash(o, interaction, command, args) {
       if (!common.isDeveloper(o)) return common.slashCmdResp(o, true, 'dev only command');
-      let cmd = args[0] ? args[0].value : '', res;
+      let cmd = args[0] ? args[0].value : '';
       nonlogmsg(`shell exec from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${util.inspect(cmd)}`);
       
       client.api.interactions(interaction.id, interaction.token).callback.post({ data: { type: 5, data: { flags: 64 } } });

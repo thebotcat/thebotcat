@@ -310,7 +310,7 @@ module.exports = [
       }
       
       let avatarURL = member.user.displayAvatarURL({ dynamic: true });
-      let animated = member.user.avatar && member.user.avatar.startsWith('a_'), avatarEmbed;
+      let animated = member.user.avatar && member.user.avatar.startsWith('a_');
       if (member.user.avatar == null) {
         return common.slashCmdResp(o, ephemeral,
           `**Avatar for ${member.user.tag}**\n` +

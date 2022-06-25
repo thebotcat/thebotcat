@@ -1,7 +1,5 @@
-var worker = require('worker_threads');
 var workerpool = require('workerpool');
 var util = require('util');
-var v8 = require('v8');
 var vm = require('vm');
 var common = require('./common/random');
 var math = require('./math.min.js');

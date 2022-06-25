@@ -314,7 +314,6 @@ function removeCommand(cmd) {
 }
 
 function removeCommands(cmds) {
-  var index, cmd;
   cmds.forEach(x => removeCommand(x));
 }
 
@@ -694,7 +693,7 @@ process.on('unhandledRejection', function (reason, p) {
 });
 
 // exit handlers
-function exitHandler(...args) {
+function exitHandler() {
   if (props.feat.version == 'normal') {
     exitHandled++;
     switch (exitHandled - 1) {
