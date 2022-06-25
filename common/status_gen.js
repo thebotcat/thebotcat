@@ -7,7 +7,7 @@ function getBotcatUptimeMessage(embeds) {
       }],
     };
   else
-    return `Uptime: ${common.msecToHMSs(client.uptime)} (${ticks} ticks)`
+    return `Uptime: ${common.msecToHMSs(client.uptime)} (${ticks} ticks)`;
 }
 
 function getBotcatStatusMessage(embeds) {

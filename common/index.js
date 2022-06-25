@@ -45,8 +45,8 @@ var { isId, isObject, persDataCreateVerifiedCopy, propsSavedCreateVerifiedCopy, 
 // also an interesting way to make js cleaner is by shortening { e: e } to { e }, and the compiler still understands
 module.exports = {
   constants, recursiveReaddir, fastIntLog2,
-  get randomBytes() { return randomModule.randomBytes }, set randomBytes(val) { randomModule.randomBytes = val; },
-  get randomOffset() { return randomModule.randomOffset }, set randomOffset(val) { randomModule.randomOffset = val; },
+  get randomBytes() { return randomModule.randomBytes; }, set randomBytes(val) { randomModule.randomBytes = val; },
+  get randomOffset() { return randomModule.randomOffset; }, set randomOffset(val) { randomModule.randomOffset = val; },
   randBytes, randFloat, randInt, randInts,
   msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IdToDate, dateToId,
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,

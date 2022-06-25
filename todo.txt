@@ -1,4 +1,3 @@
-add semicolon
 remove unused code
 unnecessary semicolon
 replace unnecessary template string

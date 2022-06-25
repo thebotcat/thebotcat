@@ -64,27 +64,27 @@ function randInt(min, max) {
     if (range <= 256) {
       do {
         res = randBytes(1)[0] >> (7 - rangeLog);
-      } while (res >= range)
+      } while (res >= range);
     } else if (range <= 2 ** 48) {
       do {
         let exp = Math.floor(rangeLog / 8);
         let bytes = randBytes(1 + exp);
         res = (bytes[0] >> (7 - rangeLog % 8)) << (exp * 8);
         for (var i = 1; i <= exp; i++) res += bytes[i] << ((exp - i) * 8);
-      } while (res >= range)
+      } while (res >= range);
     } else {
       do {
         let exp = Math.floor(rangeLog / 8);
         let bytes = randBytes(1 + exp);
         res = (bytes[0] >> (7 - rangeLog % 8)) * 256 ** exp;
         for (var i = 1; i <= exp; i++) res += bytes[i] * 256 ** (exp - i);
-      } while (res >= range)
+      } while (res >= range);
     }
   } else {
     if (range <= 256) {
       do {
         res = randBytes(1)[0] >> (7 - rangeLog);
-      } while (res >= range)
+      } while (res >= range);
       res = BigInt(res);
     } else {
       do {
@@ -93,7 +93,7 @@ function randInt(min, max) {
         exp = BigInt(exp);
         res = (BigInt(bytes[0]) >> (7n - BigInt(rangeLog) % 8n)) << (exp * 8n);
         for (var i = 1n; i <= exp; i++) res += BigInt(bytes[i]) << ((exp - i) * 8n);
-      } while (res >= range)
+      } while (res >= range);
     }
   }
   
@@ -138,7 +138,7 @@ function randInts(min, max, amt) {
 
 module.exports = {
   fastIntLog2,
-  get randomBytes() { return randomBytes }, set randomBytes(val) { randomBytes = val; },
-  get randomOffset() { return randomOffset }, set randomOffset(val) { randomOffset = val; },
+  get randomBytes() { return randomBytes; }, set randomBytes(val) { randomBytes = val; },
+  get randomOffset() { return randomOffset; }, set randomOffset(val) { randomOffset = val; },
   randBytes, randFloat, randInt, randInts,
 };

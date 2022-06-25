@@ -51,7 +51,7 @@ function getSortedChannels(guild) {
         channel: x,
         children: nonCategoryChannels[x.id].sort((a, b) => a.type == 'voice' && b.type != 'voice' ? 1 : a.type != 'voice' && b.type == 'voice' ? -1 : a.position > b.position ? 1 : a.position < b.position ? -1 : 0),
       })),
-  }
+  };
 }
 
 /* returns a string with contents:
