@@ -6,8 +6,8 @@
       setDescription(v) { this.description = v; return this; }
       setFooter(v) { this.footer = v; return this; }
     }
-  };
-   * /
+  }; * /
+  
   let content_types = {
     "hey": "text_reply", "who am i": "text_reply", "temmie": "text_reply", "vsco": "text_reply", "bot": "text_reply", "pls money": "text_reply", "unretard": "text_reply", "techku": "text_reply", "goe mama": "text", "pp": "text_reply",
     "shut": "image", "joke": "text_multi_reply", "fun fact": "text_multi_reply", "pun": "text_multi_reply",
@@ -24,31 +24,33 @@
         let text;
         x.execute({ channel: { send: v => text = v } });
         return `  ${JSON.stringify(x.name)}: { "type": ${JSON.stringify(type)}, "content": ${JSON.stringify(text)} },`;
-      } break;
+      }
       case 'text_reply': {
         let text;
         x.execute({ reply: v => text = v });
         return `  ${JSON.stringify(x.name)}: { "type": ${JSON.stringify(type)}, "content": ${JSON.stringify(text)} },`;
-      } break;
+      }
       case 'text_multi_reply': {
         let amount = Number(/(?<=Math.random\(\) \* )[0-9]+/.exec(x.execute.toString()));
         let texts = [];
         for (let i = 0; i < amount; i++)
           x.execute({ reply: v => texts.push(v) }, 0, 0, 0, [i + 1 + '']);
         return `  ${JSON.stringify(x.name)}: {\n    "type": ${JSON.stringify(type)},\n    "contents": ${JSON.stringify(texts, null, 2).split('\n').map(x => '    ' + x).join('\n').trim()}\n  },`;
-      } break;
+      }
       case 'image': {
         let embed;
         x.execute({ channel: { send: v => embed = v } });
         return `  ${JSON.stringify(x.name)}: {\n    "type": ${JSON.stringify(type)}${embed.title ? `,\n    "title": ${JSON.stringify(embed.title)}` : ''}${embed.description ? `, "desc": ${JSON.stringify(embed.description)}` : ''}${embed.url ? `,\n    "image": ${JSON.stringify(embed.url)}` : ''}${embed.footer ? `,\n    "footer": ${JSON.stringify(embed.footer)}` : ''}\n  },`;
-      } break;
+      }
       case 'image_multi': {
         let amount = Number(/(?<=Math.random\(\) \* )[0-9]+/.exec(x.execute.toString()));
         let embeds = [];
         for (let i = 0; i < amount; i++)
           x.execute({ channel: { send: v => embeds.push(v) } }, 0, 0, 0, [i + 1 + '']);
         return `  ${JSON.stringify(x.name)}: {\n    "type": ${JSON.stringify(type)},\n    "embeds": ${JSON.stringify(embeds.map(x => ({ title: x.title, desc: x.description, image: x.url, footer: x.footer })), null, 2).split('\n').map(x => '    ' + x).join('\n').trim()}\n  },`;
-      } break;
+      }
+      default:
+        throw new Error(`Content type not provided for command ${x.name}`);
     }
   }).join('\n') + '\n}';
 })()); */
