@@ -1,5 +1,4 @@
 remove unused code
-unnecessary semicolon
 replace unnecessary template string
 unused function args and vars in code
 

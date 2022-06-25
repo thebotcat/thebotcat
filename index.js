@@ -755,7 +755,7 @@ function startRepl() {
     breakEvalOnSigint: true,
   });
   global.replServer.on('exit', exitHandler);
-};
+}
 
 // login to discord
 if (props.feat.version == 'normal') {
