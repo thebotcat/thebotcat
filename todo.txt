@@ -5,6 +5,7 @@ replace unnecessary template string
 unused function args and vars in code
 
 fix bug with status randomly disappearing
+botcat ignoring ctrl c when repl server is closed
 
 remove unnecessary break statements and other unreachable code
 make clientvcmanager into class (also make variables camelCase)
@@ -21,6 +22,7 @@ use objects for regCmdResp and slashCmdResp
 disabling vc commands should cause insta disconnect, disabling music commands should cause insta stop
 make global enabledcmds true or false, category is true false or null (meaning inherit), commands same thing, inherit from category
 botcat confirmkb doesnt work on slash commands
+add uwu mode where all text strings are replaced with something more uwu-ey
 
 investigate all automatic saved guilddata creators, only add data to saved guilddata if it differs from the default
 aliases for commands and rename base music commands to something more obvious
