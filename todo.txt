@@ -1,7 +1,6 @@
 fix bug with status randomly disappearing
 botcat ignoring ctrl c when repl server is closed
 
-remove unnecessary break statements and other unreachable code
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code
 add config option to always forceLoop if song error
