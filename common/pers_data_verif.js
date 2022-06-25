@@ -200,7 +200,7 @@ module.exports = {
       if (guildsIsObj) {
         let props = Object.getOwnPropertyDescriptors(obj.guilds);
         let keys = Object.keys(props);
-        for (var key of keys) {
+        for (let key of keys) {
           if (props[key].enumerable && isId(key))
             newObj.guilds[key] = perGuildFunc(obj.guilds[key], key);
           else if (props[key].get)
@@ -519,7 +519,7 @@ module.exports = {
       if (guildsIsObj) {
         let props = Object.getOwnPropertyDescriptors(obj.guilds);
         let keys = Object.keys(props);
-        for (var key of keys) {
+        for (let key of keys) {
           if (props[key].enumerable && isId(key))
             newObj.guilds[key] = perGuildFunc(obj.guilds[key], key);
           else if (props[key].get)

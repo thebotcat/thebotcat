@@ -70,14 +70,14 @@ function randInt(min, max) {
         let exp = Math.floor(rangeLog / 8);
         let bytes = randBytes(1 + exp);
         res = (bytes[0] >> (7 - rangeLog % 8)) << (exp * 8);
-        for (var i = 1; i <= exp; i++) res += bytes[i] << ((exp - i) * 8);
+        for (let i = 1; i <= exp; i++) res += bytes[i] << ((exp - i) * 8);
       } while (res >= range);
     } else {
       do {
         let exp = Math.floor(rangeLog / 8);
         let bytes = randBytes(1 + exp);
         res = (bytes[0] >> (7 - rangeLog % 8)) * 256 ** exp;
-        for (var i = 1; i <= exp; i++) res += bytes[i] * 256 ** (exp - i);
+        for (let i = 1; i <= exp; i++) res += bytes[i] * 256 ** (exp - i);
       } while (res >= range);
     }
   } else {
@@ -117,7 +117,7 @@ function randInts(min, max, amt) {
     for (; amt > 0; amt -= 128) {
       subAmt = Math.min(amt, 128);
       bigRandInt = randInt(0n, range ** BigInt(subAmt));
-      for (var i = 0; i < subAmt; i++) {
+      for (let i = 0; i < subAmt; i++) {
         array.push(min + Number(bigRandInt % range));
         bigRandInt /= range;
       }
@@ -126,7 +126,7 @@ function randInts(min, max, amt) {
     for (; amt > 0; amt -= 128) {
       subAmt = Math.min(amt, 128);
       bigRandInt = randInt(0n, range ** BigInt(subAmt));
-      for (var i = 0; i < subAmt; i++) {
+      for (let i = 0; i < subAmt; i++) {
         array.push(min + bigRandInt % range);
         bigRandInt /= range;
       }

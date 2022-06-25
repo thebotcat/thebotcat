@@ -311,7 +311,7 @@ module.exports = [
               case 'modify':
                 if (rawArgs.length < 8) return common.regCmdResp(o, 'Not enough arguments');
                 let index2 = null;
-                for (var i = 0; i < guilddata.basic_automod.bad_words.length; i++) {
+                for (let i = 0; i < guilddata.basic_automod.bad_words.length; i++) {
                   if (guilddata.basic_automod.bad_words[i].word == rawArgs[2]) {
                     index2 = i;
                     break;
@@ -962,7 +962,7 @@ module.exports = [
             
             case 'remove':
               let index = null;
-              for (var i = 0; i < guilddata.basic_automod.bad_words.length; i++) {
+              for (let i = 0; i < guilddata.basic_automod.bad_words.length; i++) {
                 if (guilddata.basic_automod.bad_words[i].word == args[0].options[0].options[0].value) {
                   index = i;
                   break;
@@ -975,7 +975,7 @@ module.exports = [
             
             case 'modify':
               let index2 = null;
-              for (var i = 0; i < guilddata.basic_automod.bad_words.length; i++) {
+              for (let i = 0; i < guilddata.basic_automod.bad_words.length; i++) {
                 if (guilddata.basic_automod.bad_words[i].word == args[0].options[0].options[0].value) {
                   index2 = i;
                   break;

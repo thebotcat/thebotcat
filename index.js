@@ -139,9 +139,9 @@ var client = new Discord.Client({
 global.client = client;
 
 // create bot specific config variables
-try { var developers = JSON.parse(process.env.DEVELOPERS); } catch (e) { var developers = ['405091324572991498','312737536546177025']; }
-try { var confirmdevelopers = JSON.parse(process.env.CONFIRMDEVELOPERS); } catch (e) { var confirmdevelopers = []; }
-try { var addlbotperms = JSON.parse(process.env.ADDLBOTPERMS); } catch (e) { var addlbotperms = {}; }
+var developers; try { developers = JSON.parse(process.env.DEVELOPERS); } catch (e) { developers = ['405091324572991498','312737536546177025']; }
+var confirmdevelopers; try { confirmdevelopers = JSON.parse(process.env.CONFIRMDEVELOPERS); } catch (e) { confirmdevelopers = []; }
+var addlbotperms; try { addlbotperms = JSON.parse(process.env.ADDLBOTPERMS); } catch (e) { addlbotperms = {}; }
 var mutelist = [];
 
 // status updating code
@@ -207,12 +207,13 @@ Object.defineProperties(global, {
 });
 
 // persData loading
+var persData;
 try {
-  var persData = common.persDataCreateVerifiedCopy(JSON.parse(process.env.PERSISTENT_DATA));
+  persData = common.persDataCreateVerifiedCopy(JSON.parse(process.env.PERSISTENT_DATA));
   console.log('Successfully loaded persData');
 } catch (e) {
   console.error(`Unable to load persData: ${e.toString()}`);
-  var persData = { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {}, ids: { guilds: {}, channel: {}, user: {}, misc: {} } };
+  persData = { special_guilds: [], special_guilds_set: new Set(), propssaved_alias: {}, ids: { guilds: {}, channel: {}, user: {}, misc: {} } };
 }
 
 // propsSaved loading

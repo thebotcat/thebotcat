@@ -55,11 +55,12 @@
   }).join('\n') + '\n}';
 })()); */
 
+var commands;
 try {
-  var commands = JSON.parse(fs.readFileSync(require.resolve('./content_commands.json')));
+  commands = JSON.parse(fs.readFileSync(require.resolve('./content_commands.json')));
 } catch (e) {
   console.error(e);
-  var commands = {};
+  commands = {};
 }
 
 function contentCommand(o, msg, rawArgs) {

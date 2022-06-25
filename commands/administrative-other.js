@@ -177,14 +177,14 @@ module.exports = [
       try {
         res = eval(cmd);
         console.debug(`-> ${util.inspect(res)}`);
-        var richres = new Discord.MessageEmbed()
+        let richres = new Discord.MessageEmbed()
           .setTitle('Eval Result')
           .setDescription(util.inspect(res));
         return common.regCmdResp(o, { embeds: [richres] });
       } catch (e) {
         console.log('error in eval');
         console.debug(e.stack);
-        var richres = new Discord.MessageEmbed()
+        let richres = new Discord.MessageEmbed()
           .setTitle('Eval Error')
           .setDescription(e.stack);
         return common.regCmdResp(o, { embeds: [richres] });
@@ -261,7 +261,7 @@ module.exports = [
           if (err) {
             console.log('error in shell exec');
             console.debug(err.stack);
-            var richres = new Discord.MessageEmbed()
+            let richres = new Discord.MessageEmbed()
               .setTitle('Shell Command Error')
               .setDescription(err.stack);
             common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
@@ -269,10 +269,10 @@ module.exports = [
           }
           stdout = stdout.toString(); stderr = stderr.toString();
           console.debug(`shell command result\nstdout:\n${util.inspect(stdout)}\nstderr:\n${util.inspect(stderr)}`);
-          var richres = new Discord.MessageEmbed()
+          let richres = new Discord.MessageEmbed()
             .setTitle('Shell Command Result')
             .setDescription(`*stdout*:\n${util.inspect(stdout)}\n*stderr*:\n${util.inspect(stderr)}`);
-            common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
+          common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
         });
         props.execCmdProcesses.push(proc);
       });
