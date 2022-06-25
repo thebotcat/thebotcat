@@ -22,13 +22,10 @@
             "always"
         ],
         "no-undef": 0,
-        "no-redeclare": 0,
         "no-empty": 0,
-        "no-setter-return": 0,
-        "indent": 0,
         "no-func-assign": 0,
-        "no-case-declarations": 0,
         "no-cond-assign": 0,
-        "no-unused-vars": 0
+        "no-unused-vars": 0,
+        "no-useless-catch": 0
     }
 }
