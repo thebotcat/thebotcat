@@ -202,8 +202,8 @@ var universalprefix = props.feat.version == 'normal' ? '!(thebotcat)' : '?(thebo
 
 // prefix has to be defined globally now as it is used globally immediately afterward
 Object.defineProperties(global, {
-  defaultprefix: { configurable: true, enumerable: true, get: () => defaultprefix, set: val => defaultprefix = val },
-  universalprefix: { configurable: true, enumerable: true, get: () => universalprefix, set: val => universalprefix = val },
+  defaultprefix: { configurable: true, enumerable: true, get: () => defaultprefix, set: val => { defaultprefix = val; } },
+  universalprefix: { configurable: true, enumerable: true, get: () => universalprefix, set: val => { universalprefix = val; } },
 });
 
 // persData loading
@@ -243,7 +243,7 @@ Object.keys(persData.propssaved_alias).forEach(x => {
 
 if (!props.saved.guilds.default) props.saved.guilds.default = {};
 Object.defineProperty(props.saved.guilds.default, 'prefix', {
-  configurable: true, enumerable: false, get: () => defaultprefix, set: val => defaultprefix = val,
+  configurable: true, enumerable: false, get: () => defaultprefix, set: val => { defaultprefix = val; },
 });
 
 // propsSaved functions
@@ -724,24 +724,24 @@ process.on('SIGINT', exitHandler);
 Object.assign(global, { developers, confirmdevelopers, addlbotperms, mutelist, updateStatus, persData, props, cleanPropsSaved, propsSave, schedulePropsSave, indexeval, infomsg, logmsg, nonlogmsg, addCommand, addCommands, removeCommand, removeCommands, getCommandsCategorized, updateSlashCommands, updateNonPubSlashCommands, startRepl, handlers: common.handlers });
 
 Object.defineProperties(global, {
-  exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => exitHandled = val },
-  starttime: { configurable: true, enumerable: true, get: () => starttime, set: val => starttime = val },
-  readytime: { configurable: true, enumerable: true, get: () => readytime, set: val => readytime = val },
-  ready2time: { configurable: true, enumerable: true, get: () => ready2time, set: val => ready2time = val },
-  ready3time: { configurable: true, enumerable: true, get: () => ready3time, set: val => ready3time = val },
-  doWorkers: { configurable: true, enumerable: true, get: () => doWorkers, set: val => doWorkers = val },
-  version: { configurable: true, enumerable: true, get: () => version, set: val => version = val },
-  messageHandler: { configurable: true, enumerable: true, get: () => handlers.event.message, set: val => handlers.event.message = val },
-  messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => handlers.extra.message = val },
-  voiceStateUpdateHandler: { configurable: true, enumerable: true, get: () => voiceStateUpdateHandler, set: val => voiceStateUpdateHandler = val },
-  exitHandler: { configurable: true, enumerable: true, get: () => exitHandler, set: val => exitHandler = val },
-  ticks: { configurable: true, enumerable: true, get: () => ticks, set: val => ticks = val },
-  tickStatUpdInt: { configurable: true, enumerable: true, get: () => tickStatUpdInt, set: val => tickStatUpdInt = val },
-  tickStatUpdNextPossible: { configurable: true, enumerable: true, get: () => tickStatUpdNextPossible, set: val => tickStatUpdNextPossible = val },
-  tickFuncs: { configurable: true, enumerable: true, get: () => tickFuncs, set: val => tickFuncs = val },
-  tickFunc: { configurable: true, enumerable: true, get: () => tickFunc, set: val => tickFunc = val },
-  tickInt: { configurable: true, enumerable: true, get: () => tickInt, set: val => tickInt = val },
-  tickTimTemp: { configurable: true, enumerable: true, get: () => tickTimTemp, set: val => tickTimTemp = val },
+  exitHandled: { configurable: true, enumerable: true, get: () => exitHandled, set: val => { exitHandled = val; } },
+  starttime: { configurable: true, enumerable: true, get: () => starttime, set: val => { starttime = val; } },
+  readytime: { configurable: true, enumerable: true, get: () => readytime, set: val => { readytime = val; } },
+  ready2time: { configurable: true, enumerable: true, get: () => ready2time, set: val => { ready2time = val; } },
+  ready3time: { configurable: true, enumerable: true, get: () => ready3time, set: val => { ready3time = val; } },
+  doWorkers: { configurable: true, enumerable: true, get: () => doWorkers, set: val => { doWorkers = val; } },
+  version: { configurable: true, enumerable: true, get: () => version, set: val => { version = val; } },
+  messageHandler: { configurable: true, enumerable: true, get: () => handlers.event.message, set: val => { handlers.event.message = val; } },
+  messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => { handlers.extra.message = val; } },
+  voiceStateUpdateHandler: { configurable: true, enumerable: true, get: () => voiceStateUpdateHandler, set: val => { voiceStateUpdateHandler = val; } },
+  exitHandler: { configurable: true, enumerable: true, get: () => exitHandler, set: val => { exitHandler = val; } },
+  ticks: { configurable: true, enumerable: true, get: () => ticks, set: val => { ticks = val; } },
+  tickStatUpdInt: { configurable: true, enumerable: true, get: () => tickStatUpdInt, set: val => { tickStatUpdInt = val; } },
+  tickStatUpdNextPossible: { configurable: true, enumerable: true, get: () => tickStatUpdNextPossible, set: val => { tickStatUpdNextPossible = val; } },
+  tickFuncs: { configurable: true, enumerable: true, get: () => tickFuncs, set: val => { tickFuncs = val; } },
+  tickFunc: { configurable: true, enumerable: true, get: () => tickFunc, set: val => { tickFunc = val; } },
+  tickInt: { configurable: true, enumerable: true, get: () => tickInt, set: val => { tickInt = val;  } },
+  tickTimTemp: { configurable: true, enumerable: true, get: () => tickTimTemp, set: val => { tickTimTemp = val; } },
 });
 
 // repl start function
