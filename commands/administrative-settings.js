@@ -223,7 +223,6 @@ module.exports = [
             schedulePropsSave();
             return common.regCmdResp(o, `Server prefix set to: \`${guilddata.prefix}\``);
           }
-          break;
         
         case 'confirmkb':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
@@ -245,7 +244,6 @@ module.exports = [
             schedulePropsSave();
             return common.regCmdResp(o, `Confirmation on the kick, ban, and unban commands set to: ${guilddata.confirm_kb ? '✅' : '❌'}`);
           }
-          break;
         
         case 'badwords':
           if (rawArgs.length == 1) {
@@ -277,7 +275,6 @@ module.exports = [
                     }]
                   });
                 }
-                break;
               
               case 'add':
                 if (rawArgs.length < 8) return common.regCmdResp(o, 'Not enough arguments');
@@ -296,7 +293,6 @@ module.exports = [
                 });
                 schedulePropsSave();
                 return common.regCmdResp(o, { embeds: [{ title: 'Word Added', description: `Word ${util.inspect(rawArgs[2])} successfully added` }] });
-                break;
               
               case 'remove':
                 if (rawArgs.length < 3) return common.regCmdResp(o, 'Not enough arguments');
@@ -311,7 +307,6 @@ module.exports = [
                 guilddata.basic_automod.bad_words.splice(index, 1);
                 schedulePropsSave();
                 return common.regCmdResp(o, { embeds: [{ title: 'Word Removed', description: `Word ${util.inspect(rawArgs[2])} successfully removed` }] });
-                break;
               
               case 'modify':
                 if (rawArgs.length < 8) return common.regCmdResp(o, 'Not enough arguments');
@@ -336,7 +331,6 @@ module.exports = [
                 };
                 schedulePropsSave();
                 return common.regCmdResp(o, { embeds: [{ title: 'Word Modified', description: `Word ${util.inspect(rawArgs[2])} successfully modified` }] });
-                break;
             }
           }
           break;
@@ -377,7 +371,6 @@ module.exports = [
               );
             }
           }
-          break;
         
         case 'mutedrole':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
@@ -415,7 +408,6 @@ module.exports = [
               return common.regCmdResp(o, 'Invalid option. To change, run `settings mutedrole set <@mention|id|name|query>`.\nTo reset, run `settings mutedrole set`.');
             }
           }
-          break;
         
         case 'roles':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
@@ -461,7 +453,6 @@ module.exports = [
                     });
                   }
                 }
-                break;
               
               case 'init':
                 let role = common.searchRoles(msg.guild.roles, rawArgs.slice(2).join(' '));
@@ -486,7 +477,6 @@ module.exports = [
                     }]
                   });
                 }
-                break;
               
               case 'clear':
                 let role2 = common.searchRoles(msg.guild.roles, rawArgs.slice(2).join(' '));
@@ -514,7 +504,6 @@ module.exports = [
                     }]
                   });
                 }
-                break;
               
               case 'setperms':
                 if (rawArgs[3] != 'enable' && rawArgs[3] != 'disable')
@@ -551,14 +540,11 @@ module.exports = [
                     }]
                   });
                 }
-                break;
               
               default:
                 return common.regCmdResp(o, 'Invalid option. Run `settings roles` to view options.');
-                break;
             }
           }
-          break;
         
         case 'overrides':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
@@ -638,7 +624,6 @@ module.exports = [
                     });
                   }
                 }
-                break;
               
               case 'init':
                 if (rawArgs.length == 3) {
@@ -697,7 +682,6 @@ module.exports = [
                     });
                   }
                 }
-                break;
               
               case 'clear':
                 if (rawArgs.length == 3) {
@@ -756,7 +740,6 @@ module.exports = [
                     });
                   }
                 }
-                break;
               
               case 'setperms':
                 if (rawArgs[4] != 'enable' && rawArgs[4] != 'disable' && rawArgs[4] != 'reset')
@@ -815,14 +798,11 @@ module.exports = [
                     }]
                   });
                 }
-                break;
               
               default:
                 return common.regCmdResp(o, 'Invalid option. Run `settings overrides` to view options.');
-                break;
             }
           }
-          break;
         
         case 'enabledcmds':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
@@ -841,7 +821,6 @@ module.exports = [
                 switch (rawArgs[2]) {
                   case 'global':
                     return common.regCmdResp(o, `Commands are globally ${guilddata.enabled_commands.global ? 'enabled' : 'disabled'}.`);
-                    break;
                   
                   case 'category':
                     let category = guilddata.enabled_commands.categories[rawArgs.slice(3).join(' ')];
@@ -850,7 +829,6 @@ module.exports = [
                     } else {
                       return common.regCmdResp(o, `The category '${rawArgs.slice(3).join(' ')}' does not exist.`);
                     }
-                    break;
                   
                   case 'command':
                     let command = guilddata.enabled_commands.commands[rawArgs.slice(3).join(' ')];
@@ -859,13 +837,10 @@ module.exports = [
                     } else {
                       return common.regCmdResp(o, `The command '${rawArgs.slice(3).join(' ')}' does not exist.`);
                     }
-                    break;
                   
                   default:
                     return common.regCmdResp(o, 'Invalid option. Run `settings enabledcmds` to view options.');
-                    break;
                 }
-                break;
               
               case 'set':
                 switch (rawArgs[2]) {
@@ -873,7 +848,6 @@ module.exports = [
                     guilddata.enabled_commands.global = rawArgs[3] == 'enable';
                     schedulePropsSave();
                     return common.regCmdResp(o, `Global commands have been successfully ${rawArgs[3] == 'enable' ? 'enabled' : 'disabled'}.`);
-                    break;
                   
                   case 'category':
                     let category = guilddata.enabled_commands.categories[rawArgs[4]];
@@ -884,7 +858,6 @@ module.exports = [
                     } else {
                       return common.regCmdResp(o, `The category '${rawArgs[4]}' does not exist.`);
                     }
-                    break;
                   
                   case 'command':
                     let command = guilddata.enabled_commands.commands[rawArgs[4]];
@@ -895,7 +868,6 @@ module.exports = [
                     } else {
                       return common.regCmdResp(o, `The command '${rawArgs[4]}' does not exist.`);
                     }
-                    break;
                   
                   case 'all':
                     let val = rawArgs[3] == 'enable';
@@ -906,13 +878,11 @@ module.exports = [
                       .forEach(x => guilddata.enabled_commands.commands[x] = val);
                     schedulePropsSave();
                     return common.regCmdResp(o, `All commands and categories have been ${val ? 'enabled' : 'disabled'}.`);
-                    break;
                 }
                 break;
               
               default:
                 return common.regCmdResp(o, 'Invalid option. Run `settings enabledcmds` to view options.');
-                break;
             }
           }
           break;
@@ -945,7 +915,6 @@ module.exports = [
             schedulePropsSave();
             return common.slashCmdResp(o, false, `Server prefix set to: \`${guilddata.prefix}\``);
           }
-          break;
         
         case 'confirmkb':
           if (!fullperms) return silenced ? null : common.slashCmdResp(o, true, 'You do not have permission to run this command.');
@@ -956,7 +925,6 @@ module.exports = [
             schedulePropsSave();
             return common.slashCmdResp(o, false, `Confirmation on the kick, ban, and unban commands set to: ${guilddata.confirm_kb ? '✅' : '❌'}`);
           }
-          break;
         
         case 'badwords':
           switch (args[0].options[0].name) {
@@ -974,7 +942,6 @@ module.exports = [
                   `Ignore Admin: ${word.ignore_admin}\n` +
                   `Ignored Roles: ${word.ignored_roles.length ? word.ignored_roles.map(x => `<@&${x}>`).join(' ') : 'None'}`);
               }
-              break;
             
             case 'add':
               if (guilddata.basic_automod.bad_words.filter(x => x.word == args[0].options[0].options[0].value).length)
@@ -992,7 +959,6 @@ module.exports = [
               });
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Word ${util.inspect(args[0].options[0].options[0].value)} successfully added`);
-              break;
             
             case 'remove':
               let index = null;
@@ -1006,7 +972,6 @@ module.exports = [
               guilddata.basic_automod.bad_words.splice(index, 1);
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Word ${util.inspect(args[0].options[0].options[0].value)} successfully removed`);
-              break;
             
             case 'modify':
               let index2 = null;
@@ -1030,7 +995,6 @@ module.exports = [
               };
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Word ${util.inspect(args[0].options[0].options[0].value)} successfully modified`);
-              break;
           }
           break;
         
@@ -1039,7 +1003,6 @@ module.exports = [
           switch (args[0].options[0].name) {
             case 'view':
               return common.slashCmdResp(o, true, `The current logging channel is ` + (guilddata.logging.main ? `<#${guilddata.logging.main}> (id ${guilddata.logging.main})` : `none`) + '.');
-              break;
             
             case 'set':
               if (!args[0].options[0].options[0]) {
@@ -1055,13 +1018,11 @@ module.exports = [
                   return common.slashCmdResp(o, true, 'Channel nonexistent or not in this server.');
                 }
               }
-              break;
             
             case 'clear':
               guilddata.logging.main = null;
               schedulePropsSave();
               return common.slashCmdResp(o, false, 'Logging disabled.');
-              break;
           }
           break;
         
@@ -1070,7 +1031,6 @@ module.exports = [
           switch (args[0].options[0].name) {
             case 'view':
               return common.slashCmdResp(o, true, `The muted role is currently set to: ${guilddata.mutedrole ? '<@&' + guilddata.mutedrole + '>' : 'nothing'}`);
-              break;
             
             case 'set':
               if (!args[0].options[0].options[0]) {
@@ -1086,7 +1046,6 @@ module.exports = [
                 schedulePropsSave();
                 return common.slashCmdResp(o, false, `<@&${args[0].options[0].options[0].value}> set as muted role.`);
               }
-              break;
           }
           break;
         
@@ -1103,7 +1062,6 @@ module.exports = [
                 return common.slashCmdResp(o, true, `Permissions for <@&${roleId}>:\n` + 
                   common.getBotPermissionsArray(guilddata.perms[roleId]).map(x => `${x[1] ? '🟩' : '🟥'} ${x[0]}`).join('\n'));
               }
-              break;
             }
             
             case 'init': {
@@ -1113,7 +1071,6 @@ module.exports = [
               guilddata.perms[roleId] = guilddata.perms[o.guild.id];
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Permissions created for role <@&${roleId}>.`);
-              break;
             }
             
             case 'clear': {
@@ -1126,7 +1083,6 @@ module.exports = [
                 guilddata.perms[roleId] = common.constants.botRolePermDef;
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Permissions cleared for role <@&${roleId}>.`);
-              break;
             }
             
             case 'setperms': {
@@ -1145,7 +1101,6 @@ module.exports = [
                 guilddata.perms[roleId] &= ~permsToChange;
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Permissions ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[1].value == 'enable' ? 'enabled' : 'disabled'} for role <@&${roleId}>.`);
-              break;
             }
           }
           break;
@@ -1173,7 +1128,6 @@ module.exports = [
               } else {
                 return common.slashCmdResp(o, true, 'Channels with bot-level permission overrides:\n' + Object.keys(guilddata.overrides).map(x => `<#${x}>`));
               }
-              break;
             
             case 'init':
               if (args[0].options[0].options[1]) {
@@ -1194,7 +1148,6 @@ module.exports = [
                 schedulePropsSave();
                 return common.slashCmdResp(o, false, `Overrides created for channel <#${channelId}>.`);
               }
-              break;
             
             case 'clear':
               if (args[0].options[0].options[1]) {
@@ -1215,7 +1168,6 @@ module.exports = [
                 schedulePropsSave();
                 return common.slashCmdResp(o, false, `Overrides cleared for channel <#${channelId}>.`);
               }
-              break;
             
             case 'setperms':
               let channelId = args[0].options[0].options[0].value;
@@ -1246,7 +1198,6 @@ module.exports = [
               }
               schedulePropsSave();
               return common.slashCmdResp(o, false, `Overrides ${changedPerms.map(x => `\'${x}\'`).join(', ')} ${args[0].options[0].options[2].value == 'enable' ? 'enabled' : args[0].options[0].options[2].value == 'disable' ? 'disabled' : 'reset'} in channel <#${channelId}> for role <@&${roleId}>.`);
-              break;
           }
           break;
         
@@ -1257,7 +1208,6 @@ module.exports = [
               switch (args[0].options[0].options[0].value) {
                 case 'global':
                   return common.slashCmdResp(o, true, `Commands are globally ${guilddata.enabled_commands.global ? 'enabled' : 'disabled'}.`);
-                  break;
                 
                 case 'category':
                   if (!args[0].options[0].options[1])
@@ -1268,7 +1218,6 @@ module.exports = [
                   } else {
                     return common.slashCmdResp(o, true, `The category '${args[0].options[0].options[1]?.value}' does not exist.`);
                   }
-                  break;
                 
                 case 'command':
                   if (!args[0].options[0].options[1])
@@ -1279,7 +1228,6 @@ module.exports = [
                   } else {
                     return common.slashCmdResp(o, true, `The command '${args[0].options[0].options[1]?.value}' does not exist.`);
                   }
-                  break;
               }
               break;
             
@@ -1289,7 +1237,6 @@ module.exports = [
                   guilddata.enabled_commands.global = args[0].options[0].options[1].value == 'enable';
                   schedulePropsSave();
                   return common.slashCmdResp(o, false, `Global commands have been successfully ${args[0].options[0].options[1].value == 'enable' ? 'enabled' : 'disabled'}.`);
-                  break;
                 
                 case 'category':
                   if (!args[0].options[0].options[2])
@@ -1302,7 +1249,6 @@ module.exports = [
                   } else {
                     return common.slashCmdResp(o, false, `The category '${args[0].options[0].options[2].value}' does not exist.`);
                   }
-                  break;
                 
                 case 'command':
                   if (!args[0].options[0].options[2])
@@ -1315,7 +1261,6 @@ module.exports = [
                   } else {
                     return common.slashCmdResp(o, false, `The command '${args[0].options[0].options[2].value}' does not exist.`);
                   }
-                  break;
                 
                 case 'all':
                   let val = args[0].options[0].options[1].value == 'enable';
@@ -1326,7 +1271,6 @@ module.exports = [
                     .forEach(x => guilddata.enabled_commands.commands[x] = val);
                   schedulePropsSave();
                   return common.slashCmdResp(o, false, `All commands and categories have been ${val ? 'enabled' : 'disabled'}.`);
-                  break;
               }
               break;
           }

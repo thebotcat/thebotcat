@@ -550,7 +550,6 @@ module.exports = [
       } else {
         return common.regCmdResp(o, `${member.user.tag} already muted.`);
       }
-      return promise;
     },
     async execute_slash(o, interaction, command, args) {
       if (!props.saved.guilds[o.guild.id]) {
@@ -580,7 +579,6 @@ module.exports = [
       } else {
         return common.slashCmdResp(o, false, `${member.user.tag} already muted.`);
       }
-      return promise;
     },
   },
   {
