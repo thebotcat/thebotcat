@@ -1,6 +1,6 @@
 module.exports = async interaction => {
   switch (interaction.type) {
-    case 'APPLICATION_COMMAND':
+    case 'APPLICATION_COMMAND': {
       let o = {
         cmdName: interaction.commandName,
         cmd: commandColl.get(interaction.commandName),
@@ -98,6 +98,7 @@ module.exports = async interaction => {
           return common.slashCmdResp(o, true, o.guild ? 'Command not for guilds.' : 'Command not for dms.');
         }
       }
-      break;
+    }
+    break;
   }
 };

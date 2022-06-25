@@ -991,9 +991,10 @@ module.exports = [
       let roles = rawArgs.slice(2).map(x => common.searchRole(msg.guild.roles, x)).filter(x => x);
       
       switch (rawArgs[0]) {
-        case 'view':
+        case 'view': {
           let origRoles = emote.roles.cache.map(x => `<@&${x.id}>`);
           return common.regCmdResp(o, { embeds: [{ title: 'Emote Roles', description: `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? origRoles.join(' ') : 'None'}` }] });
+        }
         case 'add':
           emote.roles.add(roles);
           return common.regCmdResp(o, { embeds: [{ title: 'Roles Added', description: `${roles.length ? 'Roles ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} added to <:${emote.name}:${emote.id}> emote` }] });
@@ -1023,9 +1024,10 @@ module.exports = [
       let roles = args[0].options[1] ? args[0].options[1].value.split(' ').map(x => common.searchRole(o.guild.roles, x)).filter(x => x) : [];
       
       switch (args[0].name) {
-        case 'view':
+        case 'view': {
           let origRoles = emote.roles.cache.map(x => `<@&${x.id}>`);
           return common.slashCmdResp(o, true, `<:${emote.name}:${emote.id}> emote roles: ${origRoles.length ? origRoles.join(' ') : 'None'}`);
+        }
         case 'add':
           emote.roles.add(roles);
           return common.slashCmdResp(o, false, `${roles.length ? 'Roles ' + roles.map(x => `<@&${x.id}>`).join(' ') : 'No Roles'} added to <:${emote.name}:${emote.id}> emote`);
