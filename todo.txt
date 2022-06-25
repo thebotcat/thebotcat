@@ -1,4 +1,3 @@
-replace unnecessary template string
 unused function args and vars in code
 
 fix bug with status randomly disappearing

@@ -202,7 +202,7 @@ module.exports = [
           common.clientVCManager.setVolume(guilddata.voice, wantedvolume);
           return common.regCmdResp(o, `Set playback volume to ${wantedvolume}`);
         } catch (e) {
-          return common.regCmdResp(o, `Playback volume could not be set.`);
+          return common.regCmdResp(o, 'Playback volume could not be set.');
         }
       }
     },
@@ -230,7 +230,7 @@ module.exports = [
           common.clientVCManager.setVolume(guilddata.voice, wantedvolume);
           return common.slashCmdResp(o, false, `Set playback volume to ${wantedvolume}`);
         } catch (e) {
-          return common.slashCmdResp(o, false, `Playback volume could not be set.`);
+          return common.slashCmdResp(o, false, 'Playback volume could not be set.');
         }
       }
     },

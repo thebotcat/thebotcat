@@ -1002,7 +1002,7 @@ module.exports = [
           if (!fullperms) return silenced ? null : common.slashCmdResp(o, false, 'You do not have permission to run this command.');
           switch (args[0].options[0].name) {
             case 'view':
-              return common.slashCmdResp(o, true, `The current logging channel is ` + (guilddata.logging.main ? `<#${guilddata.logging.main}> (id ${guilddata.logging.main})` : `none`) + '.');
+              return common.slashCmdResp(o, true, 'The current logging channel is ' + (guilddata.logging.main ? `<#${guilddata.logging.main}> (id ${guilddata.logging.main})` : 'none') + '.');
             
             case 'set':
               if (!args[0].options[0].options[0]) {

@@ -10,7 +10,7 @@ function explainChannel(channel, full) {
   if (full)
     return channel.guild ? `${channel.guild.name}:${channel.name}` : `dms with ${channel.recipient.tag} (id ${channel.recipient.id})`;
   else
-    return channel.guild ? `${channel.guild.name}:${channel.name}` : `dms`;
+    return channel.guild ? `${channel.guild.name}:${channel.name}` : 'dms';
 }
 
 function stringToBoolean(str) {
