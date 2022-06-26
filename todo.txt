@@ -1,6 +1,3 @@
-fix bug with status randomly disappearing
-botcat ignoring ctrl c when repl server is closed
-
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code
 add config option to always forceLoop if song error
@@ -105,3 +102,7 @@ use typescript
 
 problems with discord api or discord.js:
 a guild emoji's allowed roles will not update on d.js GuildEmojiRoleManager.cache but will update on discord itself, and will also update on the cache when bot is restarted
+
+transient problems with bot:
+status dissappears after bot has been running for weeks, sometimes
+ctrl c ignored after repl server is closed
