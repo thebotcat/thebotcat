@@ -1,8 +1,8 @@
 {
-    "rules": {
-        "indent": [
-            "error",
-            2
-        ]
-    }
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ]
+  }
 }

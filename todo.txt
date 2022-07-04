@@ -1,3 +1,5 @@
+do better eslint check, missed package-update.js
+
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code
 add config option to always forceLoop if song error

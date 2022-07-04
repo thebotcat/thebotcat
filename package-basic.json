@@ -11,6 +11,6 @@
     "@discordjs/voice": "^0.10.0",
     
     "sodium": "^3.0.2",
-    "@discordjs/opus": "^0.7.0"
+    "@discordjs/opus": "^0.8.0"
   }
 }
