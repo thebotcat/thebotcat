@@ -16,6 +16,7 @@ add uwu mode where all text strings are replaced with something more uwu-ey
 
 investigate all automatic saved guilddata creators, only add data to saved guilddata if it differs from the default
 aliases for commands and rename base music commands to something more obvious
+  for now no settings but maybe in future, currently show aliases after regular commands in each category in help, with newline seperating regular and alias maybe, with aliases help page just saying they are alias, maybe only help all shows alias
 use ytdl.validateURL
 play command other music providers
 get ytdl stream of next song ready when current song is 5s away from finishing
