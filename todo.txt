@@ -1,4 +1,5 @@
 fix dm commands help and execution
+coll search functions' convert mentions to the inside use match variable instead of running regex twice, do same for any similar situation in code
 aliases for commands and rename base music commands to something more obvious
   for now no settings but maybe in future, currently show aliases after regular commands in each category in help, with newline seperating regular and alias maybe, with aliases help page just saying they are alias, maybe only help all shows alias
 
