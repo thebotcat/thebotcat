@@ -23,7 +23,7 @@ module.exports = [
       
       if (match = /^([0-9]+)$/.exec(rawArgs[1])) {
         targetMsg = match[1];
-        if (match = /<#([0-9]+)>/.exec(rawArgs[2])) channel = match[1];
+        if (match = /^<#([0-9]+)>$/.exec(rawArgs[2])) channel = match[1];
       } else if (match = /^https:\/\/(?:canary.)?discord(?:app)?.com\/channels\/[0-9]+\/([0-9]+)\/([0-9]+)$/.exec(rawArgs[1])) {
         channel = match[1];
         targetMsg = match[2];
@@ -95,7 +95,7 @@ module.exports = [
       seconds = Math.floor(Number(rawArgs[0]));
       if (!Number.isSafeInteger(seconds) || seconds < 0) return common.regCmdResp(o, 'Invalid seconds for slowmode.');
       
-      if (/<#[0-9]+>/.test(rawArgs[1])) {
+      if (/^<#[0-9]+>$/.test(rawArgs[1])) {
         channel = msg.guild.channels.cache.get(rawArgs[1].slice(2, -1));
         if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL'))
           return common.regCmdResp(o, 'Cannot set slowmode in channel outside of this guild.');
@@ -171,7 +171,7 @@ module.exports = [
       bitrate = Math.floor(Number(rawArgs[0]));
       if (!Number.isSafeInteger(bitrate) || bitrate < 0) return common.regCmdResp(o, 'Invalid bitrate');
       
-      if (/<#[0-9]+>/.test(rawArgs[1])) {
+      if (/^<#[0-9]+>$/.test(rawArgs[1])) {
         channel = msg.guild.channels.cache.get(rawArgs[1].slice(2, -1));
         if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'Cannot set bitrate of channel outside of this guild.');
       } else {
@@ -249,7 +249,7 @@ module.exports = [
       msgs = rawArgs[0] == 'all' ? -1 : Number(rawArgs[0]);
       if (!Number.isSafeInteger(msgs)) return common.regCmdResp(o, 'Invalid number of messages to delete');
       
-      if (/<#[0-9]+>/.test(rawArgs[1])) {
+      if (/^<#[0-9]+>$/.test(rawArgs[1])) {
         channel = msg.guild.channels.cache.get(rawArgs[1].slice(2, -1));
         if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'Cannot purge messages in channel outside of this guild.');
       }
@@ -306,7 +306,7 @@ module.exports = [
       let channel, reason = [];
       
       for (var i = 0; i < rawArgs.length; i++) {
-        if (i > 0 || !/<#[0-9]+>/.test(rawArgs[0])) {
+        if (i > 0 || !/^<#[0-9]+>$/.test(rawArgs[0])) {
           reason.push(rawArgs[i]);
         } else {
           channel = msg.guild.channels.cache.get(rawArgs[0].slice(2, -1));
@@ -448,7 +448,7 @@ module.exports = [
       let channel, reason = [];
       
       for (var i = 0; i < rawArgs.length; i++) {
-        if (i > 0 || !/<#[0-9]+>/.test(rawArgs[0])) {
+        if (i > 0 || !/^<#[0-9]+>$/.test(rawArgs[0])) {
           reason.push(rawArgs[i]);
         } else {
           channel = msg.guild.channels.cache.get(rawArgs[0].slice(2, -1));
@@ -859,7 +859,7 @@ module.exports = [
       
       let userId;
       if (rawArgs[0]) {
-        if (/<@!?[0-9]+>|[0-9]+/.test(rawArgs[0]))
+        if (/^(?:<@!?[0-9]+>|[0-9]+)$/.test(rawArgs[0]))
           userId = rawArgs[0].replace(/[<@!>]/g, '');
       }
       if (!userId) return common.regCmdResp(o, 'Could not find user.');

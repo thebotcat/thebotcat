@@ -101,7 +101,7 @@ async function searchMembers(members, query) {
     }
   }
   
-  if (/[0-9]+/.test(query)) {
+  if (/^[0-9]+$/.test(query)) {
     try {
       return await members.fetch(query);
     } catch (e) {}
@@ -156,7 +156,7 @@ async function searchUsers(users, query, options) {
     }
   }
   
-  if (/[0-9]+/.test(query)) {
+  if (/^[0-9]+$/.test(query)) {
     try {
       return await users.fetch(query);
     } catch (e) {}

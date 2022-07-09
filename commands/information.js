@@ -730,7 +730,7 @@ module.exports = [
       let channel;
       if (!rawArgs[0] || !msg.guild) {
         channel = msg.channel;
-      } else if (/<#[0-9]+>/.test(rawArgs[0])) {
+      } else if (/^<#[0-9]+>$/.test(rawArgs[0])) {
         channel = msg.guild.channels.cache.get(rawArgs[0].slice(2, -1));
         if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) channel = msg.channel;
       }

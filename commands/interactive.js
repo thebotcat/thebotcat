@@ -26,15 +26,15 @@ module.exports = [
     ],
     execute(o, msg, rawArgs) {
       let match, sides, times, modifier;
-      if (match = /d?(-?[0-9.e]+) +([0-9.e]+)(?: +(-?[0-9.e]+))?/.exec(o.argstring)) {
+      if (match = /^d?(-?[0-9.e]+) +([0-9.e]+)(?: +(-?[0-9.e]+))?$/.exec(o.argstring)) {
         sides = match[1];
         times = match[2];
         modifier = match[3];
-      } else if (match = /([0-9.e]+)d(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?/.exec(o.argstring)) {
+      } else if (match = /^([0-9.e]+)d(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?$/.exec(o.argstring)) {
         sides = match[2];
         times = match[1];
         modifier = match[3];
-      } else if (match = /d?(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?/.exec(o.argstring)) {
+      } else if (match = /^d?(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?$/.exec(o.argstring)) {
         sides = match[1];
         times = 1;
         modifier = match[2];
@@ -65,11 +65,11 @@ module.exports = [
         sides = match[1];
         times = args[1] ? args[1].value : 1;
         modifier = args[2] ? args[2].value : undefined;
-      } else if (match = /([0-9.e]+)d(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?/.exec(sides)) {
+      } else if (match = /^([0-9.e]+)d(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?$/.exec(sides)) {
         sides = match[2];
         times = match[1];
         modifier = match[3];
-      } else if (match = /d?(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?/.exec(sides)) {
+      } else if (match = /^d?(-?[0-9.e]+)(?:\+?(-?[0-9.e]+))?$/.exec(sides)) {
         sides = match[1];
         times = 1;
         modifier = match[2];

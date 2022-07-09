@@ -13,7 +13,7 @@ module.exports = [
         if (!msg.member.voice.channelId) return common.regCmdResp(o, 'You are not in a voice channel.');
         channel = msg.guild.channels.cache.get(msg.member.voice.channelId);
       } else {
-        if (!/<#[0-9]+>/.test(rawArgs[0])) return common.regCmdResp(o, 'Invalid channel mention.');
+        if (!/^<#[0-9]+>$/.test(rawArgs[0])) return common.regCmdResp(o, 'Invalid channel mention.');
         channel = msg.guild.channels.cache.find(x => x.id == rawArgs[0].slice(2, -1));
         if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'Cannot join channel outside of this guild.');
       }

@@ -2,7 +2,7 @@ var commonConstants = require('./constants');
 
 // props.saved integrity checks / conversion from older format
 function isId(val) {
-  return typeof val == 'string' && /[0-9]{16,20}/.test(val);
+  return typeof val == 'string' && /^[0-9]{16,20}$/.test(val);
 }
 
 // cause js typeof is sus
