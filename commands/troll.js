@@ -6,16 +6,16 @@ module.exports = [
     execute(o, msg, rawArgs) {
       if (!persData.special_guilds_set.has(msg.guild.id)) return;
       if (!common.isAdmin(msg)) return;
-
+      
       let doRoles, hidden = Boolean(rawArgs[1]);
-
+      
       if (rawArgs[0] == 'members')
         doRoles = false;
       else if (rawArgs[0] == 'roles')
         doRoles = true;
       else
         return common.regCmdResp(o, 'Error: argument must be either members or roles.');
-
+      
       if (!doRoles && msg.guild.memberCount > 1000)
         return common.regCmdResp(o, 'Error: too many members in guild to ping all members.');
       
@@ -26,13 +26,13 @@ module.exports = [
             .then(x => x.edit({ content: '@everyone', allowedMentions: { parse: ['everyone'] } }))
         );
       }
-
+      
       let step = doRoles ? 90 : 95;
-
+      
       let entries = Array.from(msg.guild[doRoles ? 'roles' : 'members'].cache.values());
       if (doRoles) entries = entries.map(x => `<@&${x.id}>`);
       else entries = entries.filter(x => !x.user.bot).map(x => `<@${x.id}>`);
-
+      
       for (var i = 0; i < entries.length; i += step) {
         let promise = msg.channel.send({
           content: entries.slice(i, i + step).join(''),
@@ -41,7 +41,7 @@ module.exports = [
         if (hidden) promise = promise.then(x => x.delete());
         promises.push(promise);
       }
-
+      
       return Promise.allSettled(promises);
     },
   },

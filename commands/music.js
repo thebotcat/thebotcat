@@ -11,7 +11,7 @@ module.exports = [
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = common.createAndGetGuilddata(msg.guild.id);
-
+      
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) {
         if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
         let channel;
@@ -42,7 +42,7 @@ module.exports = [
           return common.regCmdResp(o, `Error in joining channel <#${channel.id}>`);
         }
       }
-
+      
       let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
@@ -59,7 +59,7 @@ module.exports = [
         props.saved.guilds[o.guild.id] = common.getEmptyGuildObject(o.guild.id);
         schedulePropsSave();
       }
-
+      
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has('VIEW_CHANNEL')) {
         if (!(props.saved.feat.audio & 1)) return common.slashCmdResp(o, false, 'Voice Channel features are disabled.');
         let channel;

@@ -973,7 +973,7 @@ module.exports = [
       
       if (!['view', 'add', 'remove', 'set'].includes(rawArgs[0]))
         return common.regCmdResp(o, 'Invalid option, run `?help emoterole` for parameters');
-
+      
       if (rawArgs.length < 2)
         return common.regCmdResp(o, 'Emoji not specified, run `?help emoterole` for parameters');
       

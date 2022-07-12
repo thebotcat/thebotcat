@@ -566,7 +566,7 @@ client.on('ready', async () => {
   nonlogmsg(`Logged in as ${client.user.tag}!`);
   
   updateStatus();
-
+  
   await populateBotStatusMessage();
   
   await fullUpdateSlashCommands();
@@ -574,13 +574,13 @@ client.on('ready', async () => {
   readytime = new Date();
   
   await standardWakeHandlers();
-
+  
   ready2time = new Date();
-
+  
   if (props.feat.repl) startRepl();
   
   if (props.feat.loaddms) props.saved.misc.dmchannels.forEach(x => client.channels.fetch(x));
-
+  
   ready3time = new Date();
 });
 
@@ -652,7 +652,7 @@ function tickFunc() {
       tickStatUpdNextPossible = true;
     }
   }
-
+  
   if (ticks % 1440 == 0 && errorCounter > 0) errorCounter = 0;
   
   for (var tickFunc of tickFuncs) {
