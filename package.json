@@ -26,7 +26,10 @@
   },
   "keywords": [
     "bot",
-    "discord-bot"
+    "discord",
+    "discordjs",
+    "discord-bot",
+    "discord-js"
   ],
   "bugs": {
     "url": "https://github.com/thebotcat/thebotcat/issues"
