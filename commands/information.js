@@ -245,7 +245,7 @@ module.exports = [
             .setDescription(
               `userid: ${member.user.id}\n` +
               `links: [default](${avatarURL}) (avatar is default)`
-              )
+            )
             .setImage(avatarURL)
             .setColor(member.displayHexColor)],
         });
@@ -264,7 +264,7 @@ module.exports = [
                 `big links: [big png](${baseurl}.png?size=4096), ` +
                 `[big\xa0webp](${baseurl}.webp?size=4096), ` +
                 `[big\xa0gif](${baseurl}.gif?size=4096)`
-                )
+              )
               .setImage(`${baseurl}.gif?size=4096`)
               .setColor(member.displayHexColor)],
           });
@@ -279,7 +279,7 @@ module.exports = [
                 `[normal\xa0webp](${baseurl}.webp), ` +
                 `[big\xa0png](${baseurl}.png?size=4096), ` +
                 `[big\xa0webp](${baseurl}.webp?size=4096)`
-                )
+              )
               .setImage(`${baseurl}.png?size=4096`)
               .setColor(member.displayHexColor)],
           });
@@ -379,7 +379,7 @@ module.exports = [
                 `big links: [big png](${baseurl}.png?size=4096), ` +
                 `[big\xa0webp](${baseurl}.webp?size=4096), ` +
                 `[big\xa0gif](${baseurl}.gif?size=4096)`
-                )
+              )
               .setImage(`${baseurl}.gif?size=4096`)],
           });
         else
@@ -393,7 +393,7 @@ module.exports = [
                 `[normal\xa0webp](${baseurl}.webp), ` +
                 `[big\xa0png](${baseurl}.png?size=4096), ` +
                 `[big\xa0webp](${baseurl}.webp?size=4096)`
-                )
+              )
               .setImage(`${baseurl}.png?size=4096`)],
           });
       }
@@ -470,18 +470,19 @@ module.exports = [
       let baseurl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`;
       let avatarStr = user.avatar == null ? `[default](${avatarURL}) (avatar is default)` :
         (animated ?
-        `[default](${avatarURL}), ` +
-        `[normal\xa0png](${baseurl}.png), ` +
-        `[normal\xa0webp](${baseurl}.webp), ` +
-        `[normal\xa0gif](${baseurl}.gif), ` +
-        `[big\xa0png](${baseurl}.png?size=4096), ` +
-        `[big\xa0webp](${baseurl}.webp?size=4096), ` +
-        `[big\xa0gif](${baseurl}.gif?size=4096)` :
-        `[default](${avatarURL}), ` +
-        `[normal\xa0png](${baseurl}.png), ` +
-        `[normal\xa0webp](${baseurl}.webp), ` +
-        `[big\xa0png](${baseurl}.png?size=4096), ` +
-        `[big\xa0webp](${baseurl}.webp?size=4096)`);
+          `[default](${avatarURL}), ` +
+          `[normal\xa0png](${baseurl}.png), ` +
+          `[normal\xa0webp](${baseurl}.webp), ` +
+          `[normal\xa0gif](${baseurl}.gif), ` +
+          `[big\xa0png](${baseurl}.png?size=4096), ` +
+          `[big\xa0webp](${baseurl}.webp?size=4096), ` +
+          `[big\xa0gif](${baseurl}.gif?size=4096)` :
+          `[default](${avatarURL}), ` +
+          `[normal\xa0png](${baseurl}.png), ` +
+          `[normal\xa0webp](${baseurl}.webp), ` +
+          `[big\xa0png](${baseurl}.png?size=4096), ` +
+          `[big\xa0webp](${baseurl}.webp?size=4096)`
+        );
       
       return common.regCmdResp(o, {
         embeds: [{
@@ -525,7 +526,7 @@ module.exports = [
       let avatarStr = user.avatar == null ?
         `[default](<${avatarURL} ) (avatar is default)\n` +
         `[[for\xa0embed]]( ${avatarURL}?size=64 )` :
-          (animated ?
+        (animated ?
           `[default](<${avatarURL}>), ` +
           `[normal\xa0png](<${baseurl}.png>), ` +
           `[normal\xa0webp](<${baseurl}.webp>), ` +
@@ -539,7 +540,8 @@ module.exports = [
           `[normal\xa0webp](<${baseurl}.webp>), ` +
           `[big\xa0png](<${baseurl}.png?size=4096>), ` +
           `[big\xa0webp](<${baseurl}.webp?size=4096>)\n` +
-          `[[for\xa0embed]]( ${avatarURL}?size=64 )`);
+          `[[for\xa0embed]]( ${avatarURL}?size=64 )`
+        );
       
       return common.slashCmdResp(o, ephemeral,
         `**User Info for ${user.tag}**\n` +
@@ -633,18 +635,19 @@ module.exports = [
       let baseurl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
       let iconStr = guild.icon == null ? 'Server icon is default' :
         (animated ?
-        `[default](${iconURL}), ` +
-        `[normal\xa0png](${baseurl}.png), ` +
-        `[normal\xa0webp](${baseurl}.webp), ` +
-        `[normal\xa0gif](${baseurl}.gif), ` +
-        `[big\xa0png](${baseurl}.png?size=4096), ` +
-        `[big\xa0webp](${baseurl}.webp?size=4096), ` +
-        `[big\xa0gif](${baseurl}.gif?size=4096)` :
-        `[default](${iconURL}), ` +
-        `[normal\xa0png](${baseurl}.png), ` +
-        `[normal\xa0webp](${baseurl}.webp), ` +
-        `[big\xa0png](${baseurl}.png?size=4096), ` +
-        `[big\xa0webp](${baseurl}.webp?size=4096)`);
+          `[default](${iconURL}), ` +
+          `[normal\xa0png](${baseurl}.png), ` +
+          `[normal\xa0webp](${baseurl}.webp), ` +
+          `[normal\xa0gif](${baseurl}.gif), ` +
+          `[big\xa0png](${baseurl}.png?size=4096), ` +
+          `[big\xa0webp](${baseurl}.webp?size=4096), ` +
+          `[big\xa0gif](${baseurl}.gif?size=4096)` :
+          `[default](${iconURL}), ` +
+          `[normal\xa0png](${baseurl}.png), ` +
+          `[normal\xa0webp](${baseurl}.webp), ` +
+          `[big\xa0png](${baseurl}.png?size=4096), ` +
+          `[big\xa0webp](${baseurl}.webp?size=4096)`
+        );
       
       if (rawArgs[0] == 'all')
         return common.regCmdResp(o, {
@@ -685,18 +688,19 @@ module.exports = [
       let baseurl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
       let iconStr = guild.icon == null ? 'Server icon is default' :
         (animated ?
-        `[default](<${iconURL}>), ` +
-        `[normal\xa0png](<${baseurl}.png>), ` +
-        `[normal\xa0webp](<${baseurl}.webp>), ` +
-        `[normal\xa0gif](<${baseurl}.gif>), ` +
-        `[big\xa0png](<${baseurl}.png?size=4096>), ` +
-        `[big\xa0webp](<${baseurl}.webp?size=4096>), ` +
-        `[big\xa0gif](<${baseurl}.gif?size=4096>)` :
-        `[default](<${iconURL}>), ` +
-        `[normal\xa0png](<${baseurl}.png>), ` +
-        `[normal\xa0webp](<${baseurl}.webp>), ` +
-        `[big\xa0png](<${baseurl}.png?size=4096>), ` +
-        `[big\xa0webp](<${baseurl}.webp?size=4096>)`);
+          `[default](<${iconURL}>), ` +
+          `[normal\xa0png](<${baseurl}.png>), ` +
+          `[normal\xa0webp](<${baseurl}.webp>), ` +
+          `[normal\xa0gif](<${baseurl}.gif>), ` +
+          `[big\xa0png](<${baseurl}.png?size=4096>), ` +
+          `[big\xa0webp](<${baseurl}.webp?size=4096>), ` +
+          `[big\xa0gif](<${baseurl}.gif?size=4096>)` :
+          `[default](<${iconURL}>), ` +
+          `[normal\xa0png](<${baseurl}.png>), ` +
+          `[normal\xa0webp](<${baseurl}.webp>), ` +
+          `[big\xa0png](<${baseurl}.png?size=4096>), ` +
+          `[big\xa0webp](<${baseurl}.webp?size=4096>)`
+        );
       
       if (args[0] && args[0].value)
         return common.slashCmdResp(o, ephemeral,
