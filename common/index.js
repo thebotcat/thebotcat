@@ -7,7 +7,7 @@ var { recursiveReaddir } = require('./convenience');
 var randomModule = require('./random');
 var { fastIntLog2, randBytes, randFloat, randInt, randInts } = randomModule;
 
-var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IdToDate, dateToId } = require('./time_format'); 
+var { msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IdToDate, dateToId } = require('./time_format');
 
 var { getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage } = require('./status_gen');
 

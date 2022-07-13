@@ -36,7 +36,7 @@ module.exports = [
       for (var i = 0; i < entries.length; i += step) {
         let promise = msg.channel.send({
           content: entries.slice(i, i + step).join(''),
-          allowedMentions: { parse: [doRoles ? 'roles' : 'users'] } 
+          allowedMentions: { parse: [doRoles ? 'roles' : 'users'] },
         });
         if (hidden) promise = promise.then(x => x.delete());
         promises.push(promise);

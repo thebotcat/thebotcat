@@ -247,7 +247,7 @@ module.exports = [
         
         case 'badwords':
           if (rawArgs.length == 1) {
-            return common.regCmdResp(o, 
+            return common.regCmdResp(o,
               'To list badwords run `settings badwords list`.\n' +
               'To list info about one badword run `settings badwords list <word>`.\n' +
               'To add a badword run `settings badwords add <word> <retaliation> <enabled> <type> <ignore_admin> [<ignored_role> ...]`.\n' +
@@ -341,7 +341,7 @@ module.exports = [
         case 'logchannel':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
           if (rawArgs.length == 1) {
-            return common.regCmdResp(o, 
+            return common.regCmdResp(o,
               'The current logging channel is ' + (guilddata.logging.main ? `<#${guilddata.logging.main}> (id ${guilddata.logging.main})` : 'none') + '.\n' +
               'To set logging channel to this channel run `settings logchannel set`.\n' +
               'To set logging channel to a channel run `settings logchannel set <#channel>`.\n' +
@@ -367,7 +367,7 @@ module.exports = [
                 return common.regCmdResp(o, 'Channel nonexistent or not in this server.');
               }
             } else {
-              return common.regCmdResp(o, 
+              return common.regCmdResp(o,
                 'To set logging channel to this channel run `settings logchannel set`.\n' +
                 'To set logging channel to a channel run `settings logchannel set <#channel>`.\n' +
                 'To turn off logging run `settings logchannel clear`.'
@@ -415,7 +415,7 @@ module.exports = [
         case 'roles':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
           if (rawArgs.length == 1) {
-            return common.regCmdResp(o, 
+            return common.regCmdResp(o,
               'This command configures the bot-level permissions certain roles have, ranging from music command access to muting, locking, kicking, banning, and bot settings control.\n\n' +
               'To view roles with bot-level permissions set, run `settings roles view`.\n' +
               'To view the permissions for one role, run `settings roles view <@mention|name|query>`\n' +
@@ -450,7 +450,7 @@ module.exports = [
                     return common.regCmdResp(o, {
                       embeds: [{
                         title: 'Permissions',
-                        description: `Permissions for <@&${role.id}>:\n` + 
+                        description: `Permissions for <@&${role.id}>:\n` +
                           common.getBotPermissionsArray(guilddata.perms[role.id]).map(x => `${x[1] ? '🟩' : '🟥'} ${x[0]}`).join('\n')
                       }]
                     });
@@ -555,7 +555,7 @@ module.exports = [
         case 'overrides':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
           if (rawArgs.length == 1) {
-            return common.regCmdResp(o, 
+            return common.regCmdResp(o,
               'This command configures the bot-level permission overrides for certain channels.\n\n' +
               'To view channels with overrides, run `settings overrides view`.\n' +
               'To view override roles for a channel, run `settings overrides view #channel`.\n' +
@@ -624,7 +624,7 @@ module.exports = [
                     return common.regCmdResp(o, {
                       embeds: [{
                         title: 'Permissions',
-                        description: `Permissions for <@&${role.id}>:\n` + 
+                        description: `Permissions for <@&${role.id}>:\n` +
                           common.getBotPermissionsArray(guilddata.overrides[channel.id][role.id], true).map(x => `${x[1] > 0 ? '🟩' : x[1] < 0 ? '🟥' : '⬛'} ${x[0]}`).join('\n')
                       }]
                     });
@@ -814,7 +814,7 @@ module.exports = [
         case 'enabledcmds':
           if (!fullperms) return silenced ? null : common.regCmdResp(o, 'You do not have permission to run this command.');
           if (rawArgs.length == 1) {
-            return common.regCmdResp(o, 
+            return common.regCmdResp(o,
               'This command configures which commands are enabled.\n\n' +
               'To view whether commands are enabled globally, run `settings enabledcmds view global`.\n' +
               'To view whether a particular command or category is enabled, run `settings enabledcmds view <\'category\'/\'command\'> <command/category>`.\n' +
@@ -1073,7 +1073,7 @@ module.exports = [
                 let roleId = args[0].options[0].options[0].value;
                 if (!guilddata.perms[roleId])
                   return common.slashCmdResp(o, true, `No bot-level permissions for role <@&${roleId}>.`);
-                return common.slashCmdResp(o, true, `Permissions for <@&${roleId}>:\n` + 
+                return common.slashCmdResp(o, true, `Permissions for <@&${roleId}>:\n` +
                   common.getBotPermissionsArray(guilddata.perms[roleId]).map(x => `${x[1] ? '🟩' : '🟥'} ${x[0]}`).join('\n'));
               }
             }
@@ -1132,7 +1132,7 @@ module.exports = [
                 let roleId = args[0].options[0].options[1].value;
                 if (!guilddata.overrides[channelId][roleId])
                   return common.slashCmdResp(o, true, `No bot-level overrides in channel <#${channelId}> for role <@&${roleId}>.`);
-                return common.slashCmdResp(o, true, `Permissions for <@&${roleId}>:\n` + 
+                return common.slashCmdResp(o, true, `Permissions for <@&${roleId}>:\n` +
                   common.getBotPermissionsArray(guilddata.overrides[channelId][roleId], true).map(x => `${x[1] > 0 ? '🟩' : x[1] < 0 ? '🟥' : '⬛'} ${x[0]}`).join('\n'));
               } else if (args[0].options[0].options[0]) {
                 let channelId = args[0].options[0].options[0].value;
