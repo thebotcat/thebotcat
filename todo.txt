@@ -1,30 +1,27 @@
 fix dm commands help and execution
-coll search functions' convert mentions to the inside use match variable instead of running regex twice, do same for any similar situation in code
 aliases for commands and rename base music commands to something more obvious
   for now no settings but maybe in future, currently show aliases after regular commands in each category in help, with newline seperating regular and alias maybe, with aliases help page just saying they are alias, maybe only help all shows alias
-review toisostring calls
+play with no args should resume
+play command handle youtu.be and playlists and maybe auto searching with a list of results and a prompt for confirm which can be bypassed and the first choice autopicked by passing an argument to the play command
+seek command, using begin param on ytdl maybe
+use ytdl.validateURL
+play command other music providers
+get ytdl stream of next song ready when current song is 5s away from finishing
 
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code
 add config option to always forceLoop if song error
 make say and sayy not developer commands
-play with no args should resume
 check slash command paramters on discord api docs, particularly add dm_permission flags and others
-play command handle youtu.be and playlists and maybe auto searching with a list of results and a prompt for confirm which can be bypassed and the first choice autopicked by passing an argument to the play command
-seek command, using begin param on ytdl maybe
 music state saving to string name, and state restoring, saves the entire songslist and state
 help slash command in dms shows invalid commands
 use objects for regCmdResp and slashCmdResp
 disabling vc commands should cause insta disconnect, disabling music commands should cause insta stop
 make global enabledcmds true or false, category is true false or null (meaning inherit), commands same thing, inherit from category
 botcat confirmkb doesnt work on slash commands
-add uwu mode where all text strings are replaced with something more uwu-ey
-
+review toisostring calls
+coll search functions' convert mentions to the inside use match variable instead of running regex twice, do same for any similar situation in code
 investigate all automatic saved guilddata creators, only add data to saved guilddata if it differs from the default
-use ytdl.validateURL
-play command other music providers
-get ytdl stream of next song ready when current song is 5s away from finishing
-
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well
 
@@ -57,6 +54,7 @@ contentCommand and contentCommandNonSlash are duplicate functions
 command descriptions should use prefix
 use guildmembermanager.search
 use deferred ack more
+add uwu mode where all text strings are replaced with something more uwu-ey
 
 emphemeral message chat feature
 make pseudo tagscript implementation in common and use it
