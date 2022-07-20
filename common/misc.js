@@ -90,7 +90,7 @@ function slashCmdResp(o, ephemeral, message, mention) {
 
 function getGuilddata(guildId) {
   let guilddata = props.saved.guilds[guildId];
-  if (!guilddata) return getEmptyGuildObject(guildId);
+  if (!guilddata) return common.getEmptyGuildObject(guildId);
   return guilddata;
 }
 
