@@ -77,6 +77,7 @@ module.exports = [
     name: 'leave',
     description: '`!leave` for me to leave the voice channel I am in',
     description_slash: 'for me to leave the voice channel I am in',
+    aliases: ['disconnect', 'dc', 'gtfo'],
     flags: 0b110110,
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');

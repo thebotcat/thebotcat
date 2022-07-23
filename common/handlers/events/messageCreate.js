@@ -80,25 +80,29 @@ module.exports = async msg => {
   // this code loops through the commands array to see if the stated text matches any known command
   if (isCommand == 1) {
     for (var cmdObj of commands) {
-      let cmdNameStr = cmdObj.name;
       if (!(msg.guild && cmdObj.flags & 4 || !msg.guild && cmdObj.flags & 8) || !(cmdObj.flags & 16)) continue;
-      if (!(cmdObj.flags & 1 && cmdNameStr == cmdstring || !(cmdObj.flags & 1) && cmdstring.startsWith(cmdNameStr))) continue;
-      if (cmdstring[cmdNameStr.length] != ' ' && cmdstring[cmdNameStr.length] != '\n' && cmdstring.length > cmdNameStr.length) continue;
-      if (msg.guild && (
-        cmdObj.flags & 2 && (
-          cmdNameStr != 'settings' && props.saved.guilds[msg.guild.id] && (
-            !props.saved.guilds[msg.guild.id].enabled_commands.global ||
-            props.saved.guilds[msg.guild.id].enabled_commands.categories[cmdObj.category] == false ||
-            props.saved.guilds[msg.guild.id].enabled_commands.commands[cmdNameStr] == false ||
-            cmdNameStr == 'join' && props.saved.guilds[msg.guild.id].enabled_commands.commands['leave'] == false ||
-            cmdNameStr == 'play' && props.saved.guilds[msg.guild.id].enabled_commands.commands['stop'] == false)) ||
-        !(cmdObj.flags & 2) && !persData.special_guilds_set.has(msg.guild.id))) continue;
-      argstring = cmdstring.slice(cmdNameStr.length).trim();
-      ({ rawArgs, args, kwargs } = common.parseArgs(argstring));
-      isCommand = 2;
-      cmd = cmdObj;
-      cmdName = cmdNameStr;
-      break;
+      let cmdstringLower = cmdstring.toLowerCase();
+      let cmdAliases = [cmdObj.name, ...(cmdObj.aliases ?? [])], doBreak = false, cmdNameStr;
+      for (cmdNameStr of cmdAliases) {
+        if (!(cmdObj.flags & 1 && cmdNameStr == cmdstringLower || !(cmdObj.flags & 1) && cmdstringLower.startsWith(cmdNameStr))) continue;
+        if (cmdstringLower[cmdNameStr.length] != ' ' && cmdstringLower[cmdNameStr.length] != '\n' && cmdstringLower.length > cmdNameStr.length) continue;
+        if (msg.guild && (
+          cmdObj.flags & 2 && (
+            cmdNameStr != 'settings' && props.saved.guilds[msg.guild.id] && (
+              !props.saved.guilds[msg.guild.id].enabled_commands.global ||
+              props.saved.guilds[msg.guild.id].enabled_commands.categories[cmdObj.category] == false ||
+              props.saved.guilds[msg.guild.id].enabled_commands.commands[cmdNameStr] == false ||
+              cmdNameStr == 'join' && props.saved.guilds[msg.guild.id].enabled_commands.commands['leave'] == false ||
+              cmdNameStr == 'play' && props.saved.guilds[msg.guild.id].enabled_commands.commands['stop'] == false)) ||
+          !(cmdObj.flags & 2) && !persData.special_guilds_set.has(msg.guild.id))) continue;
+        argstring = cmdstring.slice(cmdNameStr.length).trim();
+        ({ rawArgs, args, kwargs } = common.parseArgs(argstring));
+        isCommand = 2;
+        cmd = cmdObj;
+        cmdName = cmdNameStr;
+        doBreak = true;
+      }
+      if (doBreak) break;
     }
   }
   

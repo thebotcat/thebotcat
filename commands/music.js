@@ -1,8 +1,9 @@
 module.exports = [
   {
     name: 'play',
-    description: '`!play <url> [#channel]` plays the audio of a YouTube URL, like every other music bot in existence, channel is channel to join',
+    description: '`!play <url> [#channel]` plays the audio of a YouTube URL, like every other music bot in existence; channel is channel to join',
     description_slash: 'plays the audio of a YouTube URL, like every other music bot in existence',
+    aliases: ['p'],
     flags: 0b110110,
     options: [
       { type: 'STRING', name: 'url', description: 'the URL of the YouTube video to play the audio of', required: true },
@@ -272,9 +273,10 @@ module.exports = [
     },
   },
   {
-    name: 'loopqueue',
-    description: '`!loopqueue` toggles whether the queue will loop (when a song finishes playing its added to the end of the queue)',
-    description_slash: 'toggles whether the queue will loop (when a song finishes playing its added to the end of the queue)',
+    name: 'queueloop',
+    description: '`!queueloop` toggles whether the queue will loop (when a song finishes it\'s added to the end of the queue)',
+    description_slash: 'toggles whether the queue will loop (when a song finishes it\'s added to the end of the queue)',
+    aliases: ['loopqueue'],
     flags: 0b110110,
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
@@ -308,9 +310,10 @@ module.exports = [
     },
   },
   {
-    name: 'voteskip',
-    description: '`!voteskip` toggles the vote to skip the currently playing song (if 50% or over votes, it will be skipped)',
+    name: 'skip',
+    description: '`!skip` toggles the vote to skip the currently playing song (if 50% or over votes, it will be skipped)',
     description_slash: 'toggles the vote to skip the currently playing song (if 50% or over votes, it will be skipped)',
+    aliases: ['voteskip', 's'],
     flags: 0b110110,
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
@@ -353,6 +356,7 @@ module.exports = [
     name: 'forceskip',
     description: '`!forceskip` skips the currently playing song',
     description_slash: 'skips the currently playing song',
+    aliases: ['fs'],
     flags: 0b110110,
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
@@ -424,9 +428,10 @@ module.exports = [
     },
   },
   {
-    name: 'currentsong',
-    description: '`!currentsong` prints the currently playing song',
+    name: 'nowplaying',
+    description: '`!nowplaying` prints the currently playing song',
     description_slash: 'prints the currently playing song',
+    aliases: ['currentsong', 'np'],
     flags: 0b110110,
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
@@ -452,9 +457,10 @@ module.exports = [
     },
   },
   {
-    name: 'songslist',
-    description: '`!songslist` lists the currently playing song and the next songs',
+    name: 'queue',
+    description: '`!queue` lists the currently playing song and the next songs',
     description_slash: 'lists the currently playing song and the next songs',
+    aliases: ['songslist', 'q'],
     flags: 0b110110,
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');

@@ -165,10 +165,10 @@ async function updateStatus() {
 }
 
 // command variables
-var commands = [], commandColl = new Discord.Collection(), commandCategories = ['Information', 'Administrative', 'Interactive', 'Voice Channel', 'Music', 'Content', 'Troll'];
+var commands = [], commandColl = new Discord.Collection(), commandCollWAliases = new Discord.Collection(), commandCategories = ['Information', 'Administrative', 'Interactive', 'Voice Channel', 'Music', 'Content', 'Troll'];
 
 // command variables to be defined globally now as they are used globally afterward
-Object.assign(global, { commands, commandColl, commandCategories });
+Object.assign(global, { commands, commandColl, commandCollWAliases, commandCategories });
 
 // bot config variables
 var props = {
@@ -293,13 +293,15 @@ function nonlogmsg(val) {
 
 // command handling functions
 function addCommand(cmd, category) {
-  if (category) {
+  if (category)
     cmd = { category, ...cmd };
-    commands.push(cmd);
-    commandColl.set(cmd.name, cmd);
-  } else {
-    commands.push(cmd);
-    commandColl.set(cmd.name, cmd);
+  commands.push(cmd);
+  commandColl.set(cmd.name, cmd);
+  commandCollWAliases.set(cmd.name, cmd);
+  if (cmd.aliases) {
+    cmd.aliases.forEach(x => {
+      commandCollWAliases.set(x, cmd);
+    });
   }
 }
 
@@ -324,7 +326,7 @@ function getCommandsCategorized(guilddata, slashContext) {
     commandsList = commands.filter(x => x.flags & 0b000010);
   } else if (!guilddata) {
     if (slashContext)
-      commandsList = commands.filter(x => (x.flags & 0b100010) == 0b100010);
+      commandsList = commands.filter(x => (x.flags & 0b101010) == 0b101010);
     else
       commandsList = commands.filter(x => (x.flags & 0b011010) == 0b011010);
   } else {
@@ -341,16 +343,23 @@ function getCommandsCategorized(guilddata, slashContext) {
           guilddata.enabled_commands.categories[x.category] == false ||
           guilddata.enabled_commands.commands[x.name] == false)));
   }
-  let commandsCategorized = { Uncategorized: [] };
-  commandsList.forEach(x =>
-    x.category ?
-      (commandsCategorized[x.category] ?
-        commandsCategorized[x.category].push(x) :
-        commandsCategorized[x.category] = [x]
-      ) :
-      commandsCategorized.Uncategorized.push(x)
-  );
-  if (commandsCategorized.Uncategorized.length == 0) delete commandsCategorized.Uncategorized;
+  commandsList.map(x => x.aliases).filter(x => x).flat();
+  let commandsCategorized = {}, uncategorized = [];
+  commandsList.forEach(x => {
+    if (x.category) {
+      if (commandsCategorized[x.category])
+        commandsCategorized[x.category].push(x);
+      else
+        commandsCategorized[x.category] = [x];
+      if (x.aliases)
+        commandsCategorized[x.category].push(...x.aliases.map(x => ({ name: x, alias: true })));
+    } else {
+      uncategorized.push(x);
+      if (x.aliases)
+        uncategorized.push(...x.aliases.map(x => ({ name: x, alias: true })));
+    }
+  });
+  if (uncategorized.length > 0) commandsCategorized.Uncategorized = uncategorized;
   return [commandsList, commandsCategorized];
 }
 
@@ -716,6 +725,13 @@ function exitHandler() {
   }
 }
 
+function shutdownBot() {
+  console.log('Shutting down');
+  propsSave();
+  process.removeAllListeners('exit');
+  process.exit();
+}
+
 process.on('exit', exitHandler);
 
 process.on('SIGINT', exitHandler);
@@ -735,6 +751,7 @@ Object.defineProperties(global, {
   messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => { handlers.extra.message = val; } },
   voiceStateUpdateHandler: { configurable: true, enumerable: true, get: () => voiceStateUpdateHandler, set: val => { voiceStateUpdateHandler = val; } },
   exitHandler: { configurable: true, enumerable: true, get: () => exitHandler, set: val => { exitHandler = val; } },
+  shutdownBot: { configurable: true, enumerable: true, get: () => shutdownBot, set: val => { shutdownBot = val; } },
   ticks: { configurable: true, enumerable: true, get: () => ticks, set: val => { ticks = val; } },
   tickStatUpdInt: { configurable: true, enumerable: true, get: () => tickStatUpdInt, set: val => { tickStatUpdInt = val; } },
   tickStatUpdNextPossible: { configurable: true, enumerable: true, get: () => tickStatUpdNextPossible, set: val => { tickStatUpdNextPossible = val; } },

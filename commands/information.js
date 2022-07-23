@@ -14,20 +14,17 @@ module.exports = [
         return common.regCmdResp(o, {
           embeds: [{
             title: `Commands (${commandsList.length})`,
-            description: 'Run `!help <command>` for help on a specific command.',
+            description: 'Run `!help <command>` for help on a specific command. (Italics are aliases.)',
             fields: Object.keys(commandsCategorized).map(
-              x => ({ name: `${x} (${commandsCategorized[x].length})`, value: commandsCategorized[x].map(y => `\`${y.name}\``).join(', ') || 'None', inline: false })
+              x => ({ name: `${x} (${commandsCategorized[x].filter(x => !x.alias).length})`, value: commandsCategorized[x].map(y => y.alias ? `_\`${y.name}\`_` : `\`${y.name}\``).join(', ') || 'None', inline: false })
             ),
           }],
         });
       } else {
         let name = o.asOneArg;
-        let cmdobj = commands.filter(x => x.name == name)[0];
+        let cmdobj = commandCollWAliases.get(name);
         if (cmdobj && cmdobj.flags & 2) {
-          if (cmdobj.description)
-            return common.regCmdResp(o, cmdobj.description);
-          else
-            return common.regCmdResp(o, `Command \`${name}\` has no description.`);
+          return common.regCmdResp(o, `**Command:** \`${cmdobj.name}\`\n${cmdobj.aliases ? '**Aliases:** ' + cmdobj.aliases.map(x => `\`${x}\``).join(', ') + '\n' : ''}${cmdobj.description ?? 'No description'}`);
         } else {
           return common.regCmdResp(o, `Command \`${name}\` does not exist.`);
         }
@@ -39,19 +36,16 @@ module.exports = [
         let [commandsList, commandsCategorized] = getCommandsCategorized(args[0] && args[0].value == 'all' ? null : o.guild ? props.saved.guilds[o.guild.id] : false, true);
         return common.slashCmdResp(o, ephemeral,
           `Commands (${commandsList.length})\n` +
-          'Run `!help <command>` for help on a specific command.\n\n' +
+          'Run `!help <command>` for help on a specific command. (Italics are aliases.)\n\n' +
           Object.keys(commandsCategorized).map(
-            x => (`${x} (${commandsCategorized[x].length})\n` +
-              commandsCategorized[x].map(y => `\`${y.name}\``).join(', ') || 'None')
+            x => (`${x} (${commandsCategorized[x].filter(x => !x.alias).length})\n` +
+              commandsCategorized[x].map(y => y.alias ? `_\`${y.name}\`_` : `\`${y.name}\``).join(', ') || 'None')
           ).join('\n\n'));
       } else {
         let name = args[0].value;
-        let cmdobj = commands.filter(x => x.name == name)[0];
+        let cmdobj = commandCollWAliases.get(name);
         if (cmdobj && cmdobj.flags & 2) {
-          if (cmdobj.description)
-            return common.slashCmdResp(o, ephemeral, cmdobj.description);
-          else
-            return common.slashCmdResp(o, ephemeral, `Command \`${name}\` has no description.`);
+          return common.slashCmdResp(o, ephemeral, `**Command:** \`${cmdobj.name}\`\n${cmdobj.aliases ? '**Aliases:** ' + cmdobj.aliases.map(x => `\`${x}\``).join(', ') + '\n' : ''}${cmdobj.description ?? 'No description'}`);
         } else {
           return common.slashCmdResp(o, ephemeral, `Command \`${name}\` does not exist.`);
         }

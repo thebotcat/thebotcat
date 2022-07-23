@@ -311,6 +311,15 @@ module.exports = [
     },
   },
   {
+    name: 'shutdown',
+    flags: 0b011100,
+    execute(o, msg, rawArgs) {
+      if (!common.isDeveloper(msg)) return;
+      common.regCmdResp(o, 'Shutting down');
+      setTimeout(shutdownBot, 1000);
+    },
+  },
+  {
     name: 'crash',
     flags: 0b011100,
     execute(o, msg, rawArgs) {
