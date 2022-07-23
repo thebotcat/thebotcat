@@ -1,6 +1,3 @@
-fix dm commands help and execution
-aliases for commands and rename base music commands to something more obvious
-  for now no settings but maybe in future, currently show aliases after regular commands in each category in help, with newline seperating regular and alias maybe, with aliases help page just saying they are alias, maybe only help all shows alias
 play with no args should toggle pause/resume
 play command handle youtu.be and playlists and maybe auto searching with a list of results and a prompt for confirm which can be bypassed and the first choice autopicked by passing an argument to the play command
 seek command, using begin param on ytdl maybe
@@ -78,6 +75,7 @@ add to guild settings
   auto disconnect from vc timeout
   move deafened ppl to a vc
   reply to non slash commands, default, yes, or no
+  aliases
 make user specific settings
   forcing no embeds or reacts in message reponses
   prefix in dm channels
