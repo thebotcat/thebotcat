@@ -4,8 +4,8 @@ module.exports = [
     description_slash: 'sends a message as botcat in the current channel',
     flags: 0b111100,
     options: [
-      { type: 'STRING', name: 'expression', description: 'what to say', required: true },
-      { type: 'BOOLEAN', name: 'mention', description: 'whether the bot should mention (defaults to true)' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'expression', description: 'what to say', required: true },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'mention', description: 'whether the bot should mention (defaults to true)' },
     ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg) || addlbotperms[msg.author.id] & 3)) return;
@@ -31,9 +31,9 @@ module.exports = [
     description_slash: 'sends a message as botcat in a given channel',
     flags: 0b111100,
     options: [
-      { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
-      { type: 'STRING', name: 'expression', description: 'what to say', required: true },
-      { type: 'BOOLEAN', name: 'mention', description: 'whether the bot should mention (defaults to true)' },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel', required: true },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'expression', description: 'what to say', required: true },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'mention', description: 'whether the bot should mention (defaults to true)' },
     ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg) || addlbotperms[msg.author.id] & 2)) return;
@@ -163,7 +163,7 @@ module.exports = [
     name: 'eval',
     description_slash: 'evaluates.',
     flags: 0b111100,
-    options: [ { type: 'STRING', name: 'expression', description: 'the expression to evaluate' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'expression', description: 'the expression to evaluate' } ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
       let cmd = o.argstring, res;
@@ -177,14 +177,14 @@ module.exports = [
       try {
         res = eval(cmd);
         console.debug(`-> ${util.inspect(res)}`);
-        let richres = new Discord.MessageEmbed()
+        let richres = new Discord.EmbedBuilder()
           .setTitle('Eval Result')
           .setDescription(util.inspect(res));
         return common.regCmdResp(o, { embeds: [richres] });
       } catch (e) {
         console.log('error in eval');
         console.debug(e.stack);
-        let richres = new Discord.MessageEmbed()
+        let richres = new Discord.EmbedBuilder()
           .setTitle('Eval Error')
           .setDescription(e.stack);
         return common.regCmdResp(o, { embeds: [richres] });
@@ -210,7 +210,7 @@ module.exports = [
     name: 'evalv',
     description_slash: 'evaluates void.',
     flags: 0b111100,
-    options: [ { type: 'STRING', name: 'expression', description: 'the expression to evaluate' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'expression', description: 'the expression to evaluate' } ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
       let cmd = o.argstring, res;
@@ -245,7 +245,7 @@ module.exports = [
     name: 'exec',
     description_slash: 'executes.',
     flags: 0b111100,
-    options: [ { type: 'STRING', name: 'expression', description: 'the expression to evaluate' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'expression', description: 'the expression to evaluate' } ],
     async execute(o, msg, rawArgs) {
       if (!(common.isDeveloper(msg) || common.isConfirmDeveloper(msg))) return;
       let cmd = o.argstring;
@@ -261,7 +261,7 @@ module.exports = [
           if (err) {
             console.log('error in shell exec');
             console.debug(err.stack);
-            let richres = new Discord.MessageEmbed()
+            let richres = new Discord.EmbedBuilder()
               .setTitle('Shell Command Error')
               .setDescription(err.stack);
             common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
@@ -269,7 +269,7 @@ module.exports = [
           }
           stdout = stdout.toString(); stderr = stderr.toString();
           console.debug(`shell command result\nstdout:\n${util.inspect(stdout)}\nstderr:\n${util.inspect(stderr)}`);
-          let richres = new Discord.MessageEmbed()
+          let richres = new Discord.EmbedBuilder()
             .setTitle('Shell Command Result')
             .setDescription(`*stdout*:\n${util.inspect(stdout)}\n*stderr*:\n${util.inspect(stderr)}`);
           common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));

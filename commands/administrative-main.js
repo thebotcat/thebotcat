@@ -6,11 +6,11 @@ module.exports = [
     flags: 0b110110,
     options: [
       {
-        type: 'STRING', name: 'value', description: 'to suppress or unsuppress embeds', required: true,
+        type: Discord.ApplicationCommandOptionType.String, name: 'value', description: 'to suppress or unsuppress embeds', required: true,
         choices: [ { name: 'suppress', value: 'suppress' }, { name: 'unsuppress', value: 'unsuppress' } ],
       },
-      { type: 'STRING', name: 'messageid', description: 'id of message or message link', required: true },
-      { type: 'CHANNEL', name: 'channel', description: 'channel the message is in' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'messageid', description: 'id of message or message link', required: true },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'channel the message is in' },
     ],
     async execute(o, msg, rawArgs) {
       let suppress, match, channel, targetMsg;
@@ -86,8 +86,8 @@ module.exports = [
     description_slash: 'sets slowmode in a text channel',
     flags: 0b110110,
     options: [
-      { type: 'INTEGER', name: 'slowmode', description: 'slowmode in seconds', required: true },
-      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
+      { type: Discord.ApplicationCommandOptionType.Integer, name: 'slowmode', description: 'slowmode in seconds', required: true },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel' },
     ],
     async execute(o, msg, rawArgs) {
       let seconds, channel;
@@ -162,8 +162,8 @@ module.exports = [
     description_slash: 'sets the bitrate of a voice channel',
     flags: 0b110110,
     options: [
-      { type: 'INTEGER', name: 'bitrate', description: 'bitrate in bytes per second', required: true },
-      { type: 'CHANNEL', name: 'channel', description: 'the voice channel', required: true },
+      { type: Discord.ApplicationCommandOptionType.Integer, name: 'bitrate', description: 'bitrate in bytes per second', required: true },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the voice channel', required: true },
     ],
     async execute(o, msg, rawArgs) {
       let bitrate, channel;
@@ -240,8 +240,8 @@ module.exports = [
     description_slash: 'deletes messages from a channel',
     flags: 0b111110,
     options: [
-      { type: 'INTEGER', name: 'amount', description: 'amount of messages to purge', required: true },
-      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
+      { type: Discord.ApplicationCommandOptionType.Integer, name: 'amount', description: 'amount of messages to purge', required: true },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel' },
     ],
     async execute(o, msg, rawArgs) {
       let msgs, channel;
@@ -291,8 +291,8 @@ module.exports = [
     description_slash: 'locks a channel, preventing anyone other than moderators from sending messages in it',
     flags: 0b110110,
     options: [
-      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
-      { type: 'STRING', name: 'reason', description: 'the reason to lock' },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'reason', description: 'the reason to lock' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -323,13 +323,13 @@ module.exports = [
       if (!newperms.filter(x => x.id == msg.guild.id)) {
         newperms.push({
           id: msg.guild.id,
-          type: 'role',
+          type: Discord.ApplicationCommandOptionType.Role,
           allow: '0',
           deny: '0',
         });
       }
       let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
-      let bits = Discord.Permissions.FLAGS.SEND_MESSAGES * BigInt(type & 1n) | Discord.Permissions.FLAGS.CONNECT * BigInt(type & 2n);
+      let bits = Discord.PermissionsBitField.Flags.SendMessages * BigInt(type & 1n) | Discord.PermissionsBitField.Flags.Connect * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[msg.guild.id].perms).filter(y => y == x.id && props.saved.guilds[msg.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
           x.allow = String(BigInt(x.allow) & ~bits);
@@ -341,7 +341,7 @@ module.exports = [
         if (props.saved.guilds[msg.guild.id].perms[x] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK) && !newpermids.includes(x))
           newperms.push({
             id: x,
-            type: 'role',
+            type: Discord.ApplicationCommandOptionType.Role,
             allow: bits,
             deny: 0n,
           });
@@ -386,13 +386,13 @@ module.exports = [
       if (!newperms.filter(x => x.id == o.guild.id)) {
         newperms.push({
           id: o.guild.id,
-          type: 'role',
+          type: Discord.ApplicationCommandOptionType.Role,
           allow: 0n,
           deny: 0n,
         });
       }
       let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
-      let bits = Discord.Permissions.FLAGS.SEND_MESSAGES * BigInt(type & 1n) | Discord.Permissions.FLAGS.CONNECT * BigInt(type & 2n);
+      let bits = Discord.PermissionsBitField.Flags.SendMessages * BigInt(type & 1n) | Discord.PermissionsBitField.Flags.Connect * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[o.guild.id].perms).filter(y => y == x.id && props.saved.guilds[o.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
           x.allow &= ~bits;
@@ -404,7 +404,7 @@ module.exports = [
         if (props.saved.guilds[o.guild.id].perms[x] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK) && !newpermids.includes(x))
           newperms.push({
             id: x,
-            type: 'role',
+            type: Discord.ApplicationCommandOptionType.Role,
             allow: bits,
             deny: 0n,
           });
@@ -433,8 +433,8 @@ module.exports = [
     description_slash: 'unlocks a channel, resetting permissions to what they were before the lock',
     flags: 0b110110,
     options: [
-      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
-      { type: 'STRING', name: 'reason', description: 'the reason to unlock' },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'reason', description: 'the reason to unlock' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -519,8 +519,8 @@ module.exports = [
     description_slash: 'mutes someone by adding the muted role to them',
     flags: 0b110110,
     options: [
-      { type: 'USER', name: 'member', description: 'the member to mute', required: true },
-      { type: 'STRING', name: 'reason', description: 'the reason to mute' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'member', description: 'the member to mute', required: true },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'reason', description: 'the reason to mute' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -587,8 +587,8 @@ module.exports = [
     description_slash: 'unmutes someone by removing the muted role from them',
     flags: 0b110110,
     options: [
-      { type: 'USER', name: 'member', description: 'the member to unmute', required: true },
-      { type: 'STRING', name: 'reason', description: 'the reason to unmute' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'member', description: 'the member to unmute', required: true },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'reason', description: 'the reason to unmute' },
     ],
     async execute(o, msg, rawArgs) {
       if (!props.saved.guilds[msg.guild.id]) {
@@ -655,14 +655,14 @@ module.exports = [
     description_slash: 'kicks someone from this guild',
     flags: 0b110110,
     options: [
-      { type: 'USER', name: 'member', description: 'the member to kick', required: true },
-      { type: 'STRING', name: 'reason', description: 'optional kick reason' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'member', description: 'the member to kick', required: true },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'reason', description: 'optional kick reason' },
     ],
     async execute(o, msg, rawArgs) {
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.KICK))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (!msg.guild.me.permissions.has(Discord.Permissions.FLAGS.KICK_MEMBERS))
+      if (!msg.guild.me.permissions.has(Discord.PermissionsBitField.Flags.KickMembers))
         return common.regCmdResp(o, 'Error: I do not have permission to kick members.');
       
       let member;
@@ -713,7 +713,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.KICK))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.permissions.has(Discord.Permissions.FLAGS.KICK_MEMBERS))
+      if (!o.guild.me.permissions.has(Discord.PermissionsBitField.Flags.KickMembers))
         return common.slashCmdResp(o, true, 'Error: I do not have permission to kick members.');
       
       let member;
@@ -750,14 +750,14 @@ module.exports = [
     description_slash: 'bans someone from this guild',
     flags: 0b110110,
     options: [
-      { type: 'USER', name: 'member', description: 'the member to ban', required: true },
-      { type: 'STRING', name: 'reason', description: 'optional ban reason' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'member', description: 'the member to ban', required: true },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'reason', description: 'optional ban reason' },
     ],
     async execute(o, msg, rawArgs) {
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (!msg.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
+      if (!msg.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.regCmdResp(o, 'Error: I do not have permission to ban members.');
       
       let user = await common.searchMember(msg.guild.members, rawArgs[0]);
@@ -809,7 +809,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.BAN))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
+      if (!o.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.slashCmdResp(o, true, 'Error: I do not have permission to ban members.');
       
       let user = await o.guild.members.fetch(args[0].value);
@@ -847,14 +847,14 @@ module.exports = [
     description_slash: 'unbans someone from this guild',
     flags: 0b110110,
     options: [
-      { type: 'USER', name: 'member', description: 'the member to unban', required: true },
-      { type: 'STRING', name: 'reason', description: 'optional unban reason' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'member', description: 'the member to unban', required: true },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'reason', description: 'optional unban reason' },
     ],
     async execute(o, msg, rawArgs) {
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (!msg.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
+      if (!msg.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.regCmdResp(o, 'Error: I do not have permission to unban members.');
       
       let userId;
@@ -903,7 +903,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.BAN))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.permissions.has(Discord.Permissions.FLAGS.BAN_MEMBERS))
+      if (!o.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.slashCmdResp(o, true, 'Error: I do not have permission to unban members.');
       
       let userId = args[0] && args[0].value;
@@ -937,35 +937,35 @@ module.exports = [
     flags: 0b110110,
     options: [
       {
-        type: 'SUB_COMMAND', name: 'view', description: 'views roles which can use the emoji',
+        type: Discord.ApplicationCommandOptionType.Subcommand, name: 'view', description: 'views roles which can use the emoji',
         options: [
-          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: Discord.ApplicationCommandOptionType.String, name: 'emote', description: 'emote, id, or search query', required: true },
         ],
       },
       {
-        type: 'SUB_COMMAND', name: 'add', description: 'adds roles which can use the emoji',
+        type: Discord.ApplicationCommandOptionType.Subcommand, name: 'add', description: 'adds roles which can use the emoji',
         options: [
-          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
-          { type: 'STRING', name: 'roles', description: 'roles to add' },
+          { type: Discord.ApplicationCommandOptionType.String, name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: Discord.ApplicationCommandOptionType.String, name: 'roles', description: 'roles to add' },
         ],
       },
       {
-        type: 'SUB_COMMAND', name: 'remove', description: 'removes roles which can use the emoji',
+        type: Discord.ApplicationCommandOptionType.Subcommand, name: 'remove', description: 'removes roles which can use the emoji',
         options: [
-          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
-          { type: 'STRING', name: 'roles', description: 'roles to remove' },
+          { type: Discord.ApplicationCommandOptionType.String, name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: Discord.ApplicationCommandOptionType.String, name: 'roles', description: 'roles to remove' },
         ],
       },
       {
-        type: 'SUB_COMMAND', name: 'set', description: 'sets roles which can use the emoji',
+        type: Discord.ApplicationCommandOptionType.Subcommand, name: 'set', description: 'sets roles which can use the emoji',
         options: [
-          { type: 'STRING', name: 'emote', description: 'emote, id, or search query', required: true },
-          { type: 'STRING', name: 'roles', description: 'roles to set' },
+          { type: Discord.ApplicationCommandOptionType.String, name: 'emote', description: 'emote, id, or search query', required: true },
+          { type: Discord.ApplicationCommandOptionType.String, name: 'roles', description: 'roles to set' },
         ],
       },
     ],
     execute(o, msg, rawArgs) {
-      if (!msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS))
+      if (!msg.member.permissions.has(Discord.PermissionsBitField.Flags.ManageEmojisAndStickers))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
       if (!rawArgs.length)
@@ -1007,7 +1007,7 @@ module.exports = [
       }
     },
     execute_slash(o, interaction, command, args) {
-      if (!o.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS))
+      if (!o.member.permissions.has(Discord.PermissionsBitField.Flags.ManageEmojisAndStickers))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
       let emote;

@@ -182,9 +182,9 @@ for (var i = 0, numCommands = commandKeys.length / 25; i < numCommands; i++) {
     description_slash: `content${i ? i + 1 : ''}.`,
     flags: i == 0 ? 0b111110 : 0b101110,
     options: commandKeys.slice(i * 25, i * 25 + 25).map(x => ({
-      type: 'SUB_COMMAND', name: x.replaceAll(' ', '_'), description: `type: ${commands[x].type.replaceAll('_', ' ')}`,
+      type: Discord.ApplicationCommandOptionType.Subcommand, name: x.replaceAll(' ', '_'), description: `type: ${commands[x].type.replaceAll('_', ' ')}`,
       ...commands[x].type.includes('multi') && {
-        options: [ { type: 'STRING', name: 'value', description: 'empty for random content, a number for a specific content, and \'count\' for total number of contents' } ],
+        options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'value', description: 'empty for random content, a number for a specific content, and \'count\' for total number of contents' } ],
       },
     })),
     ...i == 0 && { execute: contentCommandNonSlash },
@@ -203,7 +203,7 @@ exports.push(
     name: 'lamo',
     description_slash: 'puts a lamo in chat',
     flags: 0b111110,
-    options: [ { type: 'INTEGER', name: 'length', description: 'length of the lamo', required: true } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Integer, name: 'length', description: 'length of the lamo', required: true } ],
     execute(o, msg, rawArgs) {
       let len = Math.min(Math.max(Math.floor(Number(rawArgs[0])), 3), 100);
       if (len != len || len < 4) {

@@ -6,27 +6,27 @@ module.exports = [
     flags: 0b110110,
     options: [
       {
-        type: 'SUB_COMMAND', name: 'prefix', description: 'view or change my server prefix',
-        options: [ { type: 'STRING', name: 'prefix', description: 'the prefix' } ],
+        type: Discord.ApplicationCommandOptionType.Subcommand, name: 'prefix', description: 'view or change my server prefix',
+        options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'prefix', description: 'the prefix' } ],
       },
       {
-        type: 'SUB_COMMAND', name: 'confirmkb', description: 'view or set whether there is confirmation on the kick, ban, and unban commands',
-        options: [ { type: 'BOOLEAN', name: 'confirmation', description: 'confirmation' } ],
+        type: Discord.ApplicationCommandOptionType.Subcommand, name: 'confirmkb', description: 'view or set whether there is confirmation on the kick, ban, and unban commands',
+        options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'confirmation', description: 'confirmation' } ],
       },
       {
-        type: 'SUB_COMMAND_GROUP', name: 'badwords', description: 'configures moderation on bad words',
+        type: Discord.ApplicationCommandOptionType.SubcommandGroup, name: 'badwords', description: 'configures moderation on bad words',
         options: [
           {
-            type: 'SUB_COMMAND', name: 'list', description: 'list all badwords or a specific word',
-            options: [ { type: 'STRING', name: 'word', description: 'a badword' } ],
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'list', description: 'list all badwords or a specific word',
+            options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'word', description: 'a badword' } ],
           },
           {
-            type: 'SUB_COMMAND', name: 'add', description: 'add a badword',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'add', description: 'add a badword',
             options: [
-              { type: 'STRING', name: 'word', description: 'the badword to add', required: true },
-              { type: 'STRING', name: 'retaliation', description: 'the retaliation for saying the badword', required: true },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'word', description: 'the badword to add', required: true },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'retaliation', description: 'the retaliation for saying the badword', required: true },
               {
-                type: 'INTEGER', name: 'type', description: 'type flags for badword', required: true,
+                type: Discord.ApplicationCommandOptionType.Integer, name: 'type', description: 'type flags for badword', required: true,
                 choices: [
                   { name: '0: entire message is badword, case sensitive', value: 0 },
                   { name: '1: message split by spaces contains badword, case sensitive', value: 1 },
@@ -36,22 +36,22 @@ module.exports = [
                   { name: '6: badword is substring in message, case insensitive', value: 6 },
                 ],
               },
-              { type: 'BOOLEAN', name: 'enabled', description: 'whether the word is enabled' },
-              { type: 'BOOLEAN', name: 'ignore_admin', description: 'whether the badword can be said by admins' },
-              { type: 'STRING', name: 'ignored_roles', description: 'roles who can say the badword' },
+              { type: Discord.ApplicationCommandOptionType.Boolean, name: 'enabled', description: 'whether the word is enabled' },
+              { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ignore_admin', description: 'whether the badword can be said by admins' },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'ignored_roles', description: 'roles who can say the badword' },
             ],
           },
           {
-            type: 'SUB_COMMAND', name: 'remove', description: 'remove a badword',
-            options: [ { type: 'STRING', name: 'word', description: 'the badword to remove', required: true } ],
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'remove', description: 'remove a badword',
+            options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'word', description: 'the badword to remove', required: true } ],
           },
           {
-            type: 'SUB_COMMAND', name: 'modify', description: 'modify a badword',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'modify', description: 'modify a badword',
             options: [
-              { type: 'STRING', name: 'word', description: 'the badword to modify', required: true },
-              { type: 'STRING', name: 'retaliation', description: 'the retaliation for saying the badword' },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'word', description: 'the badword to modify', required: true },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'retaliation', description: 'the retaliation for saying the badword' },
               {
-                type: 'INTEGER', name: 'type', description: 'type flags for badword',
+                type: Discord.ApplicationCommandOptionType.Integer, name: 'type', description: 'type flags for badword',
                 choices: [
                   { name: '0: entire message is badword, case sensitive', value: 0 },
                   { name: '1: message split by spaces contains badword, case sensitive', value: 1 },
@@ -61,129 +61,129 @@ module.exports = [
                   { name: '6: badword is substring in message, case insensitive', value: 6 },
                 ],
               },
-              { type: 'BOOLEAN', name: 'enabled', description: 'whether the word is enabled' },
-              { type: 'BOOLEAN', name: 'ignore_admin', description: 'whether the badword can be said by admins' },
-              { type: 'STRING', name: 'ignored_roles', description: 'roles who can say the badword' },
+              { type: Discord.ApplicationCommandOptionType.Boolean, name: 'enabled', description: 'whether the word is enabled' },
+              { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ignore_admin', description: 'whether the badword can be said by admins' },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'ignored_roles', description: 'roles who can say the badword' },
             ],
           },
         ],
       },
       {
-        type: 'SUB_COMMAND_GROUP', name: 'logchannel', description: 'view or set server logging channel',
+        type: Discord.ApplicationCommandOptionType.SubcommandGroup, name: 'logchannel', description: 'view or set server logging channel',
         options: [
-          { type: 'SUB_COMMAND', name: 'view', description: 'view server logging channel' },
+          { type: Discord.ApplicationCommandOptionType.Subcommand, name: 'view', description: 'view server logging channel' },
           {
-            type: 'SUB_COMMAND', name: 'set', description: 'set server logging channel',
-            options: [ { type: 'CHANNEL', name: 'logchannel', description: 'the logging channel or this channel if one isn\'t provided' } ],
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'set', description: 'set server logging channel',
+            options: [ { type: Discord.ApplicationCommandOptionType.Channel, name: 'logchannel', description: 'the logging channel or this channel if one isn\'t provided' } ],
           },
-          { type: 'SUB_COMMAND', name: 'clear', description: 'clear server logging channel' },
+          { type: Discord.ApplicationCommandOptionType.Subcommand, name: 'clear', description: 'clear server logging channel' },
         ],
       },
       {
-        type: 'SUB_COMMAND_GROUP',
+        type: Discord.ApplicationCommandOptionType.SubcommandGroup,
         name: 'mutedrole',
         description: 'view or set muted role',
         options: [
           {
-            type: 'SUB_COMMAND', name: 'view', description: 'view muted role'
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'view', description: 'view muted role'
           },
           {
-            type: 'SUB_COMMAND', name: 'set', description: 'set muted role or unset if none is provided',
-            options: [ { type: 'ROLE', name: 'mutedrole', description: 'the role' } ],
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'set', description: 'set muted role or unset if none is provided',
+            options: [ { type: Discord.ApplicationCommandOptionType.Role, name: 'mutedrole', description: 'the role' } ],
           },
         ],
       },
       {
-        type: 'SUB_COMMAND_GROUP', name: 'roles', description: 'view or set bot-level role permissions',
+        type: Discord.ApplicationCommandOptionType.SubcommandGroup, name: 'roles', description: 'view or set bot-level role permissions',
         options: [
           {
-            type: 'SUB_COMMAND', name: 'view', description: 'view roles with bot-level permissions or view permissions for one role',
-            options: [ { type: 'ROLE', name: 'role', description: 'the role' } ],
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'view', description: 'view roles with bot-level permissions or view permissions for one role',
+            options: [ { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'the role' } ],
           },
           {
-            type: 'SUB_COMMAND', name: 'init', description: 'create bot-level permissions for a role',
-            options: [ { type: 'ROLE', name: 'role', description: 'the role', required: true } ],
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'init', description: 'create bot-level permissions for a role',
+            options: [ { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'the role', required: true } ],
           },
           {
-            type: 'SUB_COMMAND', name: 'clear', description: 'remove bot-level permissions for a role',
-            options: [ { type: 'ROLE', name: 'role', description: 'the role', required: true } ],
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'clear', description: 'remove bot-level permissions for a role',
+            options: [ { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'the role', required: true } ],
           },
           {
-            type: 'SUB_COMMAND', name: 'setperms', description: 'set bot-level permissions for a role',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'setperms', description: 'set bot-level permissions for a role',
             options: [
-              { type: 'ROLE', name: 'role', description: 'the role', required: true },
+              { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'the role', required: true },
               {
-                type: 'STRING', name: 'value', description: 'enable or disable permissions', required: true,
+                type: Discord.ApplicationCommandOptionType.String, name: 'value', description: 'enable or disable permissions', required: true,
                 choices: [ { name: 'enable', value: 'enable'}, { name: 'disable', value: 'disable'} ],
               },
-              { type: 'STRING', name: 'permissions', description: 'string of a permission or permissions', required: true },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'permissions', description: 'string of a permission or permissions', required: true },
             ]
           },
         ],
       },
       {
-        type: 'SUB_COMMAND_GROUP', name: 'overrides', description: 'view or set bot-level role permission overrides for channels',
+        type: Discord.ApplicationCommandOptionType.SubcommandGroup, name: 'overrides', description: 'view or set bot-level role permission overrides for channels',
         options: [
           {
-            type: 'SUB_COMMAND', name: 'view', description: 'view channels with overrides (bot-level), overrides for a channel, or a specific override',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'view', description: 'view channels with overrides (bot-level), overrides for a channel, or a specific override',
             options: [
-              { type: 'CHANNEL', name: 'channel', description: 'a channel' },
-              { type: 'ROLE', name: 'role', description: 'a role' },
+              { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'a channel' },
+              { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'a role' },
             ]
           },
           {
-            type: 'SUB_COMMAND', name: 'init', description: 'create bot-level overrides for a role in a channel',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'init', description: 'create bot-level overrides for a role in a channel',
             options: [
-              { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
-              { type: 'ROLE', name: 'role', description: 'the role' },
+              { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel', required: true },
+              { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'the role' },
             ]
           },
           {
-            type: 'SUB_COMMAND', name: 'clear', description: 'remove bot-level overrides for a role in a channel',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'clear', description: 'remove bot-level overrides for a role in a channel',
             options: [
-              { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
-              { type: 'ROLE', name: 'role', description: 'the role' },
+              { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel', required: true },
+              { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'the role' },
             ]
           },
           {
-            type: 'SUB_COMMAND', name: 'setperms', description: 'set bot-level overrides for a role in a channel',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'setperms', description: 'set bot-level overrides for a role in a channel',
             options: [
-              { type: 'CHANNEL', name: 'channel', description: 'the channel', required: true },
-              { type: 'ROLE', name: 'role', description: 'the role', required: true },
+              { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel', required: true },
+              { type: Discord.ApplicationCommandOptionType.Role, name: 'role', description: 'the role', required: true },
               {
-                type: 'STRING', name: 'value', description: 'enable, disable, or reset permissions', required: true,
+                type: Discord.ApplicationCommandOptionType.String, name: 'value', description: 'enable, disable, or reset permissions', required: true,
                 choices: [ { name: 'enable', value: 'enable'}, { name: 'disable', value: 'disable'}, { name: 'reset', value: 'reset'} ],
               },
-              { type: 'STRING', name: 'permissions', description: 'string of a permission or permissions', required: true },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'permissions', description: 'string of a permission or permissions', required: true },
             ]
           },
         ],
       },
       {
-        type: 'SUB_COMMAND_GROUP', name: 'enabledcmds', description: 'view or set which commands are enabled',
+        type: Discord.ApplicationCommandOptionType.SubcommandGroup, name: 'enabledcmds', description: 'view or set which commands are enabled',
         options: [
           {
-            type: 'SUB_COMMAND', name: 'view', description: 'view whether commands are enabled globally or for a category or command',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'view', description: 'view whether commands are enabled globally or for a category or command',
             options: [
               {
-                type: 'STRING', name: 'scope', description: 'the scope of the view', required: true,
+                type: Discord.ApplicationCommandOptionType.String, name: 'scope', description: 'the scope of the view', required: true,
                 choices: [ { name: 'global', value: 'global' }, { name: 'category', value: 'category' }, { name: 'command', value: 'command' } ],
               },
-              { type: 'STRING', name: 'cat_or_cmd', description: 'the category or command' },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'cat_or_cmd', description: 'the category or command' },
             ]
           },
           {
-            type: 'SUB_COMMAND', name: 'set', description: 'set whether commands are enabled globally or for a category or command',
+            type: Discord.ApplicationCommandOptionType.Subcommand, name: 'set', description: 'set whether commands are enabled globally or for a category or command',
             options: [
               {
-                type: 'STRING', name: 'scope', description: 'the scope of the setting', required: true,
+                type: Discord.ApplicationCommandOptionType.String, name: 'scope', description: 'the scope of the setting', required: true,
                 choices: [ { name: 'global', value: 'global' }, { name: 'category', value: 'category' }, { name: 'command', value: 'command' }, { name: 'all', value: 'all' } ],
               },
               {
-                type: 'STRING', name: 'value', description: 'whether to enable or disable', required: true,
+                type: Discord.ApplicationCommandOptionType.String, name: 'value', description: 'whether to enable or disable', required: true,
                 choices: [ { name: 'enable', value: 'enable' }, { name: 'disable', value: 'disable' } ],
               },
-              { type: 'STRING', name: 'cat_or_cmd', description: 'the category or command' },
+              { type: Discord.ApplicationCommandOptionType.String, name: 'cat_or_cmd', description: 'the category or command' },
             ],
           },
         ],

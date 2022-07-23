@@ -4,8 +4,8 @@ module.exports = [
     description: '`!help` for a list of my commands\n`!help <command>` for help on a specific command',
     description_slash: 'help on commands',
     options: [
-      { type: 'STRING', name: 'command', description: 'the command' },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'command', description: 'the command' },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     flags: 0b111110,
     execute(o, msg, rawArgs) {
@@ -57,7 +57,7 @@ module.exports = [
     description: '`!version` for the version of my code',
     description_slash: 'prints my version',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       return common.regCmdResp(o, `Thebotcat is version ${version}`);
     },
@@ -71,7 +71,7 @@ module.exports = [
     description: '`!uptime` for my uptime',
     description_slash: 'prints my uptime',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       common.regCmdResp(o, common.getBotcatUptimeMessage());
     },
@@ -85,7 +85,7 @@ module.exports = [
     description: '`!status` for my status',
     description_slash: 'prints my status',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       common.regCmdResp(o, common.getBotcatStatusMessage());
     },
@@ -99,7 +99,7 @@ module.exports = [
     description: '`!fullstatus` for my full status',
     description_slash: 'prints my full status',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       common.regCmdResp(o, common.getBotcatFullStatusMessage());
     },
@@ -113,7 +113,7 @@ module.exports = [
     description: '`!ping` checks my ping to the WebSocket gateway, the web, and the Discord API',
     description_slash: 'checks my ping to the WebSocket gateway, the web, and the Discord API',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       return new Promise((resolve, reject) => {
         common.regCmdResp(o, 'Checking Ping').then(m => {
@@ -155,9 +155,9 @@ module.exports = [
     description: '`!discord` for a link to my Discord Support Server',
     description_slash: 'sends a link to my Discord Support Server',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
-      var discord = new Discord.MessageEmbed()
+      var discord = new Discord.EmbedBuilder()
         .setTitle('This is my discord support server if you wanna join click the link! https://discord.gg/NamrBZc')
         .setFooter({ text: 'Server for thebotcat discord bot come along and say hi!' });
       return common.regCmdResp(o, { embeds: [discord] });
@@ -172,9 +172,9 @@ module.exports = [
     description: '`!github` for a link to my GitHub repository',
     description_slash: 'sends a link to my GitHub repository',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
-      var github = new Discord.MessageEmbed()
+      var github = new Discord.EmbedBuilder()
         .setTitle('This is my github repository (I\'m completely open source)!\nhttps://github.com/thebotcat/thebotcat')
         .setFooter({ text: 'Star our GitHub repo! (If you like the code of course)\n\nAnd when they clicked "make public" they felt an evil leave their presence.' });
       return common.regCmdResp(o, { embeds: [github] });
@@ -189,9 +189,9 @@ module.exports = [
     description: '`!invite` for my server invite link',
     description_slash: 'sends my server invite link',
     flags: 0b111110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
-      var invite = new Discord.MessageEmbed()
+      var invite = new Discord.EmbedBuilder()
         .setTitle('My invite link, to add me to any server!\nhttps://discord.com/api/oauth2/authorize?client_id=682719630967439378&permissions=1379265775&scope=bot+applications.commands');
       return common.regCmdResp(o, { embeds: [invite] });
     },
@@ -206,8 +206,8 @@ module.exports = [
     description_slash: 'displays someone\'s avatar or yours if a user isn\'t provided',
     flags: 0b111110,
     options: [
-      { type: 'USER', name: 'user', description: 'a user to display the avatar of' },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'user', description: 'a user to display the avatar of' },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let member;
@@ -234,7 +234,7 @@ module.exports = [
       let animated = member.user.avatar && member.user.avatar.startsWith('a_');
       if (member.user.avatar == null) {
         return common.regCmdResp(o, {
-          embeds: [new Discord.MessageEmbed()
+          embeds: [new Discord.EmbedBuilder()
             .setTitle(`Avatar for ${member.user.tag}`)
             .setDescription(
               `userid: ${member.user.id}\n` +
@@ -247,7 +247,7 @@ module.exports = [
         let baseurl = `https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}`;
         if (animated)
           return common.regCmdResp(o, {
-            embeds: [new Discord.MessageEmbed()
+            embeds: [new Discord.EmbedBuilder()
               .setTitle(`Avatar for ${member.user.tag}`)
               .setDescription(
                 `userid: ${member.user.id}\n` +
@@ -264,7 +264,7 @@ module.exports = [
           });
         else
           return common.regCmdResp(o, {
-            embeds: [new Discord.MessageEmbed()
+            embeds: [new Discord.EmbedBuilder()
               .setTitle(`Avatar for ${member.user.tag}`)
               .setDescription(
                 `userid: ${member.user.id}\n` +
@@ -343,7 +343,7 @@ module.exports = [
     description: '`!icon` displays the server\'s icon',
     description_slash: 'displays the server\'s icon',
     flags: 0b110110,
-    options: [ { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
     execute(o, msg, rawArgs) {
       let guild = msg.guild;
       
@@ -351,7 +351,7 @@ module.exports = [
       let animated = guild.icon && guild.icon.startsWith('a_');
       if (guild.icon == null) {
         return common.regCmdResp(o, {
-          embeds: [new Discord.MessageEmbed()
+          embeds: [new Discord.EmbedBuilder()
             .setTitle(`Icon for ${guild.name}`)
             .setDescription(
               `serverid: ${guild.id}\n` +
@@ -362,7 +362,7 @@ module.exports = [
         let baseurl = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
         if (animated)
           return common.regCmdResp(o, {
-            embeds: [new Discord.MessageEmbed()
+            embeds: [new Discord.EmbedBuilder()
               .setTitle(`Icon for ${guild.name}`)
               .setDescription(
                 `serverid: ${guild.id}\n` +
@@ -378,7 +378,7 @@ module.exports = [
           });
         else
           return common.regCmdResp(o, {
-            embeds: [new Discord.MessageEmbed()
+            embeds: [new Discord.EmbedBuilder()
               .setTitle(`Icon for ${guild.name}`)
               .setDescription(
                 `serverid: ${guild.id}\n` +
@@ -437,8 +437,8 @@ module.exports = [
     description_slash: 'displays information about a user or you if a user isn\'t provided',
     flags: 0b111110,
     options: [
-      { type: 'USER', name: 'user', description: 'a user to display information about' },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'user', description: 'a user to display information about' },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let user;
@@ -560,8 +560,8 @@ module.exports = [
     description_slash: 'displays information about a member or you if a member isn\'t provided',
     flags: 0b110110,
     options: [
-      { type: 'USER', name: 'member', description: 'a member to display information about' },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.User, name: 'member', description: 'a member to display information about' },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let member;
@@ -617,8 +617,8 @@ module.exports = [
     description_slash: 'displays information about this server',
     flags: 0b110110,
     options: [
-      { type: 'BOOLEAN', name: 'all', description: 'show all server info' },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'all', description: 'show all server info' },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       let guild = msg.guild;
@@ -721,8 +721,8 @@ module.exports = [
     description_slash: 'sends a link to the first message in a channel',
     flags: 0b111110,
     options: [
-      { type: 'CHANNEL', name: 'channel', description: 'the channel' },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the channel' },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     async execute(o, msg, rawArgs) {
       let channel;
@@ -760,8 +760,8 @@ module.exports = [
     description_slash: 'prints the UTC date and time of an ID in Discord',
     flags: 0b111110,
     options: [
-      { type: 'STRING', name: 'id', description: 'the id', required: true },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'id', description: 'the id', required: true },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       try {
@@ -787,8 +787,8 @@ module.exports = [
     description_slash: 'prints the fields of an ID in Discord',
     flags: 0b111110,
     options: [
-      { type: 'STRING', name: 'id', description: 'the id', required: true },
-      { type: 'BOOLEAN', name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'id', description: 'the id', required: true },
+      { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' },
     ],
     execute(o, msg, rawArgs) {
       try {

@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "discord.js": "^13.8.1",
+    "discord.js": "^14.0.3",
     "workerpool": "^6.2.1",
     "ytdl-core": "^4.11.0",
     
@@ -8,7 +8,7 @@
     "erlpack": "^0.1.4",
     "utf-8-validate": "^5.0.9",
     "zlib-sync": "^0.1.7",
-    "@discordjs/voice": "^0.10.0",
+    "@discordjs/voice": "^0.11.0",
     
     "sodium": "^3.0.2",
     "@discordjs/opus": "^0.8.0"

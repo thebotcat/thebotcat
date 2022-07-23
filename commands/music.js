@@ -6,8 +6,8 @@ module.exports = [
     aliases: ['p'],
     flags: 0b110110,
     options: [
-      { type: 'STRING', name: 'url', description: 'the URL of the YouTube video to play the audio of', required: true },
-      { type: 'CHANNEL', name: 'channel', description: 'the voice channel' },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'url', description: 'the URL of the YouTube video to play the audio of', required: true },
+      { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the voice channel' },
     ],
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
@@ -182,7 +182,7 @@ module.exports = [
     description: '`!volume <float>` sets my volume in a vc, with 1 being the normal volume',
     description_slash: 'sets my volume in a vc, with 1 being the normal volume',
     flags: 0b110110,
-    options: [ { type: 'STRING', name: 'volume', description: 'the volume' } ],
+    options: [ { type: Discord.ApplicationCommandOptionType.String, name: 'volume', description: 'the volume' } ],
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = common.createAndGetGuilddata(msg.guild.id);

@@ -123,17 +123,17 @@ if (doWorkers) {
 var client = new Discord.Client({
   allowedMentions: { parse: [] },
   intents: [
-    Discord.Intents.FLAGS.GUILDS,
-    Discord.Intents.FLAGS.GUILD_MEMBERS,
-    Discord.Intents.FLAGS.GUILD_VOICE_STATES,
-    Discord.Intents.FLAGS.GUILD_PRESENCES,
-    Discord.Intents.FLAGS.GUILD_MESSAGES,
-    Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-    Discord.Intents.FLAGS.DIRECT_MESSAGES,
-    Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+    Discord.GatewayIntentBits.Guilds,
+    Discord.GatewayIntentBits.GuildMembers,
+    Discord.GatewayIntentBits.GuildVoiceStates,
+    Discord.GatewayIntentBits.GuildPresences,
+    Discord.GatewayIntentBits.GuildMessages,
+    Discord.GatewayIntentBits.GuildMessageReactions,
+    Discord.GatewayIntentBits.DirectMessages,
+    Discord.GatewayIntentBits.DirectMessageReactions,
   ],
   partials: [
-    Discord.Constants.PartialTypes.CHANNEL,
+    Discord.Partials.Channel,
   ],
 });
 global.client = client;

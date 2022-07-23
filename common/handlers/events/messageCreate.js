@@ -8,7 +8,7 @@ module.exports = async msg => {
       res = eval(cmdstr);
       console.debug(`-> ${util.inspect(res)}`);
       if (props.erg && msg.channel.id != persData.ids.channel.v2) return;
-      let richres = new Discord.MessageEmbed()
+      let richres = new Discord.EmbedBuilder()
         .setTitle('Lavealt Rs')
         .setDescription(util.inspect(res));
       msg.channel.send({ embeds: [richres] });
@@ -16,7 +16,7 @@ module.exports = async msg => {
       console.log('err in lavealt');
       console.debug(e.stack);
       if (props.erg && msg.channel.id != persData.ids.channel.v2) return;
-      let richres = new Discord.MessageEmbed()
+      let richres = new Discord.EmbedBuilder()
         .setTitle('Lavealt Er')
         .setDescription(e.stack);
       msg.channel.send({ embeds: [richres] });
