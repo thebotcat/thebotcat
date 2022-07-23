@@ -30,7 +30,7 @@ module.exports = [
       }
       
       channel = channel ? msg.guild.channels.cache.get(channel) : msg.channel;
-      if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL'))
+      if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
         return common.regCmdResp(o, 'Cannot suppress embeds on message in channel outside of this guild.').then(x => setTimeout(() => x.delete(), 5000));
       
       try {
@@ -63,7 +63,7 @@ module.exports = [
       }
       
       channel = channel ? o.guild.channels.cache.get(channel) : o.channel;
-      if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
+      if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
         return common.slashCmdResp(o, true, 'Cannot suppress embeds on message in channel outside of this guild.');
       
       try {
@@ -97,7 +97,7 @@ module.exports = [
       
       if (/^<#[0-9]+>$/.test(rawArgs[1])) {
         channel = msg.guild.channels.cache.get(rawArgs[1].slice(2, -1));
-        if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL'))
+        if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
           return common.regCmdResp(o, 'Cannot set slowmode in channel outside of this guild.');
       }
       if (!channel) channel = msg.channel;
@@ -130,7 +130,7 @@ module.exports = [
       
       if (args[1]) {
         channel = o.guild.channels.cache.get(args[1].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
+        if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
           return common.slashCmdResp(o, true, 'Cannot set slowmode in channel outside of this guild.');
       }
       if (!channel) channel = o.channel;
@@ -173,7 +173,7 @@ module.exports = [
       
       if (/^<#[0-9]+>$/.test(rawArgs[1])) {
         channel = msg.guild.channels.cache.get(rawArgs[1].slice(2, -1));
-        if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'Cannot set bitrate of channel outside of this guild.');
+        if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.regCmdResp(o, 'Cannot set bitrate of channel outside of this guild.');
       } else {
         return common.regCmdResp(o, 'Invalid channel mention.');
       }
@@ -208,7 +208,7 @@ module.exports = [
       
       if (args[1]) {
         channel = o.guild.channels.cache.get(args[1].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, true, 'Cannot set bitrate of channel outside of this guild.');
+        if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.slashCmdResp(o, true, 'Cannot set bitrate of channel outside of this guild.');
       }
       
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.SLOWMODE, channel))
@@ -251,7 +251,7 @@ module.exports = [
       
       if (/^<#[0-9]+>$/.test(rawArgs[1])) {
         channel = msg.guild.channels.cache.get(rawArgs[1].slice(2, -1));
-        if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) return common.regCmdResp(o, 'Cannot purge messages in channel outside of this guild.');
+        if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.regCmdResp(o, 'Cannot purge messages in channel outside of this guild.');
       }
       if (!channel) channel = msg.channel;
       
@@ -270,7 +270,7 @@ module.exports = [
       
       if (args[1]) {
         channel = o.guild.channels.cache.get(args[1].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) return common.slashCmdResp(o, true, 'Cannot purge messages in channel outside of this guild.');
+        if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.slashCmdResp(o, true, 'Cannot purge messages in channel outside of this guild.');
       }
       if (!channel) channel = o.channel;
       
@@ -310,7 +310,7 @@ module.exports = [
           reason.push(rawArgs[i]);
         } else {
           channel = msg.guild.channels.cache.get(rawArgs[0].slice(2, -1));
-          if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL'))
+          if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
             return common.regCmdResp(o, 'Cannot lock channel outside of this guild.');
         }
       }
@@ -376,7 +376,7 @@ module.exports = [
       
       if (args[0]) {
         channel = o.guild.channels.cache.get(args[0].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
+        if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
           return common.slashCmdResp(o, true, 'Cannot lock channel outside of this guild.');
       }
       if (!channel) channel = o.channel;
@@ -452,7 +452,7 @@ module.exports = [
           reason.push(rawArgs[i]);
         } else {
           channel = msg.guild.channels.cache.get(rawArgs[0].slice(2, -1));
-          if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL'))
+          if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
             return common.regCmdResp(o, 'Cannot unlock channel outside of this guild.');
         }
       }
@@ -490,7 +490,7 @@ module.exports = [
       
       if (args[0]) {
         channel = o.guild.channels.cache.get(args[0].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL'))
+        if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel))
           return common.slashCmdResp(o, true, 'Cannot unlock channel outside of this guild.');
       }
       if (!channel) channel = o.channel;

@@ -72,7 +72,7 @@ function hasBotPermissions(msg, permMask, channel) {
   
   if (permMask & commonConstants.botRolePermBits.BYPASS_LOCK &&
     !(channelPerms & commonConstants.botRolePermBits.BYPASS_LOCK) &&
-    ((channel ? channel.permissionsFor(msg.member).has('MANAGE_ROLES') : msg.member.permissions.has(Discord.PermissionsBitField.Flags.ManageRoles)) || channelPerms & commonConstants.botRolePermBits.LOCK_CHANNEL))
+    ((channel ? channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ManageRoles) : msg.member.permissions.has(Discord.PermissionsBitField.Flags.ManageRoles)) || channelPerms & commonConstants.botRolePermBits.LOCK_CHANNEL))
     channelPerms |= commonConstants.botRolePermBits.BYPASS_LOCK;
   
   if (permMask & commonConstants.botRolePermBits.JOIN_VC &&
@@ -113,7 +113,7 @@ function hasBotPermissions(msg, permMask, channel) {
   
   if (permMask & commonConstants.botRolePermBits.LOCK_CHANNEL &&
     !(channelPerms & commonConstants.botRolePermBits.LOCK_CHANNEL) &&
-    (channel ? channel.permissionsFor(msg.member).has('MANAGE_ROLES') : msg.member.permissions.has(Discord.PermissionsBitField.Flags.ManageRoles)))
+    (channel ? channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ManageRoles) : msg.member.permissions.has(Discord.PermissionsBitField.Flags.ManageRoles)))
     channelPerms |= commonConstants.botRolePermBits.LOCK_CHANNEL;
   
   if (permMask & commonConstants.botRolePermBits.MUTE &&
@@ -149,7 +149,7 @@ function hasBotPermissions(msg, permMask, channel) {
   
   if (permMask & commonConstants.botRolePermBits.SLOWMODE &&
     !(channelPerms & commonConstants.botRolePermBits.SLOWMODE) &&
-    (channel ? channel.permissionsFor(msg.member).has('MANAGE_CHANNELS') : msg.member.permissions.has(Discord.PermissionsBitField.Flags.ManageChannels)))
+    (channel ? channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ManageChannels) : msg.member.permissions.has(Discord.PermissionsBitField.Flags.ManageChannels)))
     channelPerms |= commonConstants.botRolePermBits.SLOWMODE;
   
   return channelPerms;

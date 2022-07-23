@@ -730,7 +730,7 @@ module.exports = [
         channel = msg.channel;
       } else if (/^<#[0-9]+>$/.test(rawArgs[0])) {
         channel = msg.guild.channels.cache.get(rawArgs[0].slice(2, -1));
-        if (!channel || !channel.permissionsFor(msg.member).has('VIEW_CHANNEL')) channel = msg.channel;
+        if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) channel = msg.channel;
       }
       let msgs = Array.from((await channel.messages.fetch({ after: 0, limit: 1 })).values());
       if (msgs.length == 1)
@@ -744,7 +744,7 @@ module.exports = [
         channel = o.channel;
       } else {
         channel = o.guild.channels.cache.get(args[0].value);
-        if (!channel || !channel.permissionsFor(o.member).has('VIEW_CHANNEL')) channel = o.channel;
+        if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) channel = o.channel;
       }
       let msgs = Array.from((await channel.messages.fetch({ after: 0, limit: 1 })).values());
       let ephemeral = args[1] ? args[1].value : true;
