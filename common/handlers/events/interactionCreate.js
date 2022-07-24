@@ -1,6 +1,6 @@
 module.exports = async interaction => {
   switch (interaction.type) {
-    case 'APPLICATION_COMMAND': {
+    case Discord.InteractionType.ApplicationCommand: {
       let o = {
         cmdName: interaction.commandName,
         cmd: commandColl.get(interaction.commandName),

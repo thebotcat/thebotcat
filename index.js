@@ -131,6 +131,7 @@ var client = new Discord.Client({
     Discord.GatewayIntentBits.GuildMessageReactions,
     Discord.GatewayIntentBits.DirectMessages,
     Discord.GatewayIntentBits.DirectMessageReactions,
+    Discord.GatewayIntentBits.MessageContent,
   ],
   partials: [
     Discord.Partials.Channel,

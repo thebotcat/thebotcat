@@ -105,7 +105,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.SLOWMODE, channel))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (channel.isText()) {
+      if (channel.type == Discord.ChannelType.GuildText) {
         try {
           await channel.setRateLimitPerUser(seconds);
           return common.regCmdResp(o, `Slowmode in channel <#${channel.id}> set to ${seconds} seconds.`);
@@ -138,7 +138,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.SLOWMODE, channel))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (channel.isText()) {
+      if (channel.type == Discord.ChannelType.GuildText) {
         try {
           await channel.setRateLimitPerUser(seconds);
           return common.slashCmdResp(o, false, `Slowmode in channel <#${channel.id}> set to ${seconds} seconds.`);
@@ -181,7 +181,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.SLOWMODE, channel))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (channel.isVoice()) {
+      if (channel.type == Discord.ChannelType.GuildVoice) {
         try {
           await channel.setBitrate(bitrate);
           return common.regCmdResp(o, `Channel <#${channel.id}> bitrate set to ${bitrate}`);
@@ -214,7 +214,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.SLOWMODE, channel))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (channel.isVoice()) {
+      if (channel.type == Discord.ChannelType.GuildVoice) {
         try {
           await channel.setBitrate(bitrate);
           return common.slashCmdResp(o, false, `Channel <#${channel.id}> bitrate set to ${bitrate}`);
@@ -328,7 +328,7 @@ module.exports = [
           deny: '0',
         });
       }
-      let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
+      let type = channel.type == Discord.ChannelType.GuildCategory ? 3n : channel.type == Discord.ChannelType.GuildText ? 1n : channel.type == Discord.ChannelType.GuildVoice ? 2n : 0n;
       let bits = Discord.PermissionsBitField.Flags.SendMessages * BigInt(type & 1n) | Discord.PermissionsBitField.Flags.Connect * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[msg.guild.id].perms).filter(y => y == x.id && props.saved.guilds[msg.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
@@ -391,7 +391,7 @@ module.exports = [
           deny: 0n,
         });
       }
-      let type = channel.type == 'GUILD_CATEGORY' ? 3n : channel.isText() ? 1n : channel.isVoice() ? 2n : 0n;
+      let type = channel.type == Discord.ChannelType.GuildCategory ? 3n : channel.type == Discord.ChannelType.GuildText ? 1n : channel.type == Discord.ChannelType.GuildVoice ? 2n : 0n;
       let bits = Discord.PermissionsBitField.Flags.SendMessages * BigInt(type & 1n) | Discord.PermissionsBitField.Flags.Connect * BigInt(type & 2n);
       newperms.forEach(x => {
         if (!Object.keys(props.saved.guilds[o.guild.id].perms).filter(y => y == x.id && props.saved.guilds[o.guild.id].perms[y] & (common.constants.botRolePermBits.LOCK_CHANNEL | common.constants.botRolePermBits.BYPASS_LOCK)).length) {
