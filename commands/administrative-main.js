@@ -662,7 +662,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.KICK))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (!msg.guild.me.permissions.has(Discord.PermissionsBitField.Flags.KickMembers))
+      if (!msg.guild.members.me.permissions.has(Discord.PermissionsBitField.Flags.KickMembers))
         return common.regCmdResp(o, 'Error: I do not have permission to kick members.');
       
       let member;
@@ -678,8 +678,8 @@ module.exports = [
         (member.id == msg.guild.ownerId || msg.member.roles.highest.position <= member.roles.highest.position))
         return common.regCmdResp(o, 'You cannot kick someone equal or higher than you in the role hierarchy.');
       
-      if (msg.guild.me.id != msg.guild.ownerId &&
-        (member.id == msg.guild.ownerId || msg.guild.me.roles.highest.position <= member.roles.highest.position))
+      if (msg.guild.members.me.id != msg.guild.ownerId &&
+        (member.id == msg.guild.ownerId || msg.guild.members.me.roles.highest.position <= member.roles.highest.position))
         return common.regCmdResp(o, 'Error: I cannot kick someone equal or higher than me in the role hierarchy.');
       
       let kickreason = rawArgs.slice(1).join(' ');
@@ -713,7 +713,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.KICK))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.permissions.has(Discord.PermissionsBitField.Flags.KickMembers))
+      if (!o.guild.members.me.permissions.has(Discord.PermissionsBitField.Flags.KickMembers))
         return common.slashCmdResp(o, true, 'Error: I do not have permission to kick members.');
       
       let member;
@@ -729,8 +729,8 @@ module.exports = [
         (member.id == o.guild.ownerId || o.member.roles.highest.position <= member.roles.highest.position))
         return common.slashCmdResp(o, true, 'You cannot kick someone equal or higher than you in the role hierarchy.');
       
-      if (o.guild.me.id != o.guild.ownerId &&
-        (member.id == o.guild.ownerId || o.guild.me.roles.highest.position <= member.roles.highest.position))
+      if (o.guild.members.me.id != o.guild.ownerId &&
+        (member.id == o.guild.ownerId || o.guild.members.me.roles.highest.position <= member.roles.highest.position))
         return common.slashCmdResp(o, true, 'Error: I cannot kick someone equal or higher than me in the role hierarchy.');
       
       let kickreason = args[1] && args[1].value;
@@ -757,7 +757,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (!msg.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
+      if (!msg.guild.members.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.regCmdResp(o, 'Error: I do not have permission to ban members.');
       
       let user = await common.searchMember(msg.guild.members, rawArgs[0]);
@@ -773,8 +773,8 @@ module.exports = [
           (user.id == msg.guild.ownerId || msg.member.roles.highest.position <= user.roles.highest.position))
           return common.regCmdResp(o, 'You cannot ban someone equal or higher than you in the role hierarchy.');
         
-        if (msg.guild.me.id != msg.guild.ownerId &&
-          (user.id == msg.guild.ownerId || msg.guild.me.roles.highest.position <= user.roles.highest.position))
+        if (msg.guild.members.me.id != msg.guild.ownerId &&
+          (user.id == msg.guild.ownerId || msg.guild.members.me.roles.highest.position <= user.roles.highest.position))
           return common.regCmdResp(o, 'Error: I cannot ban someone equal or higher than me in the role hierarchy.');
         
         user = user.user;
@@ -809,7 +809,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.BAN))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
+      if (!o.guild.members.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.slashCmdResp(o, true, 'Error: I do not have permission to ban members.');
       
       let user = await o.guild.members.fetch(args[0].value);
@@ -825,8 +825,8 @@ module.exports = [
           (user.id == o.guild.ownerId || o.member.roles.highest.position <= user.roles.highest.position))
           return common.slashCmdResp(o, true, 'You cannot ban someone equal or higher than you in the role hierarchy.');
         
-        if (o.guild.me.id != o.guild.ownerId &&
-          (user.id == o.guild.ownerId || o.guild.me.roles.highest.position <= user.roles.highest.position))
+        if (o.guild.members.me.id != o.guild.ownerId &&
+          (user.id == o.guild.ownerId || o.guild.members.me.roles.highest.position <= user.roles.highest.position))
           return common.slashCmdResp(o, true, 'Error: I cannot ban someone equal or higher than me in the role hierarchy.');
         
         user = user.user;
@@ -854,7 +854,7 @@ module.exports = [
       if (!common.hasBotPermissions(msg, common.constants.botRolePermBits.BAN))
         return common.regCmdResp(o, 'You do not have permission to run this command.');
       
-      if (!msg.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
+      if (!msg.guild.members.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.regCmdResp(o, 'Error: I do not have permission to unban members.');
       
       let userId;
@@ -903,7 +903,7 @@ module.exports = [
       if (!common.hasBotPermissions(o, common.constants.botRolePermBits.BAN))
         return common.slashCmdResp(o, true, 'You do not have permission to run this command.');
       
-      if (!o.guild.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
+      if (!o.guild.members.me.permissions.has(Discord.PermissionsBitField.Flags.BanMembers))
         return common.slashCmdResp(o, true, 'Error: I do not have permission to unban members.');
       
       let userId = args[0] && args[0].value;

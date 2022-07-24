@@ -62,35 +62,35 @@ module.exports = exports = {
   },
   
   getSelfMute: function getSelfMute(voice) {
-    return voice.channel.guild.me.voice.selfMute;
+    return voice.channel.guild.members.me.voice.selfMute;
   },
   
   getSelfDeaf: function getSelfDeaf(voice) {
-    return voice.channel.guild.me.voice.selfDeaf;
+    return voice.channel.guild.members.me.voice.selfDeaf;
   },
   
   toggleSelfMute: function toggleSelfMute(voice) {
-    // there appears to be no way to set this using guild.me.voice or VoiceConnection, so a raw api call has to be used
-    props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
+    // there appears to be no way to set this using guild.members.me.voice or VoiceConnection, so a raw api call has to be used
+    voice.connection.state.adapter.sendPayload({
       op: GatewayOpcodes.VoiceStateUpdate,
       d: {
         guild_id: voice.channel.guildId,
         channel_id: voice.channel.id,
-        self_mute: !voice.channel.guild.me.voice.selfMute,
-        self_deaf: voice.channel.guild.me.voice.selfDeaf,
+        self_mute: !voice.channel.guild.members.me.voice.selfMute,
+        self_deaf: voice.channel.guild.members.me.voice.selfDeaf,
       },
     });
   },
   
   toggleSelfDeaf: function toggleSelfDeaf(voice) {
-    // there appears to be no way to set this using guild.me.voice or VoiceConnection, so a raw api call has to be used
-    props.saved.guilds.ryuhub.voice.connection.state.adapter.sendPayload({
+    // there appears to be no way to set this using guild.members.me.voice or VoiceConnection, so a raw api call has to be used
+    voice.connection.state.adapter.sendPayload({
       op: GatewayOpcodes.VoiceStateUpdate,
       d: {
         guild_id: voice.channel.guildId,
         channel_id: voice.channel.id,
-        self_mute: voice.channel.guild.me.voice.selfMute,
-        self_deaf: !voice.channel.guild.me.voice.selfDeaf,
+        self_mute: voice.channel.guild.members.me.voice.selfMute,
+        self_deaf: !voice.channel.guild.members.me.voice.selfDeaf,
       },
     });
   },

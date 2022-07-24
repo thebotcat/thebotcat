@@ -67,7 +67,7 @@ function hasBotPermissions(msg, permMask, channel) {
   if (permMask & commonConstants.botRolePermBits.NORMAL &&
     !(channelPerms & commonConstants.botRolePermBits.NORMAL) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.NORMAL;
   
   if (permMask & commonConstants.botRolePermBits.BYPASS_LOCK &&
@@ -78,37 +78,37 @@ function hasBotPermissions(msg, permMask, channel) {
   if (permMask & commonConstants.botRolePermBits.JOIN_VC &&
     !(channelPerms & commonConstants.botRolePermBits.JOIN_VC) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.JOIN_VC;
   
   if (permMask & commonConstants.botRolePermBits.LEAVE_VC &&
     !(channelPerms & commonConstants.botRolePermBits.LEAVE_VC) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.LEAVE_VC;
   
   if (permMask & commonConstants.botRolePermBits.PLAY_SONG &&
     !(channelPerms & commonConstants.botRolePermBits.PLAY_SONG) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.PLAY_SONG;
   
   if (permMask & commonConstants.botRolePermBits.PLAY_PLAYLIST &&
     !(channelPerms & commonConstants.botRolePermBits.PLAY_PLAYLIST) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.PLAY_PLAYLIST;
   
   if (permMask & commonConstants.botRolePermBits.REMOTE_CMDS &&
     !(channelPerms & commonConstants.botRolePermBits.REMOTE_CMDS) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.REMOTE_CMDS;
   
   if (permMask & commonConstants.botRolePermBits.DELETE_MESSAGES &&
     !(channelPerms & commonConstants.botRolePermBits.DELETE_MESSAGES) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.DELETE_MESSAGES;
   
   if (permMask & commonConstants.botRolePermBits.LOCK_CHANNEL &&
@@ -136,12 +136,12 @@ function hasBotPermissions(msg, permMask, channel) {
   if (permMask & commonConstants.botRolePermBits.MANAGE_BOT &&
     !(channelPerms & commonConstants.botRolePermBits.MANAGE_BOT) &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg)))
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg)))
     channelPerms |= commonConstants.botRolePermBits.MANAGE_BOT;
   
   if (permMask & commonConstants.botRolePermBits.MANAGE_BOT_FULL &&
     (msg.member.permissions.has(Discord.PermissionsBitField.Flags.Administrator) &&
-      msg.member.roles.highest.position > msg.guild.me.roles.highest.position || isOwner(msg))) {
+      msg.member.roles.highest.position > msg.guild.members.me.roles.highest.position || isOwner(msg))) {
     if (!(channelPerms & commonConstants.botRolePermBits.MANAGE_BOT_FULL))
       channelPerms |= commonConstants.botRolePermBits.MANAGE_BOT_FULL;
   } else if (channelPerms & commonConstants.botRolePermBits.MANAGE_BOT_FULL)
