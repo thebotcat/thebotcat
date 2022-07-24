@@ -110,9 +110,14 @@ module.exports = [
           await channel.setRateLimitPerUser(seconds);
           return common.regCmdResp(o, `Slowmode in channel <#${channel.id}> set to ${seconds} seconds.`);
         } catch (e) {
-          let estring = e.toString();
-          if (estring.startsWith('DiscordAPIError: Invalid Form Body\nrate_limit_per_user: int value should be less than or equal to ')) {
-            return common.regCmdResp(o, `Slowmode must be less than or equal to ${estring.slice(98).replace(/[^0-9]+/g, '')}.`);
+          let eobj = e?.rawError?.errors?.rate_limit_per_user?._errors?.[0];
+          let eobjMax, estring;
+          if (eobj) {
+            eobjMax = eobj.code.endsWith('MAX');
+            estring = eobj?.message;
+          }
+          if (eobjMax) {
+            return common.regCmdResp(o, `Slowmode must be less than or equal to ${estring.replace(/[^0-9]/g, '')}.`);
           } else {
             console.error(e);
             return common.regCmdResp(o, `Error for setting slowmode in channel <#${channel.id}>.`);
@@ -143,9 +148,14 @@ module.exports = [
           await channel.setRateLimitPerUser(seconds);
           return common.slashCmdResp(o, false, `Slowmode in channel <#${channel.id}> set to ${seconds} seconds.`);
         } catch (e) {
-          let estring = e.toString();
-          if (estring.startsWith('DiscordAPIError: Invalid Form Body\nrate_limit_per_user: int value should be less than or equal to ')) {
-            return common.slashCmdResp(o, true, `Slowmode must be less than or equal to ${estring.slice(98).replace(/[^0-9]+/g, '')}.`);
+          let eobj = e?.rawError?.errors?.rate_limit_per_user?._errors?.[0];
+          let eobjMax, estring;
+          if (eobj) {
+            eobjMax = eobj.code.endsWith('MAX');
+            estring = eobj?.message;
+          }
+          if (eobjMax) {
+            return common.slashCmdResp(o, true, `Slowmode must be less than or equal to ${estring.replace(/[^0-9]/g, '')}.`);
           } else {
             console.error(e);
             return common.slashCmdResp(o, true, `Error for setting slowmode in channel <#${channel.id}>.`);
@@ -186,11 +196,17 @@ module.exports = [
           await channel.setBitrate(bitrate);
           return common.regCmdResp(o, `Channel <#${channel.id}> bitrate set to ${bitrate}`);
         } catch (e) {
-          let estring = e.toString();
-          if (estring.startsWith('DiscordAPIError: Invalid Form Body\nbitrate: int value should be greater than or equal to ')) {
-            return common.regCmdResp(o, `Bitrate must be greater than or equal to ${estring.slice(89).replace(/[^0-9]+/g, '')}.`);
-          } else if (estring.startsWith('DiscordAPIError: Invalid Form Body\nbitrate: int value should be less than or equal to ')) {
-            return common.regCmdResp(o, `Bitrate must be less than or equal to ${estring.slice(86).replace(/[^0-9]+/g, '')}.`);
+          let eobj = e?.rawError?.errors?.bitrate?._errors?.[0];
+          let eobjMin, eobjMax, estring;
+          if (eobj) {
+            eobjMin = eobj.code.endsWith('MIN');
+            eobjMax = eobj.code.endsWith('MAX');
+            estring = eobj?.message;
+          }
+          if (eobjMin) {
+            return common.regCmdResp(o, `Bitrate must be greater than or equal to ${estring.replace(/[^0-9]/g, '')}.`);
+          } else if (eobjMax) {
+            return common.regCmdResp(o, `Bitrate must be less than or equal to ${estring.replace(/[^0-9]/g, '')}.`);
           } else {
             console.error(e);
             return common.regCmdResp(o, `Error in setting bitrate of channel <#${channel.id}>.`);
@@ -219,11 +235,17 @@ module.exports = [
           await channel.setBitrate(bitrate);
           return common.slashCmdResp(o, false, `Channel <#${channel.id}> bitrate set to ${bitrate}`);
         } catch (e) {
-          let estring = e.toString();
-          if (estring.startsWith('DiscordAPIError: Invalid Form Body\nbitrate: int value should be greater than or equal to ')) {
-            return common.slashCmdResp(o, true, `Bitrate must be greater than or equal to ${estring.slice(89).replace(/[^0-9]+/g, '')}.`);
-          } else if (estring.startsWith('DiscordAPIError: Invalid Form Body\nbitrate: int value should be less than or equal to ')) {
-            return common.slashCmdResp(o, true, `Bitrate must be less than or equal to ${estring.slice(86).replace(/[^0-9]+/g, '')}.`);
+          let eobj = e?.rawError?.errors?.bitrate?._errors?.[0];
+          let eobjMin, eobjMax, estring;
+          if (eobj) {
+            eobjMin = eobj.code.endsWith('MIN');
+            eobjMax = eobj.code.endsWith('MAX');
+            estring = eobj?.message;
+          }
+          if (eobjMin) {
+            return common.slashCmdResp(o, true, `Bitrate must be greater than or equal to ${estring.replace(/[^0-9]/g, '')}.`);
+          } else if (eobjMax) {
+            return common.slashCmdResp(o, true, `Bitrate must be less than or equal to ${estring.replace(/[^0-9]/g, '')}.`);
           } else {
             console.error(e);
             return common.slashCmdResp(o, true, `Error in setting bitrate of channel <#${channel.id}>.`);

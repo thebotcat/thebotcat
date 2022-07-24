@@ -22,6 +22,10 @@ investigate all automatic saved guilddata creators, only add data to saved guild
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well
 fix cannot set slowmode of voice channel
+create role perm overrides for specific channel in one go instead of creating channel overrides first
+lock command not following role override bypass lock
+settings enabledcmds and other commands that take boolean args should error if arg doesnt exactly match enable/disable, etc.
+make emoterole and other commands error when role isnt specific enough
 
 reorder arguments in settings badwords
 command that sends a message and suppresses embed on it to make "invisible" message

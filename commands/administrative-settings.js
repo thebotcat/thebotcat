@@ -577,7 +577,7 @@ module.exports = [
                     }]
                   });
                 } else if (rawArgs.length == 3) {
-                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])[1]);
+                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])?.[1]);
                   if (!channel) {
                     return common.regCmdResp(o, 'Error: no such channel');
                   }
@@ -596,7 +596,7 @@ module.exports = [
                     }]
                   });
                 } else {
-                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])[1]);
+                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])?.[1]);
                   if (!channel) {
                     return common.regCmdResp(o, 'Error: no such channel');
                   }
@@ -633,7 +633,7 @@ module.exports = [
               
               case 'init':
                 if (rawArgs.length == 3) {
-                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])[1]);
+                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])?.[1]);
                   if (!channel) {
                     return common.regCmdResp(o, 'Error: no such channel');
                   }
@@ -653,7 +653,7 @@ module.exports = [
                     }]
                   });
                 } else {
-                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])[1]);
+                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])?.[1]);
                   if (!channel) {
                     return common.regCmdResp(o, 'Error: no such channel');
                   }
@@ -691,7 +691,7 @@ module.exports = [
               
               case 'clear':
                 if (rawArgs.length == 3) {
-                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])[1]);
+                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])?.[1]);
                   if (!channel) {
                     return common.regCmdResp(o, 'Error: no such channel');
                   }
@@ -711,7 +711,7 @@ module.exports = [
                     }]
                   });
                 } else {
-                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])[1]);
+                  let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])?.[1]);
                   if (!channel) {
                     return common.regCmdResp(o, 'Error: no such channel');
                   }
@@ -751,7 +751,7 @@ module.exports = [
                 if (rawArgs[4] != 'enable' && rawArgs[4] != 'disable' && rawArgs[4] != 'reset')
                   return common.regCmdResp(o, 'Invalid option. Run `settings overrides` to view options.');
                 
-                let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])[1]);
+                let channel = msg.guild.channels.cache.get(/^<#([0-9]+)>$/.exec(rawArgs[2])?.[1]);
                 if (!channel) {
                   return common.regCmdResp(o, 'Error: no such channel');
                 }
