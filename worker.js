@@ -2,7 +2,8 @@ var workerpool = require('workerpool');
 var util = require('util');
 var vm = require('vm');
 var common = require('./common/random');
-var math = require('./math.min.js');
+var mathjs = require('mathjs');
+var math = mathjs.create(mathjs.all);
 
 math.config({ number: 'BigNumber' });
 math.oldimport = math.import.bind(math);

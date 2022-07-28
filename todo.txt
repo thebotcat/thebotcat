@@ -38,7 +38,6 @@ parse_cmd_args "-a" with no argument after should add null to kwargs
 make bitrate command accept channel ids directly pasted in and search by channel name as text
   also join command
 collection searching function for searching for emote for emoterole command
-make math.js an npm package instead of included in source code
 content commands that send an embed with a gif can just send gif
 remindme command (takes a message and a certain time, or can be configured to repeat every certain time)
 command to print the bans and who banned them, using audit log

@@ -11,8 +11,6 @@ RUN touch props.json .env &&\
   mkdir folder &&\
   mkfifo replinp replout dpipe
 
-COPY --chown=thebotcat:thebotcat ./math.min.js math.min.js
-
 # copy package.json in but only the dependencies at first
 COPY --chown=thebotcat:thebotcat ./package-basic.json package.json
 RUN npm install -f
