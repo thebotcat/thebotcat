@@ -18,6 +18,6 @@ module.exports = [
     if (msg.channel.id == persData.ids.channel.v6 && msg.attachments.size) {
       msg.react('👍'); msg.react('🟡'); msg.react('👎');
     }
-    if (msg.channel.id == persData.ids.channel.v7 && msg.content == 'pp') msg.reply('fuck you');
+    if (msg.channel.id == persData.ids.channel.v7 && msg.content.toLowerCase() == 'pp') msg.reply('fuck you');
   },
 ];
