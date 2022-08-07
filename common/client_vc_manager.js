@@ -153,7 +153,7 @@ module.exports = exports = {
         try {
           info = await ytdl.getBasicInfo(url);
         } catch (e) {
-          throw new common.BotError('Invalid URL');
+          throw new common.BotError('Invalid URL (The video may be private or unavailable or there may be a temporary network error.)');
         }
         let songInfo = {
           type: 1,

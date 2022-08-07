@@ -327,8 +327,8 @@ module.exports = [
         return common.regCmdResp(o, 'You lack permission to voteskip.');
       switch (common.clientVCManager.voteSkip(guilddata.voice, msg.author.id)) {
         case 1: return common.regCmdResp(o, 'Skipped');
-        case 2: return common.regCmdResp(o, 'Voted');
-        case 3: return common.regCmdResp(o, 'Unvoted');
+        case 2: return common.regCmdResp(o, 'Voted to skip');
+        case 3: return common.regCmdResp(o, 'Unvoted to skip');
       }
     },
     execute_slash(o, interaction, command, args) {
@@ -347,8 +347,8 @@ module.exports = [
         return common.slashCmdResp(o, false, 'You lack permission to voteskip.');
       switch (common.clientVCManager.voteSkip(guilddata.voice, o.author.id)) {
         case 1: return common.slashCmdResp(o, false, 'Skipped');
-        case 2: return common.slashCmdResp(o, false, 'Voted');
-        case 3: return common.slashCmdResp(o, false, 'Unvoted');
+        case 2: return common.slashCmdResp(o, false, 'Voted to skip');
+        case 3: return common.slashCmdResp(o, false, 'Unvoted to skip');
       }
     },
   },
