@@ -197,7 +197,8 @@ module.exports = exports = {
   _mainLoopAwaitPromise: function _mainLoopAwaitPromise(voice) {
     return new Promise(r => {
       let alreadySettled = false;
-      let settleFunc = () => {
+      let settleFunc = err => {
+        if (err) console.error(err);
         if (alreadySettled) return;
         alreadySettled = true;
         try {
