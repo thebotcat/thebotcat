@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "discord.js": "^14.1.2",
+    "discord.js": "^14.2.0",
     "mathjs": "^11.0.1",
     "workerpool": "^6.2.1",
     "ytdl-core": "^4.11.0",

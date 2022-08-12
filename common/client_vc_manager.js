@@ -249,19 +249,13 @@ module.exports = exports = {
         
         let loopWait, forceLoop = false;
         if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < songInfo.expectedLength - 1700) {
-          if (voice.resource.playbackDuration + 100 > songInfo.expectedLength && voice._repeatedFails) {
+          if (voice.resource.playbackDuration + 100 > songInfo.expectedLength && voice._repeatedFails)
             voice._repeatedFails = 0;
-          }
           voice._repeatedFails++;
-          if (voice._repeatedFails < 12) {
-            loopWait = 100 * 2 ** (voice._repeatedFails - 2);
-          } else {
-            loopWait = 60000;
-          }
+          loopWait = 1000 * 2 ** (voice._repeatedFails - 1);
           msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
-          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2) {
+          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2 && voice._repeatedFails < 5)
             forceLoop = true;
-          }
         } else if (voice._repeatedFails) {
           voice._repeatedFails = 0;
         }
