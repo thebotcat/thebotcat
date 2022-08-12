@@ -120,14 +120,14 @@ module.exports = exports = {
     voice.player.unpause();
   },
   
-  addSong: async function addSong(voice, url, userId) {
+  addSong: async function addSong(voice, url, userId, guildId) {
     let type = null;
     
     if (/^https?:\/\/(?:(?:www.)?youtube.com\/watch\?v=|youtu.be\/)[A-Za-z0-9?&=\-_%.]+$/.test(url))
       type = 1;
-    if (type == null && userId && !common.isDeveloper(userId))
-      throw new common.BotError('Not a YouTube URL');
     if (type == null) {
+      if (userId && (!common.isDeveloper(userId) || !guildId || !persData.special_guilds_set.has(guildId)))
+        throw new common.BotError('Not a YouTube URL');
       if (fs.existsSync(url))
         type = 0;
       if (type == null)
@@ -256,6 +256,8 @@ module.exports = exports = {
           msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
           if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2 && voice._repeatedFails < 5)
             forceLoop = true;
+          if (voice._repeatedFails >= 5)
+            voice._repeatedFails = 0;
         } else if (voice._repeatedFails) {
           voice._repeatedFails = 0;
         }

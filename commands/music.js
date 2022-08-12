@@ -48,7 +48,7 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
         return common.regCmdResp(o, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
-      let songInfo = await common.clientVCManager.addSong(guilddata.voice, rawArgs[0], msg.author.id);
+      let songInfo = await common.clientVCManager.addSong(guilddata.voice, rawArgs[0], msg.author.id, msg.guild?.id);
       let text = `${common.clientVCManager.getCurrentSong(songInfo)} added to queue`;
       await common.regCmdResp(o, text);
       return common.clientVCManager.startMainLoop(guilddata.voice, msg.channel);
@@ -95,7 +95,7 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
         return common.slashCmdResp(o, false, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
-      let songInfo = await common.clientVCManager.addSong(guilddata.voice, args[0].value, o.author.id);
+      let songInfo = await common.clientVCManager.addSong(guilddata.voice, args[0].value, o.author.id, o.guild?.id);
       let text = `${common.clientVCManager.getCurrentSong(songInfo)} added to queue`;
       common.slashCmdResp(o, false, text);
       return common.clientVCManager.startMainLoop(guilddata.voice, o.channel);
