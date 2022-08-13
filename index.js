@@ -175,7 +175,7 @@ Object.assign(global, { commands, commandColl, commandCollWAliases, commandCateg
 // bot config variables
 var props = {
   feat: {
-    version: 'canary', // either 'normal' or 'canary'
+    version: process.env.VERSION ?? 'canary', // either 'normal' or 'canary'
     repl: true,
     savedms: true,
     loaddms: false,
