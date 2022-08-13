@@ -1,2 +1,5 @@
 #!/bin/bash
-sudo docker build -t thebotcat/thebotcat "$(dirname "${BASH_SOURCE[0]}")/.."
+
+cd "${0%/*}/.."
+
+sudo docker build -t thebotcat/thebotcat .

@@ -27,6 +27,7 @@ create role perm overrides for specific channel in one go instead of creating ch
 lock command not following role override bypass lock
 settings enabledcmds and other commands that take boolean args should error if arg doesnt exactly match enable/disable, etc.
 make emoterole and other commands error when role isnt specific enough
+make regular thebotcat into env var passed to docker container on start instead of requiring uncomment
 
 reorder arguments in settings badwords
 command that sends a message and suppresses embed on it to make "invisible" message
