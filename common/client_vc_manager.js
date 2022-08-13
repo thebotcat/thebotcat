@@ -198,7 +198,10 @@ module.exports = exports = {
     return new Promise(r => {
       let alreadySettled = false;
       let settleFunc = err => {
-        if (err) console.error(err);
+        if (err instanceof Error) {
+          console.error('ERROR in music playback:');
+          console.error(err);
+        }
         if (alreadySettled) return;
         alreadySettled = true;
         try {

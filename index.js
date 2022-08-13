@@ -677,7 +677,7 @@ var tickTimTemp = setTimeout(() => tickFunc(), 5000);
 
 // uncaught unhandled handlers
 process.on('uncaughtException', function (err) {
-  console.error('ERROR uncaught exception. Bot state could be corrupted, contact coolguy284 or another developer.');
+  console.error('ERROR uncaught exception. Bot state could be corrupted, contact coolguy284 or another developer. Details:');
   console.error(err);
   try {
     if (logErrors && errorCounter < 1) {
