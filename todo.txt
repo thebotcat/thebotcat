@@ -28,6 +28,7 @@ lock command not following role override bypass lock
 settings enabledcmds and other commands that take boolean args should error if arg doesnt exactly match enable/disable, etc.
 make emoterole and other commands error when role isnt specific enough
 make regular thebotcat into env var passed to docker container on start instead of requiring uncomment
+add ephemeral argument to some music commands like nowplaying
 
 reorder arguments in settings badwords
 command that sends a message and suppresses embed on it to make "invisible" message
