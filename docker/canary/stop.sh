@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo docker stop -t 60 thebotcat-canary
+sudo docker stop -t 60 thebotcat/thebotcat-canary
