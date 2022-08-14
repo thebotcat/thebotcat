@@ -1,5 +1,7 @@
 .vs
 node_modules
 .env
+.env-canary
 package-lock.json
 props.json
+props-canary.json
