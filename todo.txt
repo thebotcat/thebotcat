@@ -59,6 +59,7 @@ command descriptions should use prefix
 use guildmembermanager.search
 use deferred ack more
 add uwu mode where all text strings are replaced with something more uwu-ey
+capture edits command to capture all edits of a message for a configurable amount of time and then send a downloadable json file of the infos
 
 emphemeral message chat feature
 make pseudo tagscript implementation in common and use it
