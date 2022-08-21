@@ -60,6 +60,8 @@ use guildmembermanager.search
 use deferred ack more
 add uwu mode where all text strings are replaced with something more uwu-ey
 capture edits command to capture all edits of a message for a configurable amount of time and then send a downloadable json file of the infos
+single gif commands should show an error for input of number more than 1 like the multi gifs tho
+unite most of the single gifs into one big command that shows a gif at random from all of them but can be optionally from one category
 
 emphemeral message chat feature
 make pseudo tagscript implementation in common and use it
