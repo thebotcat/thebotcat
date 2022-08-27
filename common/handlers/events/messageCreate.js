@@ -47,7 +47,9 @@ module.exports = async msg => {
     }
   }
   
-  if (msg.channel.permissionsFor && !msg.channel.permissionsFor(client.user.id).has(Discord.PermissionsBitField.Flags.SendMessages)) return;
+  if (!msg.channel.permissionsFor) return;
+  let permissionsForMember = msg.channel.permissionsFor(client.user.id);
+  if (permissionsForMember == null || !permissionsForMember.has(Discord.PermissionsBitField.Flags.SendMessages)) return;
   
   // argstring = the part after the workingprefix, command and args in one big string
   // cmdName = the actual command
