@@ -5,6 +5,7 @@ seek command, using begin param on ytdl maybe
 use ytdl.validateURL
 play command other music providers
 get ytdl stream of next song ready when current song is 5s away from finishing
+add serverspecific argument to avatar and memberinfo command to show avatar from server instead
 
 make clientvcmanager into class (also make variables camelCase)
 make variables camelCase all throughout code
