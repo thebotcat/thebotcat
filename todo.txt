@@ -81,6 +81,7 @@ make all the commands also use intelligent arguments, kwargs so the order of arg
   make purge command have --before and --after params and --beforeeq and --aftereq params (taking message ids)
   purge --remove-duplicates-only
   purge by users and/or roles
+  purge filter messages by regex
 purge command support for over 100 messages, done in parts and with a confirm before doing so
 add to guild settings
   auto disconnect from vc timeout
