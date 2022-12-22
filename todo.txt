@@ -20,6 +20,7 @@ make global enabledcmds true or false, category is true false or null (meaning i
 botcat confirmkb doesnt work on slash commands
 review toisostring calls
 coll search functions' convert mentions to the inside use match variable instead of running regex twice, do same for any similar situation in code
+  coll search prioritize results where first characters are the characters matched
 investigate all automatic saved guilddata creators, only add data to saved guilddata if it differs from the default
 when collection searching functions are given a string that is too specific they return all items in the collection instead of null
 settings overrides view non slash command cannot handle role only, fix other commands with invalid order as well
