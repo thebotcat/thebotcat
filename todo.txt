@@ -1,3 +1,4 @@
+fix client_vc_manager line 249 causes eventemitter event listener leak; probably because error handler needed
 play command should scrape any possible yt urls from url params like on a google search, etc.
 play with no args should toggle pause/resume
 play command handle youtu.be and playlists and maybe auto searching with a list of results and a prompt for confirm which can be bypassed and the first choice autopicked by passing an argument to the play command
