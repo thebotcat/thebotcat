@@ -1,5 +1,6 @@
 add option to show server specific avatar to thebotcat
   add server and user banner command or make it a flag on avatar and serverinfo commands
+write daily server count to file with timestamp
 add yt-dlp fallback if ytdl isn't working
 fix client_vc_manager line 249 causes eventemitter event listener leak; probably because error handler needed
 play command should scrape any possible yt urls from url params like on a google search, etc.
