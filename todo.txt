@@ -1,3 +1,6 @@
+add option to show server specific avatar to thebotcat
+  add server and user banner command or make it a flag on avatar and serverinfo commands
+add yt-dlp fallback if ytdl isn't working
 fix client_vc_manager line 249 causes eventemitter event listener leak; probably because error handler needed
 play command should scrape any possible yt urls from url params like on a google search, etc.
 play with no args should toggle pause/resume
@@ -65,6 +68,7 @@ add uwu mode where all text strings are replaced with something more uwu-ey
 capture edits command to capture all edits of a message for a configurable amount of time and then send a downloadable json file of the infos
 single gif commands should show an error for input of number more than 1 like the multi gifs tho
 unite most of the single gifs into one big command that shows a gif at random from all of them but can be optionally from one category
+add functionality to join special voice channel to create voice chat and remove on leave to thebotcat, can be set to remove when creator leaves or only when everyone in it leaves
 
 emphemeral message chat feature
 make pseudo tagscript implementation in common and use it
