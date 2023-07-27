@@ -639,7 +639,7 @@ client.on('disconnect', () => {
 });
 
 // tick function called every 60 seconds
-var ticks = 0, tickStatUpdInt = 30, tickStatUpdNextPossible = false;
+var ticks = 0, tickStatUpdInt = 24 * 60, tickStatUpdNextPossible = false;
 var tickFuncs = [];
 function tickFunc() {
   if (ready3time) updateStatus();
