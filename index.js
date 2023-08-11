@@ -713,15 +713,17 @@ function exitHandler() {
         console.log('Are you sure you want to shut down thebotcat? Press Ctrl+C if yes.');
         setTimeout(() => { exitHandled = 0; startRepl(); }, 5000);
         break;
+      case 2:
+        shutdownBotImmediately();
+        break;
       default:
-        console.log('Shutting down');
-        shutdownBot();
+        if (shutdownBot()) { exitHandled = 2; startRepl(); }
     }
   } else {
+    if (exitHandled == 2) shutdownBotImmediately();
     if (exitHandled) return;
     exitHandled++;
-    console.log('Shutting down');
-    shutdownBot();
+    if (shutdownBot()) { exitHandled = 2; startRepl(); }
   }
 }
 
@@ -732,12 +734,13 @@ function shutdownBotImmediately() {
   process.exit();
 }
 
-function shutdownBot() {
+function shutdownBot(dontRunShutdown) {
   let text;
   
   if (Object.keys(props.saved.guilds).some(x=>props.saved.guilds[x].voice.mainloop)) {
     text = 'Someone\'s using me, no can do (currently playing music in a voice channel / voice channels).';
-    return text;
+    console.log(text);
+    return dontRunShutdown ? [text, false] : 1;
   }
   
   if (Object.keys(props.saved.guilds).some(x=>props.saved.guilds[x].voice.channel)) {
@@ -747,9 +750,9 @@ function shutdownBot() {
   
   if (text) console.log(text);
   
-  setTimeout(shutdownBotImmediately, 1000);
+  if (!dontRunShutdown) shutdownBotImmediately();
   
-  return text;
+  return dontRunShutdown ? [text, true] : 0;
 }
 
 process.on('exit', exitHandler);

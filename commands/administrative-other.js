@@ -313,28 +313,39 @@ module.exports = [
   {
     name: 'shutdown',
     flags: 0b011100,
-    execute(o, msg, rawArgs) {
+    async execute(o, msg, rawArgs) {
       if (!common.isDeveloper(msg)) return;
-      let result = shutdownBot();
-      if (result) common.regCmdResp(o, result);
-      else common.regCmdResp(o, 'Shutting down');
+      nonlogmsg(`shutdown from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}`);
+      let result = shutdownBot(true);
+      if (result[0]) {
+        if (result[0].length > 2000) {
+          await common.regCmdResp(o, 'This message incomplete, check console for full message:\n' + result[0].slice(0, 1940) + '...');
+        } else {
+          await common.regCmdResp(o, result[0]);
+        }
+        if (result[1]) shutdownBotImmediately();
+      } else {
+        await common.regCmdResp(o, 'Shutting down');
+        shutdownBotImmediately();
+      }
     },
   },
   {
     name: 'forceshutdown',
     flags: 0b011100,
-    execute(o, msg, rawArgs) {
+    async execute(o, msg, rawArgs) {
       if (!common.isDeveloper(msg)) return;
-      common.regCmdResp(o, 'Shutting down');
+      nonlogmsg(`force shutdown from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}`);
+      await common.regCmdResp(o, 'Shutting down');
       setTimeout(shutdownBotImmediately, 1000);
     },
   },
   {
     name: 'crash',
     flags: 0b011100,
-    execute(o, msg, rawArgs) {
+    async execute(o, msg, rawArgs) {
       if (!common.isDeveloper(msg)) return;
-      common.regCmdResp(o, 'Crashing myself RIP');
+      await common.regCmdResp(o, 'Crashing myself RIP');
       throw new Error('ERORRORORORO');
     },
   },
