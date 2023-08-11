@@ -1,4 +1,4 @@
-FROM node:20.5.0
+FROM node:20.5.1
 
 RUN apt update && apt -y upgrade
 RUN apt -y install ffmpeg

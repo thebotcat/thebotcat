@@ -713,25 +713,43 @@ function exitHandler() {
         console.log('Are you sure you want to shut down thebotcat? Press Ctrl+C if yes.');
         setTimeout(() => { exitHandled = 0; startRepl(); }, 5000);
         break;
-      case 1:
+      default:
         console.log('Shutting down');
-        propsSave();
-        process.exit();
+        shutdownBot();
     }
   } else {
     if (exitHandled) return;
     exitHandled++;
     console.log('Shutting down');
-    propsSave();
-    process.exit();
+    shutdownBot();
   }
 }
 
-function shutdownBot() {
+function shutdownBotImmediately() {
   console.log('Shutting down');
   propsSave();
   process.removeAllListeners('exit');
   process.exit();
+}
+
+function shutdownBot() {
+  let text;
+  
+  if (Object.keys(props.saved.guilds).some(x=>props.saved.guilds[x].voice.mainloop)) {
+    text = 'Someone\'s using me, no can do (currently playing music in a voice channel / voice channels).';
+    return text;
+  }
+  
+  if (Object.keys(props.saved.guilds).some(x=>props.saved.guilds[x].voice.channel)) {
+    text = 'Run this command within 1 minute (currently in a voice channel / voice channels):\n' +
+      `${defaultprefix}eval ` + Object.keys(props.saved.guilds).map(x=>props.saved.guilds[x].voice.channel?`common.clientVCManager.join(props.saved.guilds["${x}"].voice,client.channels.cache.get("${props.saved.guilds[x].voice.channel.id}"))`:null).filter(x=>x).join(';') + ';';
+  }
+  
+  if (text) console.log(text);
+  
+  setTimeout(shutdownBotImmediately, 1000);
+  
+  return text;
 }
 
 process.on('exit', exitHandler);
@@ -753,6 +771,7 @@ Object.defineProperties(global, {
   messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => { handlers.extra.message = val; } },
   voiceStateUpdateHandler: { configurable: true, enumerable: true, get: () => voiceStateUpdateHandler, set: val => { voiceStateUpdateHandler = val; } },
   exitHandler: { configurable: true, enumerable: true, get: () => exitHandler, set: val => { exitHandler = val; } },
+  shutdownBotImmediately: { configurable: true, enumerable: true, get: () => shutdownBotImmediately, set: val => { shutdownBotImmediately = val; } },
   shutdownBot: { configurable: true, enumerable: true, get: () => shutdownBot, set: val => { shutdownBot = val; } },
   ticks: { configurable: true, enumerable: true, get: () => ticks, set: val => { ticks = val; } },
   tickStatUpdInt: { configurable: true, enumerable: true, get: () => tickStatUpdInt, set: val => { tickStatUpdInt = val; } },

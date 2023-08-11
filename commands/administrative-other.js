@@ -315,8 +315,18 @@ module.exports = [
     flags: 0b011100,
     execute(o, msg, rawArgs) {
       if (!common.isDeveloper(msg)) return;
+      let result = shutdownBot();
+      if (result) common.regCmdResp(o, result);
+      else common.regCmdResp(o, 'Shutting down');
+    },
+  },
+  {
+    name: 'forceshutdown',
+    flags: 0b011100,
+    execute(o, msg, rawArgs) {
+      if (!common.isDeveloper(msg)) return;
       common.regCmdResp(o, 'Shutting down');
-      setTimeout(shutdownBot, 1000);
+      setTimeout(shutdownBotImmediately, 1000);
     },
   },
   {
