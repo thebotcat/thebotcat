@@ -1,3 +1,5 @@
+defer responses on calculation heavy commands like calc and play
+
 add current channels object to props saved, also add time bot stopped to props saved; so on bot start, autojoin the channel; in future also save and resume song and seek to correct time, also save any vc state vars like channel to send text messages in
 add option on by default to pause song on server mute
 add option to show server specific avatar to thebotcat
