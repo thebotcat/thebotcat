@@ -1,27 +1,41 @@
 module.exports = [
   {
     name: 'play',
-    description: '`!play <url> [#channel]` plays the audio of a YouTube URL, like every other music bot in existence; channel is channel to join',
+    description: '`!play <url> [#channel]` plays the audio of a YouTube URL, like every other music bot in existence; channel is channel to join; can play many urls seperated by space',
     description_slash: 'plays the audio of a YouTube URL, like every other music bot in existence',
     aliases: ['p'],
     flags: 0b110110,
     options: [
-      { type: Discord.ApplicationCommandOptionType.String, name: 'url', description: 'the URL of the YouTube video to play the audio of', required: true },
+      { type: Discord.ApplicationCommandOptionType.String, name: 'url', description: 'YT video URL or many seperated by space', required: true },
       { type: Discord.ApplicationCommandOptionType.Channel, name: 'channel', description: 'the voice channel' },
     ],
     async execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = common.createAndGetGuilddata(msg.guild.id);
       
+      let songsToAdd = [];
+      let channelString = null;
+      
+      if (o.args.length == 0) {
+        // just join vc
+      } else {
+        if (/^<#[0-9]+>$/.test(o.args[o.args.length - 1])) {
+          songsToAdd = o.args.slice(0, -1);
+          channel = o.args[o.args.length - 1];
+        } else {
+          songsToAdd = o.args;
+        }
+      }
+      
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) {
         if (!(props.saved.feat.audio & 1)) return common.regCmdResp(o, 'Voice Channel features are disabled.');
         let channel;
-        if (rawArgs[1] == null) {
+        if (channelString == null) {
           if (!msg.member.voice.channelId) return common.regCmdResp(o, 'You are not in a voice channel.');
           channel = msg.guild.channels.cache.get(msg.member.voice.channelId);
         } else {
-          if (!/^<#[0-9]+>$/.test(rawArgs[1])) return common.regCmdResp(o, 'Invalid channel mention.');
-          channel = msg.guild.channels.cache.find(x => x.id == rawArgs[1].slice(2, -1));
+          if (!/^<#[0-9]+>$/.test(channelString)) return common.regCmdResp(o, 'Invalid channel mention.');
+          channel = msg.guild.channels.cache.find(x => x.id == channelString.slice(2, -1));
           if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.regCmdResp(o, 'Cannot join channel outside of this guild.');
         }
         let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.JOIN_VC | common.constants.botRolePermBits.LEAVE_VC | common.constants.botRolePermBits.REMOTE_CMDS);
@@ -48,9 +62,11 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
         return common.regCmdResp(o, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
-      let songInfo = await common.clientVCManager.addSong(guilddata.voice, rawArgs[0], msg.author.id, msg.guild?.id);
-      let text = `${common.clientVCManager.getCurrentSong(songInfo)} added to queue`;
-      await common.regCmdResp(o, text);
+      for (let song of songsToAdd) {
+        let songInfo = await common.clientVCManager.addSong(guilddata.voice, song, msg.author.id, msg.guild?.id);
+        let text = `${common.clientVCManager.getCurrentSong(songInfo)} added to queue`;
+        await common.regCmdResp(o, text);
+      }
       return common.clientVCManager.startMainLoop(guilddata.voice, msg.channel);
     },
     async execute_slash(o, interaction, command, args) {
@@ -95,9 +111,11 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
         return common.slashCmdResp(o, false, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
-      let songInfo = await common.clientVCManager.addSong(guilddata.voice, args[0].value, o.author.id, o.guild?.id);
-      let text = `${common.clientVCManager.getCurrentSong(songInfo)} added to queue`;
-      common.slashCmdResp(o, false, text);
+      for (let song of args[0].value.split(/ +/g).map(x => x.trim())) {
+        let songInfo = await common.clientVCManager.addSong(guilddata.voice, song, o.author.id, o.guild?.id);
+        let text = `${common.clientVCManager.getCurrentSong(songInfo)} added to queue`;
+        common.slashCmdResp(o, false, text);
+      }
       return common.clientVCManager.startMainLoop(guilddata.voice, o.channel);
     },
   },
@@ -354,10 +372,14 @@ module.exports = [
   },
   {
     name: 'forceskip',
-    description: '`!forceskip` skips the currently playing song',
+    description: '`!forceskip` skips the currently playing song\n`!forceskip <index>` to skip an index in queue\n`!forceskip <startIndex> <stopIndex>` to skip from startIndex to stopIndex in queue',
     description_slash: 'skips the currently playing song',
     aliases: ['fs'],
     flags: 0b110110,
+    options: [
+      { type: Discord.ApplicationCommandOptionType.Integer, name: 'start_index', description: 'the index to start skipping from' },
+      { type: Discord.ApplicationCommandOptionType.Integer, name: 'stop_index', description: 'the index to stop skipping from' },
+    ],
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = common.createAndGetGuilddata(msg.guild.id);
@@ -368,7 +390,27 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
         return common.regCmdResp(o, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
-      common.clientVCManager.forceSkip(guilddata.voice);
+      if (o.args.length == 0) {
+        common.clientVCManager.forceSkip(guilddata.voice);
+      } else if (o.args.length == 1) {
+        let queueSize = common.clientVCManager.getQueueSize(guilddata.voice);
+        let index = Number(o.args[0]);
+        if (!Number.isSafeInteger(index) || index < 0 || index > queueSize - 1) {
+          return common.regCmdResp(o, `Skip index must be a number from 0 to ${queueSize - 1}.`);
+        }
+        common.clientVCManager.forceSkip(guilddata.voice, index);
+      } else {
+        let queueSize = common.clientVCManager.getQueueSize(guilddata.voice);
+        let startIndex = Number(o.args[0]);
+        if (!Number.isSafeInteger(startIndex) || startIndex < 0 || startIndex > queueSize - 1) {
+          return common.regCmdResp(o, `Skip start index must be a number from 0 to ${queueSize - 1}.`);
+        }
+        let stopIndex = Number(o.args[1]);
+        if (!Number.isSafeInteger(stopIndex) || stopIndex < 0 || stopIndex > queueSize - 1) {
+          return common.regCmdResp(o, `Skip stop index must be a number from 0 to ${queueSize - 1}.`);
+        }
+        common.clientVCManager.forceSkip(guilddata.voice, startIndex, stopIndex);
+      }
       return common.regCmdResp(o, 'Skipped');
     },
     execute_slash(o, interaction, command, args) {
@@ -385,7 +427,16 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
         return common.slashCmdResp(o, false, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
-      common.clientVCManager.forceSkip(guilddata.voice);
+      let startIndex = !args[0] ? 0 : args[0].value;
+      let stopIndex = !args[1] ? startIndex : args[1].value;
+      let queueSize = common.clientVCManager.getQueueSize(guilddata.voice);
+      if (startIndex < 0 || startIndex > queueSize - 1) {
+        return common.slashCmdResp(o, false, `Skip index must be a number from 1 to ${queueSize - 1}.`);
+      }
+      if (stopIndex < 0 || stopIndex > queueSize - 1) {
+        return common.slashCmdResp(o, false, `Skip stop index must be a number from 1 to ${queueSize - 1}.`);
+      }
+      common.clientVCManager.forceSkip(guilddata.voice, startIndex, stopIndex);
       return common.slashCmdResp(o, false, 'Skipped');
     },
   },

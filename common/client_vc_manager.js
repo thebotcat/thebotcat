@@ -120,6 +120,19 @@ module.exports = exports = {
     voice.player.unpause();
   },
   
+  isValidUrl: function isValidUrl(url) {
+    if (/^https?:\/\/(?:(?:www.)?youtube.com\/watch\?v=|youtu.be\/)[A-Za-z0-9?&=\-_%.]+$/.test(url))
+      return true;
+    if (type == null) {
+      if (userId && (!common.isDeveloper(userId) || !guildId || !persData.special_guilds_set.has(guildId)))
+        return false;
+      if (fs.existsSync(url))
+        return true;
+      if (type == null)
+        return false;
+    }
+  },
+  
   addSong: async function addSong(voice, url, userId, guildId) {
     let type = null;
     
@@ -190,8 +203,25 @@ module.exports = exports = {
     } else return voiceIndex > -1 ? 3 : 2;
   },
   
-  forceSkip: function (voice) {
-    if (voice.mainloop) exports.setMainLoop(voice, 2);
+  forceSkip: function (voice, startIndex, stopIndex) {
+    if (startIndex == null) startIndex = 0;
+    if (stopIndex == null) stopIndex = startIndex;
+    
+    if (stopIndex < startIndex) {
+      [ startIndex, stopIndex ] = [stopIndex, startIndex];
+    }
+    
+    if (startIndex == 0) {
+      if (voice.mainloop) exports.setMainLoop(voice, 2);
+      
+      startIndex++;
+    }
+    
+    if (startIndex > stopIndex) {
+      return;
+    }
+    
+    voice.songslist.splice(startIndex, stopIndex - startIndex + 1);
   },
   
   _mainLoopAwaitPromise: function _mainLoopAwaitPromise(voice) {
@@ -388,5 +418,9 @@ module.exports = exports = {
     } else {
       return ' empty';
     }
+  },
+  
+  getQueueSize: function getQueueSize(voice) {
+    return voice.songslist.length;
   },
 };
