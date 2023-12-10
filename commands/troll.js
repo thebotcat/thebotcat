@@ -56,4 +56,73 @@ module.exports = [
       return msg.channel.send({ content: `Random ping: <@!${random_member.user.id}>`, allowedMentions: { parse: ['users'] } });
     },
   },
+  {
+    name: 'ghostdot',
+    description: '`!ghostdot #channel1 [#channel2 ...]` to send a message and delete it in a certain channel or channels\n`!ghostdot all` to send a message then immediately delete it in every channel in a guild',
+    flags: 0b010100,
+    async execute(o, msg, rawArgs) {
+      if (!persData.special_guilds_set.has(msg.guild.id)) return;
+      if (!(common.isDeveloper(msg) || common.isOwner(msg) || common.isAdmin(msg)))
+        return;
+      if (rawArgs.length == 0) {
+        return msg.channel.send(o.cmd.description);
+      } else if (rawArgs.length == 1 && rawArgs[0] == 'all') {
+        if (persData.special_guilds_set.has(msg.guild.id)) nonlogmsg(`ghostdot from ${msg.author.tag} in ${msg.guild ? msg.guild.name + ':' + msg.channel.name : 'dms'}: all`);
+        let channels = Array.from(msg.guild.channels.cache.values()), message;
+        for (let i = 0; i < channels.length; i++) {
+          if (channels[i] && (channels[i].type == Discord.ChannelType.GuildText || channels[i].type == Discord.ChannelType.GuildAnnouncement)) {
+            message = await channels[i].send('ghostdot');
+            try { await message.delete(); } catch (e) { }
+            await new Promise(r => setTimeout(r), 400);
+          }
+        }
+      } else {
+        if (persData.special_guilds_set.has(msg.guild.id)) nonlogmsg(`ghostdot from ${msg.author.tag} in ${msg.guild ? msg.guild.name + ':' + msg.channel.name : 'dms'}: ${rawArgs.join(' ')}`);
+        for (let i = 0; i < rawArgs.length; i++) {
+          if (/<#[0-9]+>/g.test(rawArgs[i])) {
+            channel = msg.guild.channels.cache.get(rawArgs[i].slice(2, rawArgs[0].length - 1));
+            if (channel && (channel.type == Discord.ChannelType.GuildText || channel.type == Discord.ChannelType.GuildAnnouncement)) {
+              message = await channel.send('ghostdot');
+              try { await message.delete(); } catch (e) { }
+              await new Promise(r => setTimeout(r), 400);
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    name: 'ghostdot_delmsg',
+    description: '`!ghostdot_delmsg` to send a message then delete it in this channel\n`!ghostdot_delmsg #channel1 [#channel2 ...]` to send a message and delete it in a certain channel or channels\n`!ghostdot_delmsg all` to send a message then immediately delete it in every channel in a guild',
+    flags: 0b010100,
+    async execute(o, msg, rawArgs) {
+      if (!persData.special_guilds_set.has(msg.guild.id)) return;
+      if (!(common.isDeveloper(msg) || common.isOwner(msg) || common.isAdmin(msg)))
+        return;
+      msg.delete();
+      if (rawArgs.length == 1 && rawArgs[0] == 'all') {
+        if (persData.special_guilds_set.has(msg.guild.id)) nonlogmsg(`ghostdot_delmsg from ${msg.author.tag} in ${msg.guild ? msg.guild.name + ':' + msg.channel.name : 'dms'}: all`);
+        let channels = Array.from(msg.guild.channels.cache.values()), message;
+        for (let i = 0; i < channels.length; i++) {
+          if (channels[i] && (channels[i].type == Discord.ChannelType.GuildText || channels[i].type == Discord.ChannelType.GuildAnnouncement)) {
+            message = await channels[i].send('ghostdot');
+            try { await message.delete(); } catch (e) { }
+            await new Promise(r => setTimeout(r), 400);
+          }
+        }
+      } else {
+        if (persData.special_guilds_set.has(msg.guild.id)) nonlogmsg(`ghostdot_delmsg from ${msg.author.tag} in ${msg.guild ? msg.guild.name + ':' + msg.channel.name : 'dms'}: ${rawArgs.join(' ')}`);
+        for (let i = 0; i < rawArgs.length; i++) {
+          if (/<#[0-9]+>/g.test(rawArgs[i])) {
+            channel = msg.guild.channels.cache.get(rawArgs[i].slice(2, rawArgs[0].length - 1));
+            if (channel && (channel.type == Discord.ChannelType.GuildText || channel.type == Discord.ChannelType.GuildAnnouncement)) {
+              message = await channel.send('ghostdot');
+              try { await message.delete(); } catch (e) { }
+              await new Promise(r => setTimeout(r), 400);
+            }
+          }
+        }
+      }
+    }
+  },
 ];
