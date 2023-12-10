@@ -513,13 +513,16 @@ module.exports = [
     description_slash: 'lists the currently playing song and the next songs',
     aliases: ['songslist', 'q'],
     flags: 0b110110,
+    options: [
+      { type: Discord.ApplicationCommandOptionType.Integer, name: 'page', description: 'page of queue to show' },
+    ],
     execute(o, msg, rawArgs) {
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = common.createAndGetGuilddata(msg.guild.id);
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.regCmdResp(o, 'I\'m not in a voice channel');
       let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
         common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
-        `Queue${common.clientVCManager.getQueue(guilddata.voice)}\n` +
+        `Queue${common.clientVCManager.getQueue(guilddata.voice, Number(o.args[0]) - 1)}\n` +
         common.clientVCManager.getFullStatus(guilddata.voice);
       return common.regCmdResp(o, text);
     },
@@ -533,7 +536,7 @@ module.exports = [
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
       let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
         common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
-        `Queue${common.clientVCManager.getQueue(guilddata.voice)}\n` +
+        `Queue${common.clientVCManager.getQueue(guilddata.voice, args[0] ? args[0].value - 1 : null)}\n` +
         common.clientVCManager.getFullStatus(guilddata.voice);
       return common.slashCmdResp(o, false, text);
     },

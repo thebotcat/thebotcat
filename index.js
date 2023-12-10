@@ -42,10 +42,12 @@ var Discord = require('discord.js');
 var DiscordVoice = require('@discordjs/voice');
 var ytdl;
 try { ytdl = require('ytdl-core'); } catch (e) { ytdl = null; }
+var ytpl;
+try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
 var mathjs = require('mathjs');
 var math = mathjs.create(mathjs.all);
 
-Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, mathjs, math });
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, ytpl, mathjs, math });
 
 // botcat module requires
 global.props = { data_code: require('./common/data_code') };

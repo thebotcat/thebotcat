@@ -136,8 +136,11 @@ module.exports = exports = {
   addSong: async function addSong(voice, url, userId, guildId) {
     let type = null;
     
-    if (/^https?:\/\/(?:(?:www.)?youtube.com\/watch\?v=|youtu.be\/)[A-Za-z0-9?&=\-_%.]+$/.test(url))
+    if (/^https?:\/\/(?:(?:www\.)?youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)[A-Za-z0-9?&=\-_%.]+$/.test(url))
       type = 1;
+    else if (/^https?:\/\/(?:www\.)?youtube\.com\/playlist\?list=[A-Za-z0-9?&=\-_%.]+$/.test(url))
+      type = 2;
+    
     if (type == null) {
       if (userId && (!common.isDeveloper(userId) || !guildId || !persData.special_guilds_set.has(guildId)))
         throw new common.BotError('Not a YouTube URL');
@@ -149,6 +152,7 @@ module.exports = exports = {
     
     switch (type) {
       case 0: {
+        // local file
         let songInfo = {
           type: 0,
           url: url,
@@ -162,6 +166,7 @@ module.exports = exports = {
       }
       
       case 1: {
+        // youtube url
         let info;
         try {
           info = await ytdl.getBasicInfo(url);
@@ -178,6 +183,37 @@ module.exports = exports = {
         };
         voice.songslist.push(songInfo);
         return songInfo;
+      }
+      
+      case 2: {
+        // youtube playlist
+        let info;
+        try {
+          info = await ytpl(url);
+        } catch (e) {
+          console.error(e);
+          throw new common.BotError('Invalid URL (The playlist may be private or unavailable or there may be a temporary network error.)');
+        }
+        let playListInfo = {
+          type: 2,
+          url: url,
+          desc: `[playlist] ${info.title} by ${info.author.name} (${info.items.length} songs)`,
+          expectedLength: info.items.reduce((a, c) => a + c.durationSec, 0) * 1000,
+          userId: common.isId(userId) ? userId : null,
+          stream: null,
+        };
+        for (let song of info.items) {
+          voice.songslist.push({
+            type: 1,
+            url: song.shortUrl,
+            desc: `${song.title} by ${song.author.name}`,
+            expectedLength: song.durationSec * 1000,
+            userId: common.isId(userId) ? userId : null,
+            stream: null,
+          });
+          console.log(voice.songslist[voice.songslist.length - 1]);
+        }
+        return playListInfo;
       }
       
       default:
@@ -401,11 +437,22 @@ module.exports = exports = {
     return `Status: ${exports.getPlayStatus(voice)}, Volume: ${voice.volume}, Loop: ${voice.loop ? '✅' : '❌'}, Queue Loop: ${voice.queueloop ? '✅' : '❌'}, Self Muted: ${exports.getSelfMute(voice) ? '✅' : '❌'}, Self Deafened: ${exports.getSelfDeaf(voice) ? '✅' : '❌'}`;
   },
   
-  getQueue: function getQueue(voice) {
+  getQueue: function getQueue(voice, page) {
     if (voice.songslist.length > 1) {
+      if (page == null || !Number.isSafeInteger(page)) page = 0;
+      
+      let fullQueue = voice.songslist.slice(1);
+      
+      let maxPerPage = 10;
+      
+      let numPages = Math.ceil(fullQueue.length / maxPerPage);
+      
+      if (page < 0) page = 0;
+      if (page > numPages - 1) page = numPages - 1;
+      
       return ':\n' +
-        voice.songslist
-          .slice(1)
+        fullQueue
+          .slice(page * maxPerPage, (page + 1) * maxPerPage)
           .map(
             (x, i) => {
               let userString = x.userId ?
@@ -414,7 +461,8 @@ module.exports = exports = {
               return `${i + 1}. ${x.desc} (${common.msecToHMS(x.expectedLength)}${userString})`;
             }
           )
-          .join('\n');
+          .join('\n') + '\n' +
+          `Page ${page + 1}/${numPages}`;
     } else {
       return ' empty';
     }
