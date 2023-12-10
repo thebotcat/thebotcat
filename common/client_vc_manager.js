@@ -462,7 +462,7 @@ module.exports = exports = {
             }
           )
           .join('\n') + '\n' +
-          `Page ${page + 1}/${numPages}`;
+          `Page ${page + 1}/${numPages} (songs ${page * maxPerPage + 1}-${Math.min((page + 1) * maxPerPage, fullQueue.length)}/${fullQueue.length})`;
     } else {
       return ' empty';
     }
