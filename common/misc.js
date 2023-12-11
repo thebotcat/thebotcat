@@ -66,6 +66,12 @@ function regCmdResp(o, message, mention) {
   }
 }
 
+async function slashCmdDefer(o, ephemeral) {
+  if (!o.interaction.replied) {
+    return await o.interaction.deferReply({ ephemeral });
+  }
+}
+
 function slashCmdResp(o, ephemeral, message, mention) {
   let replyObject;
   if (typeof message == 'object') {
@@ -84,7 +90,11 @@ function slashCmdResp(o, ephemeral, message, mention) {
     return o.interaction.followUp(replyObject);
   } else {
     o.alreadyReplied = true;
-    return o.interaction.reply(replyObject);
+    if (o.interaction.deferred) {
+      return o.interaction.editReply(replyObject);
+    } else {
+      return o.interaction.reply(replyObject);
+    }
   }
 }
 
@@ -175,7 +185,7 @@ function rps(p1, p2) {
 
 module.exports = {
   formatPlaybackBar,
-  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdDefer, slashCmdResp, getGuilddata, createAndGetGuilddata,
   slashCommandsInequal,
   BotError,
   rps,

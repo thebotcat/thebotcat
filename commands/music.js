@@ -100,21 +100,23 @@ module.exports = [
         }
         try {
           await common.clientVCManager.join(guilddata.voice, channel);
-          common.slashCmdResp(o, false, `Joined channel <#${channel.id}>`);
+          await common.slashCmdResp(o, false, `Joined channel <#${channel.id}>`);
         } catch (e) {
           console.error(e);
           return common.slashCmdResp(o, false, `Error in joining channel <#${channel.id}>`);
         }
       }
       
+      await common.slashCmdDefer(o, false);
+      
       let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.REMOTE_CMDS);
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && playperms))
-        return common.slashCmdResp(o, false, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
+        return await common.slashCmdResp(o, false, 'You must be in the same voice channel as I\'m in to play a song. Admins and mods can bypass this though.');
       for (let song of args[0].value.split(/ +/g).map(x => x.trim())) {
         let songInfo = await common.clientVCManager.addSong(guilddata.voice, song, o.author.id, o.guild?.id);
         let text = `${common.clientVCManager.getCurrentSong(songInfo)} added to queue`;
-        common.slashCmdResp(o, false, text);
+        await common.slashCmdResp(o, false, text);
       }
       return common.clientVCManager.startMainLoop(guilddata.voice, o.channel);
     },
