@@ -189,9 +189,8 @@ module.exports = exports = {
         // youtube playlist
         let info;
         try {
-          info = await ytpl(url);
+          info = await ytpl(url, { limit: Infinity });
         } catch (e) {
-          console.error(e);
           throw new common.BotError('Invalid URL (The playlist may contain yt shorts, be private or unavailable, or there may be a temporary network error.)');
         }
         let playListInfo = {
