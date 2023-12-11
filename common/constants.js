@@ -31,6 +31,8 @@ module.exports = {
   botRolePermMod: 0b10001111111111111,
   botRolePermAll: 0b11111111111111111,
   botRolePermCnl: 0b10000011111111111,
+  
+  QUEUE_MAX_ENTRIES_PER_PAGE: 10,
 };
 
 Object.keys(module.exports.botRolePermBits).forEach(x => module.exports.botRolePermBitsInv[module.exports.botRolePermBits[x]] = x);

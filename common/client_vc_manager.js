@@ -442,26 +442,24 @@ module.exports = exports = {
       
       let fullQueue = voice.songslist.slice(1);
       
-      let maxPerPage = 10;
-      
-      let numPages = Math.ceil(fullQueue.length / maxPerPage);
+      let numPages = exports.getQueuePages(voice);
       
       if (page < 0) page = 0;
       if (page > numPages - 1) page = numPages - 1;
       
       return ':\n' +
         fullQueue
-          .slice(page * maxPerPage, (page + 1) * maxPerPage)
+          .slice(page * common.constants.QUEUE_MAX_ENTRIES_PER_PAGE, (page + 1) * common.constants.QUEUE_MAX_ENTRIES_PER_PAGE)
           .map(
             (x, i) => {
               let userString = x.userId ?
                 `, requested by ${client.users.cache.get(x.userId)?.tag ?? 'null'}, id ${x.userId}` :
                 '';
-              return `${i + 1}. ${x.desc} (${common.msecToHMS(x.expectedLength)}${userString})`;
+              return `${page * common.constants.QUEUE_MAX_ENTRIES_PER_PAGE + i + 1}. ${x.desc} (${common.msecToHMS(x.expectedLength)}${userString})`;
             }
           )
           .join('\n') + '\n' +
-          `Page ${page + 1}/${numPages} (songs ${page * maxPerPage + 1}-${Math.min((page + 1) * maxPerPage, fullQueue.length)}/${fullQueue.length})`;
+          `Page ${page + 1}/${numPages} (songs ${page * common.constants.QUEUE_MAX_ENTRIES_PER_PAGE + 1}-${Math.min((page + 1) * common.constants.QUEUE_MAX_ENTRIES_PER_PAGE, fullQueue.length)}/${fullQueue.length})`;
     } else {
       return ' empty';
     }
@@ -470,4 +468,8 @@ module.exports = exports = {
   getQueueSize: function getQueueSize(voice) {
     return voice.songslist.length;
   },
+  
+  getQueuePages: function getQueuePages(voice) {
+    return Math.ceil((voice.songslist.length - 1) / common.constants.QUEUE_MAX_ENTRIES_PER_PAGE);
+  }
 };

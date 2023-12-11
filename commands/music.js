@@ -392,25 +392,12 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
         return common.regCmdResp(o, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
-      if (o.args.length == 0) {
+      if (rawArgs.length == 0) {
         common.clientVCManager.forceSkip(guilddata.voice);
-      } else if (o.args.length == 1) {
-        let queueSize = common.clientVCManager.getQueueSize(guilddata.voice);
-        let index = Number(o.args[0]);
-        if (!Number.isSafeInteger(index) || index < 0 || index > queueSize - 1) {
-          return common.regCmdResp(o, `Skip index must be a number from 0 to ${queueSize - 1}.`);
-        }
-        common.clientVCManager.forceSkip(guilddata.voice, index);
       } else {
         let queueSize = common.clientVCManager.getQueueSize(guilddata.voice);
-        let startIndex = Number(o.args[0]);
-        if (!Number.isSafeInteger(startIndex) || startIndex < 0 || startIndex > queueSize - 1) {
-          return common.regCmdResp(o, `Skip start index must be a number from 0 to ${queueSize - 1}.`);
-        }
-        let stopIndex = Number(o.args[1]);
-        if (!Number.isSafeInteger(stopIndex) || stopIndex < 0 || stopIndex > queueSize - 1) {
-          return common.regCmdResp(o, `Skip stop index must be a number from 0 to ${queueSize - 1}.`);
-        }
+        let startIndex = common.constrainIndex(Number(rawArgs[0]), 0, queueSize - 1, false, 0);
+        let stopIndex = common.constrainIndex(Number(rawArgs[1]), 0, queueSize - 1, false, startIndex);
         common.clientVCManager.forceSkip(guilddata.voice, startIndex, stopIndex);
       }
       return common.regCmdResp(o, 'Skipped');
@@ -429,15 +416,9 @@ module.exports = [
       let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
       if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
         return common.slashCmdResp(o, false, 'Only admins and mods can forceskip, or someone who is alone with me in a voice channel.');
-      let startIndex = !args[0] ? 0 : args[0].value;
-      let stopIndex = !args[1] ? startIndex : args[1].value;
       let queueSize = common.clientVCManager.getQueueSize(guilddata.voice);
-      if (startIndex < 0 || startIndex > queueSize - 1) {
-        return common.slashCmdResp(o, false, `Skip index must be a number from 1 to ${queueSize - 1}.`);
-      }
-      if (stopIndex < 0 || stopIndex > queueSize - 1) {
-        return common.slashCmdResp(o, false, `Skip stop index must be a number from 1 to ${queueSize - 1}.`);
-      }
+      let startIndex = common.constrainIndex(Number(o.args[0]), 0, queueSize - 1, false, 0);
+      let stopIndex = common.constrainIndex(Number(o.args[1]), 0, queueSize - 1, false, startIndex);
       common.clientVCManager.forceSkip(guilddata.voice, startIndex, stopIndex);
       return common.slashCmdResp(o, false, 'Skipped');
     },
@@ -522,9 +503,11 @@ module.exports = [
       if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
       let guilddata = common.createAndGetGuilddata(msg.guild.id);
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      let numPages = common.clientVCManager.getQueuePages(guilddata.voice);
+      let queuePage = common.constrainIndex(Number(rawArgs[0]), 0, numPages - 1, true, 0);
       let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
         common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
-        `Queue${common.clientVCManager.getQueue(guilddata.voice, Number(o.args[0]) - 1)}\n` +
+        `Queue${common.clientVCManager.getQueue(guilddata.voice, queuePage)}\n` +
         common.clientVCManager.getFullStatus(guilddata.voice);
       return common.regCmdResp(o, text);
     },
@@ -536,9 +519,11 @@ module.exports = [
         schedulePropsSave();
       }
       if (!guilddata.voice.channel || !guilddata.voice.channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
+      let numPages = common.clientVCManager.getQueuePages(guilddata.voice);
+      let queuePage = common.constrainIndex(args[0] ? args[0].value : null, 0, numPages - 1, true, 0);
       let text = `Currently playing ${common.clientVCManager.getCurrentSong2(guilddata.voice)}\n` +
         common.clientVCManager.getTimeAndVoteskippers(guilddata.voice) +
-        `Queue${common.clientVCManager.getQueue(guilddata.voice, args[0] ? args[0].value - 1 : null)}\n` +
+        `Queue${common.clientVCManager.getQueue(guilddata.voice, queuePage)}\n` +
         common.clientVCManager.getFullStatus(guilddata.voice);
       return common.slashCmdResp(o, false, text);
     },

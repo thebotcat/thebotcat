@@ -108,6 +108,20 @@ function trimText(text, maxLength) {
   }
 }
 
+function constrainIndex(index, min, max, oneIndexed, defaultValue) {
+  if (Number.isNaN(index)) {
+    index = defaultValue;
+  }
+  
+  if (index < 0) {
+    index = max + 1 + index;
+  } else if (oneIndexed && index >= 1) {
+    index--;
+  }
+  
+  return Math.min(Math.max(Math.round(index), min), max);
+}
+
 function getGuilddata(guildId) {
   let guilddata = props.saved.guilds[guildId];
   if (!guilddata) return common.getEmptyGuildObject(guildId);
@@ -198,6 +212,7 @@ module.exports = {
   explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper,
   regCmdResp, slashCmdDefer, slashCmdResp,
   trimText,
+  constrainIndex,
   getGuilddata, createAndGetGuilddata,
   slashCommandsInequal,
   BotError,

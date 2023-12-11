@@ -1,3 +1,4 @@
+setting volume before starting playing doesnt work
 defer responses on calculation heavy commands like calc and play
 add normalize volume command
 
