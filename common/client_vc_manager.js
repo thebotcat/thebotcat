@@ -299,6 +299,9 @@ module.exports = exports = {
         }
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
         voice.player.play(voice.resource);
+        if (voice.volume != 1) {
+          voice.resource.volume.setVolume(voice.volume);
+        }
         
         await exports._mainLoopAwaitPromise(voice);
         
