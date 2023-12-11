@@ -511,7 +511,7 @@ module.exports = [
   },
   {
     name: 'queue',
-    description: '`!queue` lists the currently playing song and the next songs',
+    description: '`!queue [page]` lists the currently playing song and the next songs. Enter a page to show that page of the queue.',
     description_slash: 'lists the currently playing song and the next songs',
     aliases: ['songslist', 'q'],
     flags: 0b110110,
