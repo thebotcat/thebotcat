@@ -211,7 +211,6 @@ module.exports = exports = {
             userId: common.isId(userId) ? userId : null,
             stream: null,
           });
-          console.log(voice.songslist[voice.songslist.length - 1]);
         }
         return playListInfo;
       }
