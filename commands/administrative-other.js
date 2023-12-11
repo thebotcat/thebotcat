@@ -176,17 +176,19 @@ module.exports = [
       } else if (common.isConfirmDeveloper(msg) && !common.isDeveloper(msg)) return;
       try {
         res = eval(cmd);
-        console.debug(`-> ${util.inspect(res)}`);
+        let resText = util.inspect(res);
+        console.debug(`-> ${resText}`);
         let richres = new Discord.EmbedBuilder()
           .setTitle('Eval Result')
-          .setDescription(util.inspect(res));
+          .setDescription(common.trimText(resText));
         return common.regCmdResp(o, { embeds: [richres] });
       } catch (e) {
         console.log('error in eval');
-        console.debug(e.stack);
+        let resText = e.stack;
+        console.debug(resText);
         let richres = new Discord.EmbedBuilder()
           .setTitle('Eval Error')
-          .setDescription(e.stack);
+          .setDescription(common.trimText(resText));
         return common.regCmdResp(o, { embeds: [richres] });
       }
     },
@@ -197,12 +199,14 @@ module.exports = [
       if (cmd == 'deez nuts' || cmd == 'goe mama') return common.slashCmdResp(o, true, 'no');
       try {
         res = eval(cmd);
-        console.debug(`-> ${util.inspect(res)}`);
-        return await common.slashCmdResp(o, true, 'Result: ' + util.inspect(res));
+        let resText = util.inspect(res);
+        console.debug(`-> ${resText}`);
+        return await common.slashCmdResp(o, true, 'Result: ' + common.trimText(resText));
       } catch (e) {
         console.log('error in eval');
-        console.debug(e.stack);
-        return await common.slashCmdResp(o, true, 'Error: ' + e.stack);
+        let resText = e.stack;
+        console.debug(resText);
+        return await common.slashCmdResp(o, true, 'Error: ' + common.trimText(resText));
       }
     },
   },
@@ -268,10 +272,11 @@ module.exports = [
             return;
           }
           stdout = stdout.toString(); stderr = stderr.toString();
-          console.debug(`shell command result\nstdout:\n${util.inspect(stdout)}\nstderr:\n${util.inspect(stderr)}`);
+          let resText = `*stdout*:\n${util.inspect(stdout)}\n*stderr*:\n${util.inspect(stderr)}`;
+          console.debug(`shell command result\n${resText}`);
           let richres = new Discord.EmbedBuilder()
             .setTitle('Shell Command Result')
-            .setDescription(`*stdout*:\n${util.inspect(stdout)}\n*stderr*:\n${util.inspect(stderr)}`);
+            .setDescription(common.trimText(resText));
           common.regCmdResp(o, { embeds: [richres] }).then(x => resolve(x)).catch(e => reject(e));
         });
         props.execCmdProcesses.push(proc);
@@ -282,32 +287,40 @@ module.exports = [
       let cmd = args[0] ? args[0].value : '';
       nonlogmsg(`shell exec from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${util.inspect(cmd)}`);
       
-      client.api.interactions(interaction.id, interaction.token).callback.post({ data: { type: 5, data: { flags: 64 } } });
+      //client.api.interactions(interaction.id, interaction.token).callback.post({ data: { type: 5, data: { flags: 64 } } });
+      await common.slashCmdDefer(o, true);
       
-      return new Promise((resolve, reject) => {
+      let resText = await new Promise((resolve, reject) => {
         try {
           let proc = cp.exec(cmd, { timeout: 20000, windowsHide: true }, (err, stdout, stderr) => {
             props.execCmdProcesses.splice(props.execCmdProcesses.indexOf(proc), 1);
             if (err) {
               console.log('error in shell exec');
-              console.debug(err.stack);
-              client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: {
-                content: 'Shell Command Error: ' + err.stack, flags: 64,
-              } }).then(x => resolve(x)).catch(e => reject(e));
+              let resText = err.stack;
+              console.debug(resText);
+              /*client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: {
+                content: 'Shell Command Error: ' + common.trimText(resText), flags: 64,
+              } }).then(x => resolve(x)).catch(e => reject(e));*/
+              resolve('Shell Command Error: ' + common.trimText(resText));
               return;
             }
             stdout = stdout.toString(); stderr = stderr.toString();
-            console.debug(`shell command result\nstdout:\n${util.inspect(stdout)}\nstderr:\n${util.inspect(stderr)}`);
-            client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: {
-              content: `Shell Command Result:\n*stdout*:\n${util.inspect(stdout)}\n*stderr*:\n${util.inspect(stderr)}`, flags: 64,
-            } }).then(x => resolve(x)).catch(e => reject(e));
+            let resText = `stdout:\n${util.inspect(stdout)}\nstderr:\n${util.inspect(stderr)}`;
+            console.debug(`shell command result\n${resText}`);
+            /*client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: {
+              content: `Shell Command Result:\n${common.trimText(resText)}`, flags: 64,
+            } }).then(x => resolve(x)).catch(e => reject(e));*/
+            resolve('Shell Command Result:\n' + common.trimText(resText));
           });
           props.execCmdProcesses.push(proc);
         } catch (e) {
-          client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: { content: 'Error', flags: 64 } });
-          reject(e);
+          //client.api.webhooks(client.user.id, interaction.token).messages['@original'].patch({ data: { content: 'Error', flags: 64 } });
+          //reject(e);
+          resolve('Error');
         }
       });
+      
+      await common.slashCmdResp(o, true, resText);
     },
   },
   {

@@ -13,7 +13,10 @@ var { getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage
 
 var {
   formatPlaybackBar,
-  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdDefer, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper,
+  regCmdResp, slashCmdDefer, slashCmdResp,
+  trimText,
+  getGuilddata, createAndGetGuilddata,
   slashCommandsInequal,
   BotError,
   rps,
@@ -51,7 +54,10 @@ module.exports = {
   msecToHMS, msecToHMSs, fancyDateStringWD, fancyDateStringMD, fancyDateString, IdToDate, dateToId,
   getBotcatUptimeMessage, getBotcatStatusMessage, getBotcatFullStatusMessage,
   formatPlaybackBar,
-  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdDefer, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper,
+  regCmdResp, slashCmdDefer, slashCmdResp,
+  trimText,
+  getGuilddata, createAndGetGuilddata,
   slashCommandsInequal,
   BotError,
   rps,

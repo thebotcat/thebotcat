@@ -98,6 +98,16 @@ function slashCmdResp(o, ephemeral, message, mention) {
   }
 }
 
+function trimText(text, maxLength) {
+  if (maxLength == null) maxLength = 1903;
+  
+  if (text.length > maxLength) {
+    return text.slice(0, maxLength - 3) + '...';
+  } else {
+    return text;
+  }
+}
+
 function getGuilddata(guildId) {
   let guilddata = props.saved.guilds[guildId];
   if (!guilddata) return common.getEmptyGuildObject(guildId);
@@ -185,7 +195,10 @@ function rps(p1, p2) {
 
 module.exports = {
   formatPlaybackBar,
-  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper, regCmdResp, slashCmdDefer, slashCmdResp, getGuilddata, createAndGetGuilddata,
+  explainChannel, stringToBoolean, removePings, onMsgOneArgHelper, onMsgOneArgSetHelper,
+  regCmdResp, slashCmdDefer, slashCmdResp,
+  trimText,
+  getGuilddata, createAndGetGuilddata,
   slashCommandsInequal,
   BotError,
   rps,
