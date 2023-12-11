@@ -156,6 +156,7 @@ module.exports = exports = {
         let songInfo = {
           type: 0,
           url: url,
+          startMs: null,
           desc: 'Local file',
           expectedLength: 0,
           userId: null,
@@ -176,6 +177,7 @@ module.exports = exports = {
         let songInfo = {
           type: 1,
           url: url,
+          startMs: 0,
           desc: `${info.videoDetails.title} by ${info.videoDetails.author.name}`,
           expectedLength: info.videoDetails.lengthSeconds * 1000,
           userId: common.isId(userId) ? userId : null,
@@ -205,6 +207,7 @@ module.exports = exports = {
           voice.songslist.push({
             type: 1,
             url: song.shortUrl,
+            startMs: 0,
             desc: `${song.title} by ${song.author.name}`,
             expectedLength: song.durationSec * 1000,
             userId: common.isId(userId) ? userId : null,
@@ -258,6 +261,40 @@ module.exports = exports = {
     voice.songslist.splice(startIndex, stopIndex - startIndex + 1);
   },
   
+  restartAtTime: function (voice, time) {
+    if (voice.songslist.length == 0 || voice.mainloop == 0) return;
+    
+    let songInfo = voice.songslist[0];
+    
+    if (!Number.isSafeInteger(time)) {
+      time = 0;
+    }
+    
+    if (time < 0) {
+      time = 0;
+    }
+    
+    if (time > songInfo.expectedLength) {
+      time = songInfo.expectedLength;
+    }
+    
+    voice.songslist.splice(1, 0, {
+      type: songInfo.type,
+      url: songInfo.url,
+      startMs: time,
+      desc: songInfo.desc,
+      expectedLength: songInfo.expectedLength,
+      userId: songInfo.userId,
+      stream: null,
+    });
+    
+    exports.forceSkip(voice);
+  },
+  
+  restart: function (voice) {
+    exports.restartAtTime(voice, 0);
+  },
+  
   _mainLoopAwaitPromise: function _mainLoopAwaitPromise(voice) {
     return new Promise(r => {
       let alreadySettled = false;
@@ -294,7 +331,11 @@ module.exports = exports = {
             stream = songInfo.stream = fs.createReadStream(songInfo.url);
             break;
           case 1:
-            stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 2 ** 28 });
+            if (songInfo.startMs != 0 && songInfo.startMs != null) {
+              stream = songInfo.stream = ytdl(songInfo.url, { begin: songInfo.startMs, filter: 'audioonly', highWaterMark: 2 ** 28 });
+            } else {
+              stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 2 ** 28 });
+            }
             break;
         }
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
@@ -364,7 +405,7 @@ module.exports = exports = {
   },
   
   getCurrentTrackTime: function getCurrentTrackTime(voice) {
-    return voice.resource.playbackDuration;
+    return voice.songslist[0].startMs + voice.resource.playbackDuration;
   },
   
   getFinishedTrackTime: function getFinishedTrackTime(voice) {

@@ -424,6 +424,115 @@ module.exports = [
     },
   },
   {
+    name: 'restart',
+    description: '`!restart` restarts the currently playing song',
+    description_slash: 'restarts the currently playing song',
+    aliases: ['r'],
+    flags: 0b110110,
+    execute(o, msg, rawArgs) {
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
+      let guilddata = common.createAndGetGuilddata(msg.guild.id);
+      let channel = guilddata.voice.channel;
+      if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      if (!guilddata.voice.resource) return common.regCmdResp(o, 'Error: no song is playing');
+      let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
+      let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
+        return common.regCmdResp(o, 'Only admins and mods can restart, or someone who is alone with me in a voice channel.');
+      common.clientVCManager.restart(guilddata.voice);
+      return common.regCmdResp(o, 'Restarted');
+    },
+    execute_slash(o, interaction, command, args) {
+      if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
+      let guilddata = props.saved.guilds[o.guild.id];
+      if (!guilddata) {
+        props.saved.guilds[o.guild.id] = common.getEmptyGuildObject(o.guild.id);
+        schedulePropsSave();
+      }
+      let channel = guilddata.voice.channel;
+      if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
+      if (!guilddata.voice.resource) return common.slashCmdResp(o, false, 'Error: no song is playing');
+      let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
+      let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
+        return common.slashCmdResp(o, false, 'Only admins and mods can restart, or someone who is alone with me in a voice channel.');
+      common.clientVCManager.restart(guilddata.voice);
+      return common.slashCmdResp(o, false, 'Skipped');
+    },
+  },
+  // below command doesnt work, as ytdl "begin:" functionality is unreliable
+  /*{
+    name: 'seek',
+    description: '`!seek <[[hh:]mm:]ss[.mmm]>` skips to a particular moment in the song',
+    description_slash: 'skips to a particular moment in the song',
+    flags: 0b110110,
+    options: [
+      { type: Discord.ApplicationCommandOptionType.String, name: 'position', description: 'the position to seek to in [[hh:]mm:]ss[.mmm] format', required: true },
+    ],
+    execute(o, msg, rawArgs) {
+      if (!(props.saved.feat.audio & 2)) return common.regCmdResp(o, 'Music features are disabled');
+      let guilddata = common.createAndGetGuilddata(msg.guild.id);
+      let channel = guilddata.voice.channel;
+      if (!channel || !channel.permissionsFor(msg.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.regCmdResp(o, 'I\'m not in a voice channel');
+      if (!guilddata.voice.resource) return common.regCmdResp(o, 'Error: no song is playing');
+      let perms = common.hasBotPermissions(msg, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
+      let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
+      if (!((msg.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != msg.author.id).length == 0 && msg.member.voice.channelId == channel.id)))
+        return common.regCmdResp(o, 'Only admins and mods can seek, or someone who is alone with me in a voice channel.');
+      
+      if (rawArgs.length == 0) {
+        return common.regCmdResp(o, 'Position to seek not given');
+      }
+      
+      let position = common.timeStringToMs(rawArgs[0]);
+      
+      if (position == null) {
+        return common.regCmdResp(o, 'Position to seek is invalid format');
+      }
+      
+      let songLength = common.clientVCManager.getFinishedTrackTime(guilddata.voice);
+      
+      if (position < 0 || position > songLength) {
+        return common.regCmdResp(o, `Position to seek must be from ${common.msecToHMS(0)} to ${common.msecToHMS(songLength)}`);
+      }
+      
+      common.clientVCManager.restartAtTime(guilddata.voice, position);
+      
+      return common.regCmdResp(o, `Seeked to position ${common.msecToHMS(position)}`);
+    },
+    execute_slash(o, interaction, command, args) {
+      if (!(props.saved.feat.audio & 2)) return common.slashCmdResp(o, false, 'Music features are disabled');
+      let guilddata = props.saved.guilds[o.guild.id];
+      if (!guilddata) {
+        props.saved.guilds[o.guild.id] = common.getEmptyGuildObject(o.guild.id);
+        schedulePropsSave();
+      }
+      let channel = guilddata.voice.channel;
+      if (!channel || !channel.permissionsFor(o.member).has(Discord.PermissionsBitField.Flags.ViewChannel)) return common.slashCmdResp(o, false, 'I\'m not in a voice channel');
+      if (!guilddata.voice.resource) return common.slashCmdResp(o, false, 'Error: no song is playing');
+      let perms = common.hasBotPermissions(o, common.constants.botRolePermBits.PLAY_SONG | common.constants.botRolePermBits.FORCESKIP | common.constants.botRolePermBits.REMOTE_CMDS);
+      let playperms = perms & common.constants.botRolePermBits.PLAY_SONG, fsperms = common.constants.botRolePermBits.FORCESKIP, remoteperms = perms & common.constants.botRolePermBits.REMOTE_CMDS;
+      if (!((o.member.voice.channelId == guilddata.voice.channel.id || remoteperms) && (fsperms || playperms && Array.from(channel.members.values()).filter(x => !x.user.bot && x.user.id != o.author.id).length == 0 && o.member.voice.channelId == channel.id)))
+        return common.slashCmdResp(o, false, 'Only admins and mods can seek, or someone who is alone with me in a voice channel.');
+      
+      let position = common.timeStringToMs(args[0].value);
+      
+      if (position == null) {
+        return common.slashCmdResp(o, 'Position to seek is invalid format');
+      }
+      
+      let songLength = common.clientVCManager.getFinishedTrackTime(guilddata.voice);
+      
+      if (position < 0 || position > songLength) {
+        return common.slashCmdResp(o, `Position to seek must be from ${common.msecToHMS(0)} to ${common.msecToHMS(songLength)}`);
+      }
+      
+      common.clientVCManager.restartAtTime(guilddata.voice, position);
+      
+      return common.slashCmdResp(o, false, `Seeked to position  ${common.msecToHMS(position)}`);
+    },
+  },*/
+  {
     name: 'stop',
     description: '`!stop` clears the song list and stops playing',
     description_slash: 'clears the song list and stops playing',
