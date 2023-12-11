@@ -126,8 +126,9 @@ add sharding and live updating
 use es6 modules
 use typescript
 
-problems with discord api or discord.js:
+problems with external libs:
 a guild emoji's allowed roles will not update on d.js GuildEmojiRoleManager.cache but will update on discord itself, and will also update on the cache when bot is restarted
+seek command doesnt work cause ytdl "begin:" parameter has no effect
 
 transient problems with bot:
 status dissappears after bot has been running for weeks, sometimes

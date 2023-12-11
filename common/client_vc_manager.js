@@ -295,6 +295,22 @@ module.exports = exports = {
     exports.restartAtTime(voice, 0);
   },
   
+  shuffle: function (voice) {
+    if (voice.songslist.length > 2) {
+      let queueSongs = voice.songslist.slice(1);
+      
+      voice.songslist.splice(1, Infinity);
+      
+      while (queueSongs.length > 0) {
+        let randomSongIndex = Math.floor(Math.random() * queueSongs.length);
+        
+        voice.songslist.push(queueSongs[randomSongIndex]);
+        
+        queueSongs.splice(randomSongIndex, 1);
+      }
+    }
+  },
+  
   _mainLoopAwaitPromise: function _mainLoopAwaitPromise(voice) {
     return new Promise(r => {
       let alreadySettled = false;
