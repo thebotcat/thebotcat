@@ -1,7 +1,7 @@
 module.exports = [
   {
     name: 'play',
-    description: '`!play <url> [#channel]` plays the audio of a YouTube URL, like every other music bot in existence; channel is channel to join; can play many urls seperated by space',
+    description: '`!play <url> [#channel]`\nPlays the audio of a YouTube URL, like every other music bot in existence. Channel is channel to join. Can play many URLs seperated by space. URL can be a playlist but cannot contain YT shorts.',
     description_slash: 'plays the audio of a YouTube URL, like every other music bot in existence',
     aliases: ['p'],
     flags: 0b110110,
