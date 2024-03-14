@@ -1,4 +1,4 @@
-FROM node:21.6.2
+FROM node:21.7.1
 
 RUN apt update && apt -y upgrade
 RUN apt -y install ffmpeg
