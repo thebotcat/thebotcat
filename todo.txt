@@ -1,3 +1,8 @@
+borks calculator, fix:
+  !calc sin(30)
+  !calc tanh(2^402421)
+  !calc sin(30)
+
 add support for youtube.com/watch?list= playlist urls
 queue should show remining time of queue
 
