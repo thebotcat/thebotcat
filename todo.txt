@@ -1,3 +1,5 @@
+forceplay that erases currently playing song to play this song
+queue front to queue to front of queue
 add support for youtube.com/watch?list= playlist urls
 queue should show remining time of queue
 
