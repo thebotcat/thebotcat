@@ -1,14 +1,15 @@
 FROM node:22.1.0
 
+RUN adduser thebotcat -u 2201
+
 RUN apt update && apt -y upgrade
 RUN apt -y install ffmpeg
 
-RUN adduser thebotcat -u 2201
 USER thebotcat
 WORKDIR /home/thebotcat
 
 RUN touch props.json .env &&\
-  mkdir folder &&\
+  mkdir extra_data &&\
   mkfifo replinp replout dpipe
 
 # copy package.json in but only the dependencies at first
