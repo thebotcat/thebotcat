@@ -5,7 +5,7 @@ var logErrors = true;
 var doWorkers = true;
 
 // true to use yt-dlp instead of ytdl
-var useYTDLP = false;
+var useYTDLP = true;
 
 // limit is 1 error logged every 24 hours
 var errorCounter = 0;
@@ -56,7 +56,7 @@ if (useYTDLP) {
 var mathjs = require('mathjs');
 var math = mathjs.create(mathjs.all);
 
-Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, ytpl, mathjs, math });
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, ytpl, yt_dlp_wrap, mathjs, math });
 
 // botcat module requires
 global.props = { data_code: require('./common/data_code') };
@@ -131,8 +131,26 @@ if (doWorkers) {
   Object.assign(global, { mathVMContext });
 }
 
-// download yt-dlp binary if out of date
-// TODO
+// download yt-dlp binary if not present
+if (useYTDLP) {
+  (async () => {
+    
+    var yt_dlp_binary_exists = false;
+    
+    try {
+      await fs.promises.access('extra_data/yt-dlp');
+      yt_dlp_binary_exists = true;
+    } catch {}
+    
+    if (!yt_dlp_binary_exists) {
+      await yt_dlp_wrap.downloadFromGithub(
+        'extra_data/yt-dlp',
+        null, // version name, null for default
+        null // platform, null to use nodejs os.platform()
+      );
+    }
+  })();
+}
 
 // create discord client
 var client = new Discord.Client({
