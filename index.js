@@ -5,6 +5,7 @@ var logErrors = true;
 var doWorkers = true;
 
 // true to use yt-dlp instead of ytdl
+var useYTDLP = false;
 
 // limit is 1 error logged every 24 hours
 var errorCounter = 0;
@@ -42,12 +43,16 @@ var vm = require('vm');
 // 3rd party requires
 var Discord = require('discord.js');
 var DiscordVoice = require('@discordjs/voice');
-var ytdl;
-try { ytdl = require('ytdl-core'); } catch (e) { ytdl = null; }
+var ytdl = null;
+if (!useYTDLP) {
+  try { ytdl = require('ytdl-core'); } catch (e) { ytdl = null; }
+}
 var ytpl;
 try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
-var yt_dlp_wrap;
-try { yt_dlp_wrap = require('yt-dlp-wrap').default; } catch (e) { yt_dlp_wrap = null; }
+var yt_dlp_wrap = null;
+if (useYTDLP) {
+  try { yt_dlp_wrap = require('yt-dlp-wrap').default; } catch (e) { yt_dlp_wrap = null; }
+}
 var mathjs = require('mathjs');
 var math = mathjs.create(mathjs.all);
 
@@ -125,6 +130,9 @@ if (doWorkers) {
   var mathVMContext = vm.createContext({ math });
   Object.assign(global, { mathVMContext });
 }
+
+// download yt-dlp binary if out of date
+// TODO
 
 // create discord client
 var client = new Discord.Client({
