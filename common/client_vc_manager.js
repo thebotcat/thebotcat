@@ -172,7 +172,19 @@ module.exports = exports = {
         try {
           info = await ytdl.getBasicInfo(url);
         } catch (e) {
-          throw new common.BotError('Invalid URL (The video may be private or unavailable or there may be a temporary network error.)');
+          if (useYTDLP) {
+            info = {
+              videoDetails: {
+                title: 'test',
+                author: {
+                  name: 'testauthor',
+                },
+                lengthSeconds: 100,
+              }
+            };
+          } else {
+            throw new common.BotError('Invalid URL (The video may be private or unavailable or there may be a temporary network error.)');
+          }
         }
         let songInfo = {
           type: 1,
@@ -358,7 +370,7 @@ module.exports = exports = {
               stream = songInfo.stream = yt_dlp.execStream([
                 songInfo.url,
                 '-f',
-                'bestaudio[ext=mp3]',
+                'bestaudio',
               ]);
             } else {
               if (songInfo.startMs != 0 && songInfo.startMs != null) {
