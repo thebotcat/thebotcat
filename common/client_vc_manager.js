@@ -347,10 +347,25 @@ module.exports = exports = {
             stream = songInfo.stream = fs.createReadStream(songInfo.url);
             break;
           case 1:
-            if (songInfo.startMs != 0 && songInfo.startMs != null) {
-              stream = songInfo.stream = ytdl(songInfo.url, { begin: songInfo.startMs, filter: 'audioonly', highWaterMark: 2 ** 28 });
+            if (useYTDLP) {
+              /*
+              if (songInfo.startMs != 0 && songInfo.startMs != null) {
+                // TODO
+              } else {
+                
+              }
+              */
+              stream = songInfo.stream = yt_dlp.execStream([
+                songInfo.url,
+                '-f',
+                'bestaudio[ext=mp3]',
+              ]);
             } else {
-              stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 2 ** 28 });
+              if (songInfo.startMs != 0 && songInfo.startMs != null) {
+                stream = songInfo.stream = ytdl(songInfo.url, { begin: songInfo.startMs, filter: 'audioonly', highWaterMark: 2 ** 28 });
+              } else {
+                stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 2 ** 28 });
+              }
             }
             break;
         }

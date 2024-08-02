@@ -807,6 +807,7 @@ Object.defineProperties(global, {
   ready2time: { configurable: true, enumerable: true, get: () => ready2time, set: val => { ready2time = val; } },
   ready3time: { configurable: true, enumerable: true, get: () => ready3time, set: val => { ready3time = val; } },
   doWorkers: { configurable: true, enumerable: true, get: () => doWorkers, set: val => { doWorkers = val; } },
+  useYTDLP: { configurable: true, enumerable: true, get: () => useYTDLP, set: val => { useYTDLP = val; } },
   version: { configurable: true, enumerable: true, get: () => version, set: val => { version = val; } },
   messageHandler: { configurable: true, enumerable: true, get: () => handlers.event.message, set: val => { handlers.event.message = val; } },
   messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => { handlers.extra.message = val; } },
