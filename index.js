@@ -153,6 +153,8 @@ if (useYTDLP) {
     }
     
     global.yt_dlp = new yt_dlp_wrap(common.constants.YT_DLP_PATH);
+    
+    nonlogmsg('yt-dlp initialized');
   })();
 }
 
