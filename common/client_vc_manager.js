@@ -317,7 +317,7 @@ module.exports = exports = {
       let settleFunc = err => {
         if (err instanceof Error) {
           console.error('ERROR in music playback:');
-          console.error(err);
+          console.error(err.stack);
         }
         if (alreadySettled) return;
         alreadySettled = true;

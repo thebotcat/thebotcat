@@ -41,6 +41,7 @@
     "workerpool": "^9.1.3",
     "ytdl-core": "^4.11.5",
     "ytpl": "^2.3.0",
+    "yt-dlp-wrap": "^2.3.12",
     "zlib-sync": "^0.1.9"
   },
   "repository": {

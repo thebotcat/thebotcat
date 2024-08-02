@@ -4,6 +4,8 @@ var logErrors = true;
 // true to use workers to evaluate math.js, false to use v8 vm
 var doWorkers = true;
 
+// true to use yt-dlp instead of ytdl
+
 // limit is 1 error logged every 24 hours
 var errorCounter = 0;
 
@@ -44,6 +46,8 @@ var ytdl;
 try { ytdl = require('ytdl-core'); } catch (e) { ytdl = null; }
 var ytpl;
 try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
+var yt_dlp_wrap;
+try { yt_dlp_wrap = require('yt-dlp-wrap').default; } catch (e) { yt_dlp_wrap = null; }
 var mathjs = require('mathjs');
 var math = mathjs.create(mathjs.all);
 
