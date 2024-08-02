@@ -132,23 +132,27 @@ if (doWorkers) {
 }
 
 // download yt-dlp binary if not present
+global.yt_dlp = null;
+
 if (useYTDLP) {
   (async () => {
     
     var yt_dlp_binary_exists = false;
     
     try {
-      await fs.promises.access('extra_data/yt-dlp');
+      await fs.promises.access(common.constants.YT_DLP_PATH);
       yt_dlp_binary_exists = true;
     } catch {}
     
     if (!yt_dlp_binary_exists) {
       await yt_dlp_wrap.downloadFromGithub(
-        'extra_data/yt-dlp',
+        common.constants.YT_DLP_PATH,
         null, // version name, null for default
         null // platform, null to use nodejs os.platform()
       );
     }
+    
+    global.yt_dlp = new yt_dlp_wrap(common.constants.YT_DLP_PATH);
   })();
 }
 
