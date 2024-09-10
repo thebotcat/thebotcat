@@ -15,3 +15,4 @@ PERSISTENT_DATA:   JSON: object {
     misc: object { <alias>: <string>, ... },
   },
 }
+YTDL_IPV6_BLOCK:         <null or unquoted string ipv6 block>

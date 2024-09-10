@@ -43,9 +43,10 @@ var vm = require('vm');
 // 3rd party requires
 var Discord = require('discord.js');
 var DiscordVoice = require('@discordjs/voice');
-var ytdl = null;
+var ytdl = null, ytdl_ipv6Block;
 if (!useYTDLP) {
   try { ytdl = require('@distube/ytdl-core'); } catch (e) { ytdl = null; }
+  ytdl_ipv6Block = env.YTDL_IPV6_BLOCK == 'null' ? null : env.YTDL_IPV6_BLOCK;
 }
 var ytpl;
 try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
@@ -56,7 +57,7 @@ if (useYTDLP) {
 var mathjs = require('mathjs');
 var math = mathjs.create(mathjs.all);
 
-Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, ytpl, yt_dlp_wrap, mathjs, math });
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, ytdl_ipv6Block, ytpl, yt_dlp_wrap, mathjs, math });
 
 // botcat module requires
 global.props = { data_code: require('./common/data_code') };
