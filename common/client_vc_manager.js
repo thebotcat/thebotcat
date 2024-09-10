@@ -184,7 +184,11 @@ module.exports = exports = {
             };
           } else {
             console.error(`Music error: ${e.stack}`);
-            throw new common.BotError('Invalid URL (The video may be private or unavailable or there may be a temporary network error.)');
+            if (e.toString().startsWith('Error: Sign in to confirm you’re not a bot')) {
+              throw new common.BotError('Thebotcat\'s current ip has been banned by YouTube (either for 72 hours or permanently).');
+            } else {
+              throw new common.BotError('Invalid URL or some other music error (The video may be private or unavailable or there may be a temporary network error.)');
+            }
           }
         }
         let songInfo = {
