@@ -5,7 +5,7 @@ var logErrors = true;
 var doWorkers = true;
 
 // true to use yt-dlp instead of ytdl
-var useYTDLP = true;
+var useYTDLP = false;
 
 // limit is 1 error logged every 24 hours
 var errorCounter = 0;
