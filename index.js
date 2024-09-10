@@ -45,7 +45,7 @@ var Discord = require('discord.js');
 var DiscordVoice = require('@discordjs/voice');
 var ytdl = null;
 if (!useYTDLP) {
-  try { ytdl = require('ytdl-core'); } catch (e) { ytdl = null; }
+  try { ytdl = require('@distube/ytdl-core'); } catch (e) { ytdl = null; }
 }
 var ytpl;
 try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
