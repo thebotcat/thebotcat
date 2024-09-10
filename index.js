@@ -46,7 +46,7 @@ var DiscordVoice = require('@discordjs/voice');
 var ytdl = null, ytdl_ipv6Block;
 if (!useYTDLP) {
   try { ytdl = require('@distube/ytdl-core'); } catch (e) { ytdl = null; }
-  ytdl_ipv6Block = env.YTDL_IPV6_BLOCK == 'null' ? null : env.YTDL_IPV6_BLOCK;
+  ytdl_ipv6Block = process.env.YTDL_IPV6_BLOCK == 'null' ? null : process.env.YTDL_IPV6_BLOCK;
 }
 var ytpl;
 try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
