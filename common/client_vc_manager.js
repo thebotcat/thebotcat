@@ -183,6 +183,7 @@ module.exports = exports = {
               }
             };
           } else {
+            console.error(`Music error: ${e.stack}`);
             throw new common.BotError('Invalid URL (The video may be private or unavailable or there may be a temporary network error.)');
           }
         }
