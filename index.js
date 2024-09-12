@@ -634,14 +634,14 @@ client.on('ready', async () => {
   ready3time = new Date();
 });
 
-client.on('guildCreate', guild => {
-  nonlogmsg(`Joined a new guild: ${guild.name}`);
+client.on('guildCreate', () => {
+  nonlogmsg('Joined a new guild!');
   
   updateStatus();
 });
 
-client.on('guildDelete', guild => {
-  nonlogmsg(`Left a guild: ${guild.name}`);
+client.on('guildDelete', () => {
+  nonlogmsg('Left a guild!');
   
   updateStatus();
 });
@@ -651,7 +651,7 @@ client.on('reconnecting', () => {
 });
 
 client.on('disconnect', () => {
-  nonlogmsg('Disconnect!');
+  nonlogmsg('Disconnected!');
 });
 
 ['messageCreate', 'voiceStateUpdate', 'interactionCreate'].forEach(evtType => {
