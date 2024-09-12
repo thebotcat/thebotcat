@@ -382,9 +382,9 @@ module.exports = exports = {
               ]);
             } else {
               if (songInfo.startMs != 0 && songInfo.startMs != null) {
-                stream = songInfo.stream = ytdl(songInfo.url, { begin: songInfo.startMs, filter: 'audioonly', highWaterMark: exports._mainLoopMusicBufferBytes, ...(ytdl_ipv6Block != null ? { IPv6Block: ytdl_ipv6Block } : {}) });
+                stream = songInfo.stream = ytdl(songInfo.url, { begin: songInfo.startMs, filter: 'audioonly', highWaterMark: exports._mainLoopMusicBufferBytes, agent: ytdl_getAgent() });
               } else {
-                stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: exports._mainLoopMusicBufferBytes, ...(ytdl_ipv6Block != null ? { IPv6Block: ytdl_ipv6Block } : {}) });
+                stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: exports._mainLoopMusicBufferBytes, agent: ytdl_getAgent() });
               }
             }
             break;

@@ -43,10 +43,33 @@ var vm = require('vm');
 // 3rd party requires
 var Discord = require('discord.js');
 var DiscordVoice = require('@discordjs/voice');
-var ytdl = null, ytdl_ipv6Block;
+var ytdl = null, ytdl_ipv6Block, ytdl_workingProps, ytdl_getAgent;
 if (!useYTDLP) {
-  try { ytdl = require('@distube/ytdl-core'); } catch (e) { ytdl = null; }
-  ytdl_ipv6Block = process.env.YTDL_IPV6_BLOCK == 'null' ? null : process.env.YTDL_IPV6_BLOCK;
+  try {
+    ytdl = require('@distube/ytdl-core');
+    getRandomIPv6 = require('@distube/ytdl-core/lib/utils').getRandomIPv6;
+  } catch (e) { ytdl = null; }
+  ytdl_workingProps = {};
+  ytdl_workingProps.ipv6Block = process.env.YTDL_IPV6_BLOCK == 'null' ? null : process.env.YTDL_IPV6_BLOCK;
+  ytdl_workingProps.lastAgentTime = null;
+  ytdl_workingProps.currentAgent = null;
+  ytdl_getAgent = function ytdl_getAgent() {
+    if (ytdl_workingProps.ipv6Block == null) {
+      if (ytdl_workingProps.lastAgentTime) {
+        // new agent, only created once
+        ytdl_workingProps.currentAgent = ytdl.createAgent(null, {});
+      }
+    } else {
+      if (ytdl_workingProps.lastAgentTime == null || Date.now() > ytdl_workingProps.lastAgentTime + 10 * 60 * 1000) {
+        // new agent, renews every 10 minutes to ensure ipv6 is rotated
+        ytdl_workingProps.currentAgent = ytdl.createAgent(null, {
+          localAddress: getRandomIPv6(ytdl_workingProps.ipv6Block),
+        });
+      }
+    }
+    
+    return ytdl_workingProps.currentAgent;
+  };
 }
 var ytpl;
 try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
@@ -57,7 +80,7 @@ if (useYTDLP) {
 var mathjs = require('mathjs');
 var math = mathjs.create(mathjs.all);
 
-Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, ytdl_ipv6Block, ytpl, yt_dlp_wrap, mathjs, math });
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, getRandomIPv6, ytdl_ipv6Block, ytdl_workingProps, ytdl_getAgent, ytpl, yt_dlp_wrap, mathjs, math });
 
 // botcat module requires
 global.props = { data_code: require('./common/data_code') };
