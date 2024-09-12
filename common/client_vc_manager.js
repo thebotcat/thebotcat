@@ -351,6 +351,8 @@ module.exports = exports = {
     });
   },
   
+  _mainLoopRepeatedFailsWaitArray: [5000],
+  
   startMainLoop: async function startMainLoop(voice, msgchannel) {
     if (voice.mainloop) return;
     exports.setMainLoop(voice, 1);
@@ -412,11 +414,11 @@ module.exports = exports = {
           if (voice.resource.playbackDuration + 100 > songInfo.expectedLength && voice._repeatedFails)
             voice._repeatedFails = 0;
           voice._repeatedFails++;
-          loopWait = 1000 * 2 ** (voice._repeatedFails - 1);
+          loopWait = exports._mainLoopRepeatedFailsWaitArray[voice._repeatedFails - 1];
           msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
-          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2 && voice._repeatedFails < 5)
+          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2 && voice._repeatedFails < exports._mainLoopRepeatedFailsWaitArray)
             forceLoop = true;
-          if (voice._repeatedFails >= 5)
+          if (voice._repeatedFails >= exports._mainLoopRepeatedFailsWaitArray)
             voice._repeatedFails = 0;
         } else if (voice._repeatedFails) {
           voice._repeatedFails = 0;
