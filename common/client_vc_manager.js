@@ -352,6 +352,7 @@ module.exports = exports = {
   },
   
   _mainLoopRepeatedFailsWaitArray: [5000],
+  _mainLoopMusicBufferBytes: 512 * 1024,
   
   startMainLoop: async function startMainLoop(voice, msgchannel) {
     if (voice.mainloop) return;
@@ -381,9 +382,9 @@ module.exports = exports = {
               ]);
             } else {
               if (songInfo.startMs != 0 && songInfo.startMs != null) {
-                stream = songInfo.stream = ytdl(songInfo.url, { begin: songInfo.startMs, filter: 'audioonly', highWaterMark: 2 ** 28, ...(ytdl_ipv6Block != null ? { IPv6Block: ytdl_ipv6Block } : {}) });
+                stream = songInfo.stream = ytdl(songInfo.url, { begin: songInfo.startMs, filter: 'audioonly', highWaterMark: exports._mainLoopMusicBufferBytes, ...(ytdl_ipv6Block != null ? { IPv6Block: ytdl_ipv6Block } : {}) });
               } else {
-                stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: 2 ** 28, ...(ytdl_ipv6Block != null ? { IPv6Block: ytdl_ipv6Block } : {}) });
+                stream = songInfo.stream = ytdl(songInfo.url, { filter: 'audioonly', highWaterMark: exports._mainLoopMusicBufferBytes, ...(ytdl_ipv6Block != null ? { IPv6Block: ytdl_ipv6Block } : {}) });
               }
             }
             break;
