@@ -170,7 +170,7 @@ module.exports = exports = {
         // youtube url
         let info;
         try {
-          info = await ytdl.getBasicInfo(url);
+          info = await ytdl.getBasicInfo(url, { agent: ytdl_getAgent() });
         } catch (e) {
           if (useYTDLP) {
             info = {
