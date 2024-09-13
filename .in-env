@@ -16,3 +16,5 @@ PERSISTENT_DATA:   JSON: object {
   },
 }
 YTDL_IPV6_BLOCK:         <null or unquoted string ipv6 block>
+YTDL_USE_COOKIES:        <boolean>
+#TRACK_TOTAL_SONGS_PLAYED: <boolean>

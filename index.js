@@ -48,28 +48,44 @@ if (!useYTDLP) {
   try {
     ytdl = require('@distube/ytdl-core');
     getRandomIPv6 = require('@distube/ytdl-core/lib/utils').getRandomIPv6;
+    let COOKIES_FILE = 'extra_data/cookies.json';
+    ytdl_workingProps = {};
+    ytdl_workingProps.ipv6Block = process.env.YTDL_IPV6_BLOCK == 'null' ? null : process.env.YTDL_IPV6_BLOCK;
+    ytdl_workingProps.tryCookies = process.env.YTDL_USE_COOKIES == 'true' ? true : false;
+    ytdl_workingProps.lastAgentTime = null;
+    ytdl_workingProps.currentAgent = null;
+    ytdl_workingProps.cookies = null;
+    ytdl_loadCookies = function ytdl_loadCookies() {
+      if (ytdl_workingProps.cookies == null) {
+        ytdl_workingProps.cookies = JSON.parse(fs.readFileSync(COOKIES_FILE).toString());
+      }
+    };
+    ytdl_clearCookies = function ytdl_clearCookies() {
+      ytdl_workingProps.cookies = null;
+    };
+    ytdl_getAgent = function ytdl_getAgent() {
+      ytdl_loadCookies();
+      if (ytdl_workingProps.ipv6Block == null) {
+        if (ytdl_workingProps.lastAgentTime) {
+          // new agent, only created once
+          ytdl_workingProps.currentAgent = ytdl.createAgent(ytdl_workingProps.cookies, {});
+        }
+      } else {
+        if (ytdl_workingProps.lastAgentTime == null || Date.now() > ytdl_workingProps.lastAgentTime + 10 * 60 * 1000) {
+          // new agent, renews every 10 minutes to ensure ipv6 is rotated
+          ytdl_workingProps.currentAgent = ytdl.createAgent(ytdl_workingProps.cookies, {
+            localAddress: getRandomIPv6(ytdl_workingProps.ipv6Block),
+          });
+        }
+      }
+      
+      return ytdl_workingProps.currentAgent;
+    };
+    ytdl_clearAgent = function ytdl_clearAgent() {
+      ytdl.lastAgentTime = null;
+      ytdl_clearCookies();
+    };
   } catch (e) { ytdl = null; }
-  ytdl_workingProps = {};
-  ytdl_workingProps.ipv6Block = process.env.YTDL_IPV6_BLOCK == 'null' ? null : process.env.YTDL_IPV6_BLOCK;
-  ytdl_workingProps.lastAgentTime = null;
-  ytdl_workingProps.currentAgent = null;
-  ytdl_getAgent = function ytdl_getAgent() {
-    if (ytdl_workingProps.ipv6Block == null) {
-      if (ytdl_workingProps.lastAgentTime) {
-        // new agent, only created once
-        ytdl_workingProps.currentAgent = ytdl.createAgent(null, {});
-      }
-    } else {
-      if (ytdl_workingProps.lastAgentTime == null || Date.now() > ytdl_workingProps.lastAgentTime + 10 * 60 * 1000) {
-        // new agent, renews every 10 minutes to ensure ipv6 is rotated
-        ytdl_workingProps.currentAgent = ytdl.createAgent(null, {
-          localAddress: getRandomIPv6(ytdl_workingProps.ipv6Block),
-        });
-      }
-    }
-    
-    return ytdl_workingProps.currentAgent;
-  };
 }
 var ytpl;
 try { ytpl = require('ytpl'); } catch (e) { ytpl = null; }
@@ -80,7 +96,7 @@ if (useYTDLP) {
 var mathjs = require('mathjs');
 var math = mathjs.create(mathjs.all);
 
-Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, getRandomIPv6, ytdl_ipv6Block, ytdl_workingProps, ytdl_getAgent, ytpl, yt_dlp_wrap, mathjs, math });
+Object.assign(global, { fs, cp, https, stream, util, v8, vm, Discord, DiscordVoice, ytdl, getRandomIPv6, ytdl_ipv6Block, ytdl_workingProps, ytdl_loadCookies, ytdl_clearCookies, ytdl_getAgent, ytdl_clearAgent, ytpl, yt_dlp_wrap, mathjs, math });
 
 // botcat module requires
 global.props = { data_code: require('./common/data_code') };
