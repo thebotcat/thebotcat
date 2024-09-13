@@ -56,8 +56,12 @@ if (!useYTDLP) {
     ytdl_workingProps.currentAgent = null;
     ytdl_workingProps.cookies = null;
     ytdl_loadCookies = function ytdl_loadCookies() {
-      if (ytdl_workingProps.cookies == null) {
-        ytdl_workingProps.cookies = JSON.parse(fs.readFileSync(COOKIES_FILE).toString());
+      try {
+        if (ytdl_workingProps.cookies == null) {
+          ytdl_workingProps.cookies = JSON.parse(fs.readFileSync(COOKIES_FILE).toString());
+        }
+      } catch (e) {
+        console.error(e);
       }
     };
     ytdl_clearCookies = function ytdl_clearCookies() {
