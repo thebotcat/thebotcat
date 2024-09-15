@@ -419,7 +419,7 @@ module.exports = exports = {
           msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
           if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2 && voice._repeatedFails < exports._mainLoopRepeatedFailsWaitArray)
             forceLoop = true;
-          if (voice._repeatedFails >= exports._mainLoopRepeatedFailsWaitArray)
+          if (voice._repeatedFails >= exports._mainLoopRepeatedFailsWaitArray.length)
             voice._repeatedFails = 0;
         } else if (voice._repeatedFails) {
           voice._repeatedFails = 0;
