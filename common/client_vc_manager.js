@@ -437,7 +437,7 @@ module.exports = exports = {
         
         if (!(voice.loop || forceLoop)) voice.voteskip.length = 0;
         
-        if (voice._repeatedFails > 1) {
+        if (voice._repeatedFails >= 1) {
           await new Promise(r => setTimeout(r, loopWait));
         }
       }
