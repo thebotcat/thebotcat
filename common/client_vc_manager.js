@@ -328,6 +328,9 @@ module.exports = exports = {
     }
   },
   
+  _mainLoopRepeatedFailsWaitArray: [5000],
+  _mainLoopMusicBufferBytes: 512 * 1024,
+  
   _mainLoopAwaitPromise: function _mainLoopAwaitPromise(voice) {
     return new Promise(r => {
       let alreadySettled = false;
@@ -351,8 +354,22 @@ module.exports = exports = {
     });
   },
   
-  _mainLoopRepeatedFailsWaitArray: [5000],
-  _mainLoopMusicBufferBytes: 512 * 1024,
+  // returns the fail wait period for the nth fail number, starting at 0
+  // returns milliseconds for waiting period, or null for dont wait any longer
+  _mainLoopGetRepeatedFailWait: function _mainLoopGetRepeatedFailWait(failNum) {
+    if (exports._mainLoopRepeatedFailsWaitArray.length == 0) {
+      // no waiting array found
+      return null;
+    } else {
+      if (!Number.isSafeInteger(failNum) && failNum >= exports._mainLoopRepeatedFailsWaitArray.length) {
+        return null;
+      } else if (failNum <= 0) {
+        return exports._mainLoopRepeatedFailsWaitArray[0];
+      } else {
+        return exports._mainLoopRepeatedFailsWaitArray[failNum];
+      }
+    }
+  },
   
   startMainLoop: async function startMainLoop(voice, msgchannel) {
     if (voice.mainloop) return;
@@ -397,48 +414,74 @@ module.exports = exports = {
           }
         }
         
+        // indicate that song is currently playing
+        exports.setMainLoop(voice, 1);
+        
         // awaits until the song finishes, forceskip, or error occurs
         await exports._mainLoopAwaitPromise(voice);
         
-        if (voice.mainloop == 2) {
-          voice.player.unpause();
-          voice.player.stop();
-          voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
-          voice.voteskip.length = 0;
-        } else if (voice.mainloop == 3) {
-          voice.player.unpause();
-          voice.player.stop();
-          voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
-          voice.songslist.length = 0;
-          voice.voteskip.length = 0;
-        }
-        
-        let loopWait, forceLoop = false;
-        if (voice.mainloop != 2 && voice.mainloop != 3 && voice.resource && voice.resource.playbackDuration < songInfo.expectedLength - 1700) {
-          if (voice.resource.playbackDuration + 100 > songInfo.expectedLength && voice._repeatedFails)
-            voice._repeatedFails = 0;
-          voice._repeatedFails++;
-          loopWait = exports._mainLoopRepeatedFailsWaitArray[voice._repeatedFails - 1];
-          msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
-          if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2 && voice._repeatedFails < exports._mainLoopRepeatedFailsWaitArray)
-            forceLoop = true;
-          if (voice._repeatedFails >= exports._mainLoopRepeatedFailsWaitArray.length)
-            voice._repeatedFails = 0;
-        } else if (voice._repeatedFails) {
-          voice._repeatedFails = 0;
-        }
+        // loopwait is for time to wait before retrying a song, forceloop is to force a loop to the start of the song again
+        let loopWait = null, forceLoop = false;
         
         if (voice.mainloop == 2 || voice.mainloop == 3) {
+          // either a skip (mainloop == 2) or a stop (mainloop == 3) occurred
+          
+          if (voice.mainloop == 2) {
+            voice.player.unpause();
+            voice.player.stop();
+            voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
+            voice.voteskip.length = 0;
+          } else if (voice.mainloop == 3) {
+            voice.player.unpause();
+            voice.player.stop();
+            voice.player.once(DiscordVoice.AudioPlayerStatus.Idle, () => voice.resource = null);
+            voice.songslist.length = 0;
+            voice.voteskip.length = 0;
+          }
+          
           exports.setMainLoop(voice, 1);
+          
           if (voice.songslist.length) voice.songslist.splice(0, 1);
-        } else if (!(voice.loop || forceLoop) && voice.songslist.length) {
-          if (voice.queueloop) voice.songslist.push(voice.songslist.splice(0, 1)[0]);
-          else voice.songslist.splice(0, 1);
+        } else {
+          // if stopped earlier than 1700ms before the song's expected end time, there was an error in playback
+          if (voice.resource && voice.resource.playbackDuration < songInfo.expectedLength - 1700) {
+            voice._repeatedFails++;
+            
+            loopWait = exports._mainLoopGetRepeatedFailWait(voice._repeatedFails - 1);
+            
+            if (loopWait != null) {
+              msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, waiting ${(loopWait / 1000).toFixed(3)} seconds`);
+            } else {
+              msgchannel.send(`Error: something broke when playing ${voice.songslist[0].desc}, max retries reached, skipping to next song`);
+            }
+            
+            // if too many repeated fails, reset repeated fails to zero, and do not force loop the song (so just move on)
+            if (voice._repeatedFails > exports._mainLoopRepeatedFailsWaitArray.length) {
+              voice._repeatedFails = 0;
+            } else {
+              // if within the first 5000ms of a song when it failed (and there haven't been too many fails), just retry the song again
+              if (loopWait != null && voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2) {
+                forceLoop = true;
+              }
+            }
+          } else {
+            // else if song completed successfully, clear any repeated fail count that has been accumulated
+            if (voice._repeatedFails > 0) {
+              voice._repeatedFails = 0;
+            }
+          }
+        }
+        
+        // only remove songs from songs list if we are not currently looping the song
+        if (!(voice.loop || forceLoop)) {
+          voice.voteskip.length = 0;
+          if (voice.songslist.length) {
+            if (voice.queueloop) voice.songslist.push(voice.songslist.splice(0, 1)[0]);
+            else voice.songslist.splice(0, 1);
+          }
         }
         
         voice.resource = null;
-        
-        if (!(voice.loop || forceLoop)) voice.voteskip.length = 0;
         
         if (voice._repeatedFails >= 1) {
           await new Promise(r => setTimeout(r, loopWait));
@@ -447,6 +490,7 @@ module.exports = exports = {
     } catch (e) {
       console.error(e);
     }
+    
     exports.setMainLoop(voice, 0);
   },
   
