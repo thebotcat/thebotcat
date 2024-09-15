@@ -70,7 +70,7 @@ if (!useYTDLP) {
     ytdl_getAgent = function ytdl_getAgent() {
       ytdl_loadCookies();
       if (ytdl_workingProps.ipv6Block == null) {
-        if (ytdl_workingProps.lastAgentTime) {
+        if (ytdl_workingProps.lastAgentTime == null) {
           // new agent, only created once
           ytdl_workingProps.currentAgent = ytdl.createAgent(ytdl_workingProps.cookies, {});
         }
