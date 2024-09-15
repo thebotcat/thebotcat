@@ -418,7 +418,9 @@ module.exports = exports = {
         exports.setMainLoop(voice, 1);
         
         // awaits until the song finishes, forceskip, or error occurs
-        await exports._mainLoopAwaitPromise(voice);
+        if (!ytdlFakeMusicError) {
+          await exports._mainLoopAwaitPromise(voice);
+        }
         
         // loopwait is for time to wait before retrying a song, forceloop is to force a loop to the start of the song again
         let loopWait = null, forceLoop = false;
