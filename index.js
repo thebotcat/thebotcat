@@ -8,7 +8,7 @@ var doWorkers = true;
 var useYTDLP = false;
 
 // true to fake a music error every time a song is played
-var ytdlFakeMusicError = true;
+var ytdlFakeMusicError = false;
 
 // limit is 1 error logged every 24 hours
 var errorCounter = 0;
