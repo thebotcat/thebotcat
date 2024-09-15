@@ -7,6 +7,9 @@ var doWorkers = true;
 // true to use yt-dlp instead of ytdl
 var useYTDLP = false;
 
+// true to fake a music error every time a song is played
+var ytdlFakeMusicError = true;
+
 // limit is 1 error logged every 24 hours
 var errorCounter = 0;
 
@@ -852,6 +855,7 @@ Object.defineProperties(global, {
   ready3time: { configurable: true, enumerable: true, get: () => ready3time, set: val => { ready3time = val; } },
   doWorkers: { configurable: true, enumerable: true, get: () => doWorkers, set: val => { doWorkers = val; } },
   useYTDLP: { configurable: true, enumerable: true, get: () => useYTDLP, set: val => { useYTDLP = val; } },
+  ytdlFakeMusicError: { configurable: true, enumerable: true, get: () => ytdlFakeMusicError, set: val => { ytdlFakeMusicError = val; } },
   version: { configurable: true, enumerable: true, get: () => version, set: val => { version = val; } },
   messageHandler: { configurable: true, enumerable: true, get: () => handlers.event.message, set: val => { handlers.event.message = val; } },
   messageHandlers: { configurable: true, enumerable: true, get: () => handlers.extra.message, set: val => { handlers.extra.message = val; } },

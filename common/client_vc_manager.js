@@ -390,11 +390,14 @@ module.exports = exports = {
             break;
         }
         voice.resource = DiscordVoice.createAudioResource(stream, { inlineVolume: true });
-        voice.player.play(voice.resource);
-        if (voice.volume != 1) {
-          voice.resource.volume.setVolume(voice.volume);
+        if (!ytdlFakeMusicError) {
+          voice.player.play(voice.resource);
+          if (voice.volume != 1) {
+            voice.resource.volume.setVolume(voice.volume);
+          }
         }
         
+        // awaits until the song finishes, forceskip, or error occurs
         await exports._mainLoopAwaitPromise(voice);
         
         if (voice.mainloop == 2) {
