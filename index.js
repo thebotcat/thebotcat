@@ -77,13 +77,22 @@ if (!useYTDLP) {
       if (ytdl_workingProps.ipv6Block == null) {
         if (ytdl_workingProps.lastAgentTime == null) {
           // new agent, only created once
-          ytdl_workingProps.currentAgent = ytdl.createAgent(ytdl_workingProps.cookies ?? undefined, {});
+          ytdl_workingProps.currentAgent = ytdl.createAgent(ytdl_workingProps.cookies ?? undefined, {
+            headers: {
+              //referer: 'https://www.youtube.com/',
+              //'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0',
+            },
+          });
         }
       } else {
         if (ytdl_workingProps.lastAgentTime == null || Date.now() > ytdl_workingProps.lastAgentTime + 10 * 60 * 1000) {
           // new agent, renews every 10 minutes to ensure ipv6 is rotated
           ytdl_workingProps.currentAgent = ytdl.createAgent(ytdl_workingProps.cookies ?? undefined, {
             localAddress: getRandomIPv6(ytdl_workingProps.ipv6Block),
+            headers: {
+              //referer: 'https://www.youtube.com/',
+              //'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0',
+            },
           });
         }
       }
