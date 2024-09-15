@@ -443,8 +443,8 @@ module.exports = exports = {
           
           if (voice.songslist.length) voice.songslist.splice(0, 1);
         } else {
-          // if stopped earlier than 1700ms before the song's expected end time, there was an error in playback
-          if (voice.resource && voice.resource.playbackDuration < songInfo.expectedLength - 1700) {
+          // if stopped earlier than 1700ms or 50% before the song's expected end time, there was an error in playback
+          if (voice.resource && (voice.resource.playbackDuration < songInfo.expectedLength - 1700 || voice.resource.playbackDuration / songInfo.expectedLength < 0.5)) {
             voice._repeatedFails++;
             
             loopWait = exports._mainLoopGetRepeatedFailWait(voice._repeatedFails - 1);
@@ -456,11 +456,11 @@ module.exports = exports = {
             }
             
             // if too many repeated fails, reset repeated fails to zero, and do not force loop the song (so just move on)
-            if (voice._repeatedFails > exports._mainLoopRepeatedFailsWaitArray.length) {
+            if (loopWait == null) {
               voice._repeatedFails = 0;
             } else {
               // if within the first 5000ms of a song when it failed (and there haven't been too many fails), just retry the song again
-              if (loopWait != null && voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2) {
+              if (voice.resource.playbackDuration < 5000 && voice.resource.playbackDuration + 100 < songInfo.expectedLength / 2) {
                 forceLoop = true;
               }
             }
