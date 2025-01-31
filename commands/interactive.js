@@ -1,3 +1,5 @@
+let constants = require('../common/constants');
+
 module.exports = [
   {
     name: 'coinflip',
@@ -279,7 +281,9 @@ module.exports = [
     async execute(o, msg, rawArgs) {
       if (!props.saved.feat.calc) return common.regCmdResp(o, 'Calculation features are disabled');
       let expr = o.asOneArg;
-      nonlogmsg(`calculating from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(expr)}`);
+      if (constants.LOG_CALC_COMMAND) {
+        nonlogmsg(`calculating from ${msg.author.tag} (id ${msg.author.id}) in ${common.explainChannel(msg.channel)}: ${util.inspect(expr)}`);
+      }
       let user = props.saved.users[msg.author.id];
       if (!user) {
         if (expr == ':view' || expr == ':clear') return common.regCmdResp(o, 'User object not created yet');
@@ -391,7 +395,9 @@ module.exports = [
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
           } catch (e) {
             res = e.toString();
-            console.error(res);
+            if (constants.LOG_CALC_COMMAND) {
+              console.error(res);
+            }
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
               promise = common.regCmdResp(o, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else {
@@ -408,7 +414,9 @@ module.exports = [
       let ephemeral = args[1] ? args[1].value : true;
       if (!props.saved.feat.calc) return common.slashCmdResp(o, ephemeral, 'Calculation features are disabled');
       let expr = args[0] ? args[0].value : '';
-      nonlogmsg(`calculating from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${util.inspect(expr)}`);
+      if (constants.LOG_CALC_COMMAND) {
+        nonlogmsg(`calculating from ${o.author.tag} (id ${o.author.id}) in ${common.explainChannel(o.channel)}: ${util.inspect(expr)}`);
+      }
       let user = props.saved.users[o.author.id];
       if (!user) {
         if (expr == ':view' || expr == ':clear') return common.slashCmdResp(o, ephemeral, 'User object not created yet');
@@ -473,7 +481,9 @@ module.exports = [
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
           } catch (e) {
             res = e.toString();
-            console.error(res);
+            if (constants.LOG_CALC_COMMAND) {
+              console.error(res);
+            }
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
               promise = common.slashCmdResp(o, ephemeral, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else if (/^Error: Workerpool Worker terminated Unexpectedly/.test(res)) {
@@ -520,7 +530,9 @@ module.exports = [
             if (calc_scope_new || shared_calc_scope_new) schedulePropsSave();
           } catch (e) {
             res = e.toString();
-            console.error(res);
+            if (constants.LOG_CALC_COMMAND) {
+              console.error(res);
+            }
             if (/^Error: Script execution timed out after [0-9]+ms$/.test(res)) {
               promise = common.slashCmdResp(o, ephemeral, `Error: expression timeout after ${res.slice(40, Infinity)}`);
             } else {
