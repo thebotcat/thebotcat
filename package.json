@@ -29,17 +29,17 @@
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.18.0",
-    "@distube/ytdl-core": "^4.16.0",
+    "@distube/ytdl-core": "^4.16.12",
     "bufferutil": "^4.0.9",
-    "discord.js": "^14.17.3",
+    "discord.js": "^14.20.0",
     "erlpack": "^0.1.4",
-    "mathjs": "^14.2.0",
+    "mathjs": "^14.5.2",
     "sodium": "^3.0.2",
     "utf-8-validate": "^6.0.5",
-    "workerpool": "^9.2.0",
+    "workerpool": "^9.3.2",
     "ytpl": "^2.3.0",
     "yt-dlp-wrap": "^2.3.12",
-    "zlib-sync": "^0.1.9"
+    "zlib-sync": "^0.1.10"
   },
   "repository": {
     "type": "git",
