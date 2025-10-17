@@ -1,12 +1,12 @@
 module.exports = {
   event: {
-    messageCreate: require('./events/messageCreate'),
-    voiceStateUpdate: require('./events/voiceStateUpdate'),
-    interactionCreate: require('./events/interactionCreate'),
+    [Discord.Events.MessageCreate]: require('./events/messageCreate'),
+    [Discord.Events.VoiceStateUpdate]: require('./events/voiceStateUpdate'),
+    [Discord.Events.InteractionCreate]: require('./events/interactionCreate'),
   },
   extra: {
-    messageCreate: require('./extras/messageCreate'),
-    voiceStateUpdate: require('./extras/voiceStateUpdate'),
-    interactionCreate: require('./extras/interactionCreate'),
+    [Discord.Events.MessageCreate]: require('./extras/messageCreate'),
+    [Discord.Events.VoiceStateUpdate]: require('./extras/voiceStateUpdate'),
+    [Discord.Events.InteractionCreate]: require('./extras/interactionCreate'),
   },
 };

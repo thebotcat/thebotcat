@@ -711,7 +711,11 @@ client.on(Discord.Events.ShardDisconnect, () => {
   nonlogmsg('Disconnected!');
 });
 
-['messageCreate', 'voiceStateUpdate', 'interactionCreate'].forEach(evtType => {
+[
+  Discord.Events.MessageCreate,
+  Discord.Events.VoiceStateUpdate,
+  Discord.Events.InteractionCreate
+].forEach(evtType => {
   client.on(evtType, async (...args) => {
     try {
       if (handlers.event[evtType]) {
