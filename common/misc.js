@@ -77,13 +77,13 @@ function slashCmdResp(o, ephemeral, message, mention) {
   if (typeof message == 'object') {
     replyObject = {
       embeds: [message],
-      ephemeral,
+      flags: ephemeral ? Discord.MessageFlags.Ephemeral : 0,
     };
   } else {
     replyObject = {
       content: message,
       ...(mention ? { allowedMentions: { parse: ['users', 'roles', 'everyone'] } } : null),
-      ephemeral,
+      flags: ephemeral ? Discord.MessageFlags.Ephemeral : 0,
     };
   }
   if (o.alreadyReplied) {

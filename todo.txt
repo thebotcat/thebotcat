@@ -89,7 +89,7 @@ single gif commands should show an error for input of number more than 1 like th
 unite most of the single gifs into one big command that shows a gif at random from all of them but can be optionally from one category
 add functionality to join special voice channel to create voice chat and remove on leave to thebotcat, can be set to remove when creator leaves or only when everyone in it leaves
 
-emphemeral message chat feature
+ephemeral message chat feature
 make pseudo tagscript implementation in common and use it
   ts('{e}', {e:4})
   idea: double up braces {{e}} to escape them
