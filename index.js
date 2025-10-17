@@ -669,7 +669,7 @@ async function populateBotStatusMessage() {
 }
 
 // client listeners
-client.on('ready', async () => {
+client.on(Discord.Events.ClientReady, async () => {
   nonlogmsg(`Logged in as ${client.user.tag}!`);
   
   updateStatus();
@@ -691,23 +691,23 @@ client.on('ready', async () => {
   ready3time = new Date();
 });
 
-client.on('guildCreate', () => {
+client.on(Discord.Events.GuildCreate, () => {
   nonlogmsg('Joined a new guild!');
   
   updateStatus();
 });
 
-client.on('guildDelete', () => {
+client.on(Discord.Events.GuildDelete, () => {
   nonlogmsg('Left a guild!');
   
   updateStatus();
 });
 
-client.on('reconnecting', () => {
+client.on(Discord.Events.ShardReconnecting, () => {
   nonlogmsg('Reconnecting!');
 });
 
-client.on('disconnect', () => {
+client.on(Discord.Events.ShardDisconnect, () => {
   nonlogmsg('Disconnected!');
 });
 
