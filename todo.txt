@@ -1,3 +1,5 @@
+install @snazzah/davey package
+
 write joined vcs (where botcat is not playing music; otherwise leaving vc is disallowed) to the saved props on bot close, then rejoin vc on bot restart if restarted within like 1hr
 forceplay that erases currently playing song to play this song
 queue front to queue to front of queue
