@@ -39,8 +39,8 @@ module.exports = {
   LOG_CALC_COMMAND: false,
   
   PING_TEST_DOMAIN: 'http://www.msftncsi.com/ncsi.txt',
-  PING_MIN_DELAY_SECS: 5,
-  PING_SOCKET_DESTROY_TIMEOUT_SECS: 10,
+  PING_MIN_DELAY_MSECS: 5_000,
+  PING_SOCKET_DESTROY_TIMEOUT_MSECS: 10_000,
 };
 
 Object.keys(module.exports.botRolePermBits).forEach(x => module.exports.botRolePermBitsInv[module.exports.botRolePermBits[x]] = x);

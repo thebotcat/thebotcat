@@ -2,17 +2,18 @@ let commonConstants = require('./constants');
 
 module.exports = class PingChecker {
   #pingDomain;
-  #pingMinDelaySecs;
-  #pingSocketDestroyTimeoutSecs;
+  #pingMinDelayMsecs;
+  #pingSocketDestroyTimeoutMscs;
+  #lastCheckEnd = null;
   
   constructor({
     pingDomain = commonConstants.PING_TEST_DOMAIN,
-    pingMinDelaySecs = commonConstants.PING_MIN_DELAY_SECS,
-    pingSocketDestroyTimeoutSecs = commonConstants.PING_SOCKET_DESTROY_TIMEOUT_SECS,
+    pingMinDelayMsecs = commonConstants.PING_MIN_DELAY_MSECS,
+    pingSocketDestroyTimeoutMscs = commonConstants.PING_SOCKET_DESTROY_TIMEOUT_MSECS,
   } = {}) {
     this.#pingDomain = pingDomain;
-    this.#pingMinDelaySecs = pingMinDelaySecs;
-    this.#pingSocketDestroyTimeoutSecs = pingSocketDestroyTimeoutSecs;
+    this.#pingMinDelayMsecs = pingMinDelayMsecs;
+    this.#pingSocketDestroyTimeoutMscs = pingSocketDestroyTimeoutMscs;
   }
   
   async #checkPing() {
@@ -22,7 +23,10 @@ module.exports = class PingChecker {
       let req = http.get(this.#pingDomain, res => {
         afterRequest = Date.now();
         
-        r(afterRequest - beforeRequest);
+        r({
+          ping: afterRequest - beforeRequest,
+          requestEnd: afterRequest,
+        });
         
         res.on('data', () => {});
         res.on('end', () => {});
@@ -32,7 +36,7 @@ module.exports = class PingChecker {
           if (!req.socket.destroyed) {
             req.socket.destroySoon();
           }
-        }, this.#pingSocketDestroyTimeoutSecs).unref();
+        }, this.#pingSocketDestroyTimeoutMscs).unref();
       });
       
       req.on('error', err => {
@@ -44,6 +48,36 @@ module.exports = class PingChecker {
   }
   
   async checkPing() {
-    return this.#checkPing();
+    if (this.#lastCheckEnd == null) {
+      // first ping request always is allowed
+      
+      let {
+        ping,
+        requestEnd,
+      } = this.#checkPing();
+      
+      this.#lastCheckEnd = requestEnd;
+      
+      return ping;
+    } else {
+      let now = Date.now();
+      
+      if (now - this.#lastCheckEnd > this.#pingMinDelayMsecs) {
+        // request after long enough delay is allowed
+        
+        let {
+          ping,
+          requestEnd,
+        } = this.#checkPing();
+        
+        this.#lastCheckEnd = requestEnd;
+        
+        return ping;
+      } else {
+        // request without enough delay must be batched
+        
+        // TODO
+      }
+    }
   }
 };

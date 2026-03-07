@@ -140,6 +140,8 @@ use typescript
 
 probably not doing:
 shovel command
+slash command infinite "the bot is thinking..." command
+slash command bot failed to reply command
 
 problems with external libs:
 a guild emoji's allowed roles will not update on d.js GuildEmojiRoleManager.cache but will update on discord itself, and will also update on the cache when bot is restarted
