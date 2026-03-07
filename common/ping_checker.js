@@ -19,13 +19,14 @@ module.exports = class PingChecker {
   }
   
   async #checkPing() {
-    return await new Promise((r, j) => {
+    return await new Promise(r => {
       let beforeRequest = Date.now(), afterRequest;
       
       let req = http.get(this.#pingDomain, res => {
         afterRequest = Date.now();
         
         r({
+          didError: false,
           ping: afterRequest - beforeRequest,
           requestEnd: afterRequest,
         });
@@ -42,11 +43,32 @@ module.exports = class PingChecker {
       });
       
       req.on('error', err => {
-        j(err);
+        r({
+          didError: true,
+          error: err,
+          requestEnd: Date.now(),
+        });
       });
       
       req.end();
     });
+  }
+  
+  async #checkPingUpdateCheckedTime() {
+    let {
+      didError,
+      ping,
+      error,
+      requestEnd,
+    } = this.#checkPing();
+    
+    this.#lastCheckEnd = requestEnd;
+    
+    if (didError) {
+      throw error;
+    } else {
+      return ping;
+    }
   }
   
   async checkPing() {
@@ -60,14 +82,7 @@ module.exports = class PingChecker {
       if (this.#lastCheckEnd == null) {
         // first ping request always is allowed
         
-        let {
-          ping,
-          requestEnd,
-        } = this.#checkPing();
-        
-        this.#lastCheckEnd = requestEnd;
-        
-        return ping;
+        return await this.#checkPingUpdateCheckedTime();
       } else {
         const now = Date.now();
         const timeSinceLastPing = now - this.#lastCheckEnd;
@@ -75,14 +90,7 @@ module.exports = class PingChecker {
         if (timeSinceLastPing > this.#pingMinDelayMsecs) {
           // request after long enough delay is allowed
           
-          let {
-            ping,
-            requestEnd,
-          } = this.#checkPing();
-          
-          this.#lastCheckEnd = requestEnd;
-          
-          return ping;
+          return await this.#checkPingUpdateCheckedTime();
         } else {
           // request without enough delay must be batched
           
@@ -93,16 +101,17 @@ module.exports = class PingChecker {
           });
           
           setTimeout(
-            () => {
-              let {
-                ping,
-                requestEnd,
-              } = this.#checkPing();
-              
-              this.#lastCheckEnd = requestEnd;
-              
-              for (const { r, j } of this.#batchedRequests) {
-                r(ping);
+            async () => {
+              try {
+                await this.#checkPingUpdateCheckedTime();
+                
+                for (const { r } of this.#batchedRequests) {
+                  r(ping);
+                }
+              } catch (err) {
+                for (const { j } of this.#batchedRequests) {
+                  j(err);
+                }
               }
               
               this.#requestBatching = false;
