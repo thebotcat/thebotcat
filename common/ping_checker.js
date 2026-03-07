@@ -5,6 +5,8 @@ module.exports = class PingChecker {
   #pingMinDelayMsecs;
   #pingSocketDestroyTimeoutMscs;
   #lastCheckEnd = null;
+  #requestBatching = false;
+  #batchedRequests = [];
   
   constructor({
     pingDomain = commonConstants.PING_TEST_DOMAIN,
@@ -48,22 +50,15 @@ module.exports = class PingChecker {
   }
   
   async checkPing() {
-    if (this.#lastCheckEnd == null) {
-      // first ping request always is allowed
+    if (this.#requestBatching) {
+      // if in batching mode add request to the batch
       
-      let {
-        ping,
-        requestEnd,
-      } = this.#checkPing();
-      
-      this.#lastCheckEnd = requestEnd;
-      
-      return ping;
+      return new Promise((r, j) => {
+        this.#batchedRequests.push({ r, j });
+      });
     } else {
-      let now = Date.now();
-      
-      if (now - this.#lastCheckEnd > this.#pingMinDelayMsecs) {
-        // request after long enough delay is allowed
+      if (this.#lastCheckEnd == null) {
+        // first ping request always is allowed
         
         let {
           ping,
@@ -74,9 +69,50 @@ module.exports = class PingChecker {
         
         return ping;
       } else {
-        // request without enough delay must be batched
+        const now = Date.now();
+        const timeSinceLastPing = now - this.#lastCheckEnd;
         
-        // TODO
+        if (timeSinceLastPing > this.#pingMinDelayMsecs) {
+          // request after long enough delay is allowed
+          
+          let {
+            ping,
+            requestEnd,
+          } = this.#checkPing();
+          
+          this.#lastCheckEnd = requestEnd;
+          
+          return ping;
+        } else {
+          // request without enough delay must be batched
+          
+          this.#requestBatching = true;
+          
+          const resultPromise = new Promise((r, j) => {
+            this.#batchedRequests.push({ r, j });
+          });
+          
+          setTimeout(
+            () => {
+              let {
+                ping,
+                requestEnd,
+              } = this.#checkPing();
+              
+              this.#lastCheckEnd = requestEnd;
+              
+              for (const { r, j } of this.#batchedRequests) {
+                r(ping);
+              }
+              
+              this.#requestBatching = false;
+              this.#batchedRequests.length = 0;
+            },
+            Math.max(Math.min(this.#pingMinDelayMsecs - timeSinceLastPing, 0), this.#pingMinDelayMsecs),
+          ).unref();
+          
+          return resultPromise;
+        }
       }
     }
   }
