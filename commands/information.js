@@ -126,7 +126,7 @@ module.exports = [
       let apiPing = m.createdTimestamp - msg.createdTimestamp;
       let wsPing = client.ws.ping;
       
-      return m.edit(`*Bot Ping:* ${botPing != null ? `**${botPing}**ms` : '**Error**'}\n*WS Ping:* **${wsPing}**ms\n*API Ping:* **${apiPing}**ms`);
+      return m.edit(`*Bot Ping*: ${botPing != null ? `**${botPing}**ms` : '**Error**'}\n*WS Ping*: **${wsPing}**ms\n*API Ping*: **${apiPing}**ms`);
     },
     async execute_slash(o, interaction, command, args) {
       let ephemeral = args[0] ? args[0].value : true;
@@ -144,7 +144,7 @@ module.exports = [
       let apiPing = BigInt(afterMessageTime) - (BigInt(interaction.id) >> 22n) - BigInt(new Date('2015').getTime());
       let wsPing = client.ws.ping;
       
-      resolve(interaction.editReply(`*Bot Ping:* ${botPing != null ? `**${botPing}**ms` : '**Error**'}\n*WS Ping:* **${wsPing}**ms\n*API Ping:* **${apiPing}**ms (inaccurate for slash commands)`));
+      resolve(interaction.editReply(`*Bot Ping*: ${botPing != null ? `**${botPing}**ms` : '**Error**'}\n*WS Ping*: **${wsPing}**ms\n*API Ping*: **${apiPing}**ms (inaccurate for slash commands)`));
     },
   },
   {
