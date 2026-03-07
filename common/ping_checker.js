@@ -1,6 +1,6 @@
 let commonConstants = require('./constants');
 
-module.exports = class Pinger {
+module.exports = class PingChecker {
   #pingDomain;
   #pingMinDelaySecs;
   

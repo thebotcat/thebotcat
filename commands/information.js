@@ -120,7 +120,7 @@ module.exports = [
       let botPing = null;
       
       try {
-        botPing = await common.pinger.checkPing();
+        botPing = await common.pingChecker.checkPing();
       } catch {}
       
       let apiPing = m.createdTimestamp - msg.createdTimestamp;
@@ -138,7 +138,7 @@ module.exports = [
       let botPing = null;
       
       try {
-        botPing = await common.pinger.checkPing();
+        botPing = await common.pingChecker.checkPing();
       } catch {}
       
       let apiPing = BigInt(afterMessageTime) - (BigInt(interaction.id) >> 22n) - BigInt(new Date('2015').getTime());
