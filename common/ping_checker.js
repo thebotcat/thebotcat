@@ -61,7 +61,7 @@ module.exports = class PingChecker {
       ping,
       error,
       requestEnd,
-    } = this.#checkPing();
+    } = await this.#checkPing();
     
     this.#lastCheckEnd = requestEnd;
     
