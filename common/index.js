@@ -45,6 +45,8 @@ var handlers = require('./handlers/index');
 
 var { isId, isObject, persDataCreateVerifiedCopy, propsSavedCreateVerifiedCopy, getEmptyGuildObject, getEmptyUserObject } = require('./pers_data_verif');
 
+var _Pinger = require('./pinger');
+
 // module.exports is the default object that a node.js module uses to export functions and such, when you do require(), you get this object
 // also an interesting way to make js cleaner is by shortening { e: e } to { e }, and the compiler still understands
 module.exports = {
@@ -76,4 +78,6 @@ module.exports = {
   clientVCManager,
   handlers,
   isId, isObject, persDataCreateVerifiedCopy, propsSavedCreateVerifiedCopy, getEmptyGuildObject, getEmptyUserObject,
+  _Pinger,
+  pinger: new Pinger(),
 };

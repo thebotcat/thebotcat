@@ -114,40 +114,37 @@ module.exports = [
     description_slash: 'checks my ping to the WebSocket gateway, the web, and the Discord API',
     flags: 0b111110,
     options: [ { type: Discord.ApplicationCommandOptionType.Boolean, name: 'ephemeral', description: 'whether the command and result are visible to only you, defaults to true' } ],
-    execute(o, msg, rawArgs) {
-      return new Promise((resolve, reject) => {
-        common.regCmdResp(o, 'Checking Ping').then(m => {
-          let beforerequest = Date.now(), afterrequest;
-          https.get(common.constants.PING_TEST_DOMAIN, res => {
-            afterrequest = Date.now();
-            res.socket.destroy();
-            
-            var botPing = afterrequest - beforerequest;
-            var apiPing = m.createdTimestamp - msg.createdTimestamp;
-            var wsPing = client.ws.ping;
-            
-            resolve(m.edit(`*Bot Ping:* **${botPing}**ms\n*WS Ping:* **${wsPing}**ms\n*API Ping:* **${apiPing}**ms`));
-          });
-        });
-      });
+    async execute(o, msg, rawArgs) {
+      let m = await common.regCmdResp(o, 'Checking Ping');
+      
+      let botPing = null;
+      
+      try {
+        botPing = await common.pinger.checkPing();
+      } catch {}
+      
+      let apiPing = m.createdTimestamp - msg.createdTimestamp;
+      let wsPing = client.ws.ping;
+      
+      return m.edit(`*Bot Ping:* ${botPing != null ? `**${botPing}**ms` : '**Error**'}\n*WS Ping:* **${wsPing}**ms\n*API Ping:* **${apiPing}**ms`);
     },
-    execute_slash(o, interaction, command, args) {
+    async execute_slash(o, interaction, command, args) {
       let ephemeral = args[0] ? args[0].value : true;
-      return new Promise((resolve, reject) => {
-        common.slashCmdResp(o, ephemeral, 'Checking Ping').then(v => {
-          let beforerequest = Date.now(), afterrequest;
-          https.get(common.constants.PING_TEST_DOMAIN, res => {
-            afterrequest = Date.now();
-            res.socket.destroy();
-            
-            var botPing = afterrequest - beforerequest;
-            var apiPing = BigInt(beforerequest) - (BigInt(interaction.id) >> 22n) - BigInt(new Date('2015').getTime());
-            var wsPing = client.ws.ping;
-            
-            resolve(interaction.editReply( `*Bot Ping:* **${botPing}**ms\n*WS Ping:* **${wsPing}**ms\n*API Ping:* **${apiPing}**ms (inaccurate for slash commands)`));
-          });
-        });
-      });
+      
+      let v = common.slashCmdResp(o, ephemeral, 'Checking Ping');
+      
+      let afterMessageTime = Date.now();
+      
+      let botPing = null;
+      
+      try {
+        botPing = await common.pinger.checkPing();
+      } catch {}
+      
+      let apiPing = BigInt(afterMessageTime) - (BigInt(interaction.id) >> 22n) - BigInt(new Date('2015').getTime());
+      let wsPing = client.ws.ping;
+      
+      resolve(interaction.editReply(`*Bot Ping:* ${botPing != null ? `**${botPing}**ms` : '**Error**'}\n*WS Ping:* **${wsPing}**ms\n*API Ping:* **${apiPing}**ms (inaccurate for slash commands)`));
     },
   },
   {

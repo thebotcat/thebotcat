@@ -38,7 +38,8 @@ module.exports = {
   
   LOG_CALC_COMMAND: false,
   
-  PING_TEST_DOMAIN: 'https://example.com',
+  PING_TEST_DOMAIN: '8.8.8.8',
+  PING_MIN_DELAY_SECS: 5,
 };
 
 Object.keys(module.exports.botRolePermBits).forEach(x => module.exports.botRolePermBitsInv[module.exports.botRolePermBits[x]] = x);
