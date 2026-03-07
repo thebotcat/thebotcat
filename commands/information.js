@@ -118,7 +118,7 @@ module.exports = [
       return new Promise((resolve, reject) => {
         common.regCmdResp(o, 'Checking Ping').then(m => {
           let beforerequest = Date.now(), afterrequest;
-          https.get('https://example.com', res => {
+          https.get(common.constants.PING_TEST_DOMAIN, res => {
             afterrequest = Date.now();
             res.socket.destroy();
             
@@ -136,7 +136,7 @@ module.exports = [
       return new Promise((resolve, reject) => {
         common.slashCmdResp(o, ephemeral, 'Checking Ping').then(v => {
           let beforerequest = Date.now(), afterrequest;
-          https.get('https://example.com', res => {
+          https.get(common.constants.PING_TEST_DOMAIN, res => {
             afterrequest = Date.now();
             res.socket.destroy();
             

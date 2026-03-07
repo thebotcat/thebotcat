@@ -37,6 +37,8 @@ module.exports = {
   YT_DLP_PATH: 'extra_data/yt-dlp',
   
   LOG_CALC_COMMAND: false,
+  
+  PING_TEST_DOMAIN: 'https://example.com',
 };
 
 Object.keys(module.exports.botRolePermBits).forEach(x => module.exports.botRolePermBitsInv[module.exports.botRolePermBits[x]] = x);
