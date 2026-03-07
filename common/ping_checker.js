@@ -20,9 +20,10 @@ module.exports = class PingChecker {
   
   async #checkPing() {
     return await new Promise(r => {
-      let beforeRequest = Date.now(), afterRequest;
+      const beforeRequest = Date.now();
+      let afterRequest;
       
-      let req = http.get(this.#pingDomain, res => {
+      const req = http.get(this.#pingDomain, res => {
         afterRequest = Date.now();
         
         r({
@@ -55,7 +56,7 @@ module.exports = class PingChecker {
   }
   
   async #checkPingUpdateCheckedTime() {
-    let {
+    const {
       didError,
       ping,
       error,
@@ -103,7 +104,7 @@ module.exports = class PingChecker {
           setTimeout(
             async () => {
               try {
-                await this.#checkPingUpdateCheckedTime();
+                const ping = await this.#checkPingUpdateCheckedTime();
                 
                 for (const { r } of this.#batchedRequests) {
                   r(ping);
