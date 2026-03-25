@@ -1,4 +1,4 @@
-FROM node:25.8.0
+FROM node:25.8.1
 
 RUN adduser thebotcat -u 2201
 

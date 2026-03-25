@@ -1,6 +1,6 @@
 {
   "name": "thebotcat",
-  "version": "1.7.57",
+  "version": "1.7.57.1",
   "description": "Thebotcat is a general purpose, highly configurable discord bot with a focus on administration and fun. (Bot Description: My discord bot just for your server used for administration and to keep your self nice n clean.)",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.10.0",
-    "@discordjs/voice": "^0.19.0",
+    "@discordjs/voice": "^0.19.2",
     "@distube/ytdl-core": "^4.16.12",
     "@snazzah/davey": "^0.1.10",
     "bufferutil": "^4.1.0",
