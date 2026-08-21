@@ -14,7 +14,7 @@ RUN touch props.json .env &&\
 
 COPY --chown=thebotcat:thebotcat ./package.json package.json
 COPY --chown=thebotcat:thebotcat ./package-lock.json package-lock.json
-RUN npm install -f
+RUN npm ci
 
 COPY --chown=thebotcat:thebotcat ./worker.js worker.js
 COPY --chown=thebotcat:thebotcat ./index.js index.js
