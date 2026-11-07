@@ -50,7 +50,78 @@ var ytdl = null, ytdl_ipv6Block, ytdl_workingProps, ytdl_getAgent;
 if (!useYTDLP) {
   try {
     ytdl = require('@distube/ytdl-core');
-    getRandomIPv6 = require('@distube/ytdl-core/lib/utils').getRandomIPv6;
+    
+    /* External copied section */
+    
+    // From https://github.com/distubejs/ytdl-core/blob/ff5a2ff23c0bad7a7d29f00fd039a02ef1f76dc1/lib/utils.js, lines 323-327
+    const isIPv6 = ip => {
+      const IPV6_REGEX =
+        /^(?:(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?:\/(?:1[0-1][0-9]|12[0-8]|[1-9][0-9]|[1-9]))?$/;
+      return IPV6_REGEX.test(ip);
+    };
+    
+    // From https://github.com/distubejs/ytdl-core/blob/ff5a2ff23c0bad7a7d29f00fd039a02ef1f76dc1/lib/utils.js, lines 329-345
+    /**
+     * Normalizes an IPv6 address into an array of 8 integers
+     * @param {string} ip - IPv6 address
+     * @returns {number[]} - Array of 8 integers representing the address
+     */
+    const normalizeIP = ip => {
+      const parts = ip.split("::");
+      let start = parts[0] ? parts[0].split(":") : [];
+      let end = parts[1] ? parts[1].split(":") : [];
+
+      const missing = 8 - (start.length + end.length);
+      const zeros = new Array(missing).fill("0");
+
+      const full = [...start, ...zeros, ...end];
+
+      return full.map(part => parseInt(part || "0", 16));
+    };
+    
+    // From https://github.com/distubejs/ytdl-core/blob/ff5a2ff23c0bad7a7d29f00fd039a02ef1f76dc1/lib/utils.js, lines 283-321
+    /**
+     * Gets random IPv6 Address from a block
+     *
+     * @param {string} ip the IPv6 block in CIDR-Notation
+     * @returns {string}
+     */
+    getRandomIPv6 = ip => {
+      if (!isIPv6(ip)) {
+        throw new Error("Invalid IPv6 format");
+      }
+      
+      const [rawAddr, rawMask] = ip.split("/");
+      const mask = parseInt(rawMask, 10);
+      
+      if (isNaN(mask) || mask > 128 || mask < 1) {
+        throw new Error("Invalid IPv6 subnet mask (must be between 1 and 128)");
+      }
+      
+      const base10addr = normalizeIP(rawAddr);
+      
+      const fullMaskGroups = Math.floor(mask / 16);
+      const remainingBits = mask % 16;
+      
+      const result = new Array(8).fill(0);
+      
+      for (let i = 0; i < 8; i++) {
+        if (i < fullMaskGroups) {
+          result[i] = base10addr[i];
+        } else if (i === fullMaskGroups && remainingBits > 0) {
+          const groupMask = 0xffff << (16 - remainingBits);
+          const randomPart = Math.floor(Math.random() * (1 << (16 - remainingBits)));
+          result[i] = (base10addr[i] & groupMask) | randomPart;
+        } else {
+          result[i] = Math.floor(Math.random() * 0x10000);
+        }
+      }
+      
+      return result.map(x => x.toString(16).padStart(4, "0")).join(":");
+    };
+    
+    /* End external copied section */
+    
     let COOKIES_FILE = 'extra_data/cookies.json';
     ytdl_workingProps = {};
     ytdl_workingProps.ipv6Block = process.env.YTDL_IPV6_BLOCK == 'null' ? null : process.env.YTDL_IPV6_BLOCK;
